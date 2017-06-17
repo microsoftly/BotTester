@@ -2,7 +2,7 @@
   "name": "bottester",
   "version": "0.0.1",
   "description": "Easily test bots made with the bot builder framework",
-  "main": "index.js",
+  "main": "dist/index.js",
   "author": "Matt Schwartz <mattschwartz310@gmail.com>",
   "license": "MIT",
   "repository": {
