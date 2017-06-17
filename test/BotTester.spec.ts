@@ -41,9 +41,7 @@ describe('Bot Tester Example Use', () => {
         const data = "this is data";
 
         return executeDialogTest([
-            new SendMessageToBotDialogStep(
-                setUserDataDialog.USER_MESSAGE_TO_TRIGGER, 
-                setUserDataDialog.BOT_PROMPT),
+            new SendMessageToBotDialogStep(setUserDataDialog.USER_MESSAGE_TO_TRIGGER),
             new SendMessageToBotDialogStep(data),
             new InspectSessionDialogStep((session) => {
                 expect(session.userData.data).to.equal(data);
