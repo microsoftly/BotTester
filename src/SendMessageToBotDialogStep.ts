@@ -13,7 +13,11 @@ export default (sendMessageToBot: (message: IMessage | string, address?: IAddres
         private expectedResponses: [string];
         
         // for now, let the response only be in the form of a string. It can be abstracted later
-        constructor(msg: IMessage | string, expectedResponses?: string | string[], address?: IAddress) {
+        constructor(
+            msg: IMessage | string, 
+            expectedResponses?: string | string[], 
+            address?: IAddress
+        ) {
             address = address || defaultAddress;
 
             if(typeof(msg) === "string" && !defaultAddress && !address) {

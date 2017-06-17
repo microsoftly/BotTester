@@ -4,8 +4,6 @@ import * as setUserDataDialog from './setUserDataDialog';
 import { UniversalBot, IConnector, ConsoleConnector } from 'botbuilder';
 import { IDialogWaterfallStep } from 'botbuilder';
 
-const dialog: IDialogWaterfallStep = (session) => session.userData = { data: session.message.text };
-
 export default function create(connector: IConnector = new ConsoleConnector()): UniversalBot {
     const bot = new UniversalBot(connector);
     bot.dialog('/', (session) => {

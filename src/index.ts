@@ -13,18 +13,21 @@ interface ISendData {
     user?: IIdentity,
     text: string,
     address: IAddress
-}
+};
 
 function getSendBotMessageFunctionForBot(bot: UniversalBot, printMessage = (msg: IMessage) => {}) {
     return (message: IMessage | string, address?: IAddress) => {
         let messageToSend: IMessage;
+
         if(typeof message === 'string') {
             expect(address).not.to.be.null;
+
             messageToSend = new Message()
                 .address(address)
                 .text(message)
                 .timestamp()
-                .toMessage()
+                .toMessage();
+
         } else {
             messageToSend = message;
         }
@@ -61,9 +64,9 @@ export default function BotTester(bot: UniversalBot, defaultAddress?: IAddress, 
     });
 
     function executeDialogTest(steps: [IDialogTestStep], done = () => {}) {
-        return Promise.mapSeries(steps, (step) => {
-            return (step as IDialogTestStep).execute();
-        }).then(() => done())
+        return Promise.mapSeries(steps, 
+            (step) => (step as IDialogTestStep).execute())
+                .then(() => done());
     }
 
     const getSession = (addr: IAddress) => new Promise((res, rej) => {
@@ -71,7 +74,7 @@ export default function BotTester(bot: UniversalBot, defaultAddress?: IAddress, 
             if(e) return rej(e);
 
             res(session);
-        })
+        });
     });
 
     // prebuild dialog test steps
