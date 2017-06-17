@@ -12,7 +12,7 @@
     "postinstall": "tsc",
     "build": "tsc",
     "watch": "tsc -w",
-    "test": "mocha --require ts-node/register test/BotTester.spec.ts"
+    "test": "node_modules/mocha/bin/_mocha --require node_modules/ts-node/register test/BotTester.spec.ts"
   },
   "dependencies": {
     "@types/chai": "^4.0.0",

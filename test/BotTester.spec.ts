@@ -1,4 +1,3 @@
-import 'mocha';
 import BotTester from '../src/index';
 import * as echoDialog from './testBot/echoDialog';
 import * as promptDialog from './testBot/promptDialog';
