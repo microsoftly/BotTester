@@ -5,6 +5,9 @@
   "main": "index.js",
   "author": "Matt Schwartz <mattschwartz310@gmail.com>",
   "license": "MIT",
+  "repository": {
+    "url": "github.com:matts310/BotTester"
+  },
   "scripts": {
     "postinstall": "tsc",
     "build": "tsc",
