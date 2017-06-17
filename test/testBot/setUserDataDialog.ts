@@ -6,9 +6,7 @@ export const BOT_PROMPT = "what would you like to set data to?"
 const setUserDataDialog: [IDialogWaterfallStep] = [
     (session) => Prompts.text(session, BOT_PROMPT),
     (session, response: IPromptTextResult) => {
-        session.userData = { data: response.response }
-        console.log(session.userData);
-        session.save();
+        session.userData = { data: response.response };
         session.endDialog('ending');
     }
 ];
