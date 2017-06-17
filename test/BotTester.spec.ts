@@ -17,7 +17,6 @@ describe('Bot Tester Example Use', () => {
     let executeDialogTest;
     let SendMessageToBotDialogStep;
     let InspectSessionDialogStep;
-    let sendMessageToBot;
 
     beforeEach(() =>  {
         const bot =  createTestBot();
@@ -26,7 +25,6 @@ describe('Bot Tester Example Use', () => {
         executeDialogTest = botTester.executeDialogTest;
         SendMessageToBotDialogStep = botTester.SendMessageToBotDialogStep;
         InspectSessionDialogStep = botTester.InspectSessionDialogStep;
-        sendMessageToBot = botTester.sendMessageToBot;
     })
 
     it('run example for prompt dialog', () => {
