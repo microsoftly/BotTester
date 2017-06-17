@@ -1,0 +1,35 @@
+{
+    // Use IntelliSense to learn about possible Node.js debug attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "DEBUG",
+            "cwd": "${workspaceRoot}/test",
+            "console": "integratedTerminal",
+            "program": "${workspaceRoot}/node_modules/mocha/bin/_mocha",
+            "args": [
+                "${workspaceRoot}/dist/test/BotTester.spec.js",
+                "--timeout",
+                "10000000"
+            ],
+            "runtimeArgs": [
+                "--no-lazy"
+            ],
+            "runtimeExecutable": null,
+            "sourceMaps": true,
+            "stopOnEntry": false,
+            "protocol": "inspector",
+            "preLaunchTask": "compile"
+        },
+        {
+            "name": "Attach",
+            "type": "node",
+            "request": "attach",
+            "port": 5858
+        }
+    ]
+}

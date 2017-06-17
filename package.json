@@ -1,0 +1,28 @@
+{
+  "name": "bottester",
+  "version": "0.0.1",
+  "description": "Easily test bots made with the bot builder framework",
+  "main": "index.js",
+  "author": "Matt Schwartz <mattschwartz310@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "postinstall": "tsc",
+    "build": "tsc",
+    "watch": "tsc -w",
+    "test": "mocha --require ts-node/register test/BotTester.spec.ts"
+  },
+  "dependencies": {
+    "@types/chai": "^4.0.0",
+    "bluebird": "^3.5.0",
+    "botbuilder": "^3.8.4",
+    "chai": "^4.0.2",
+    "colors": "^1.1.2",
+    "typescript": "^2.3.4"
+  },
+  "devDependencies": {
+    "@types/mocha": "^2.2.41",
+    "@types/node": "^7.0.31",
+    "mocha": "^3.4.2",
+    "ts-node": "^3.0.6"
+  }
+}

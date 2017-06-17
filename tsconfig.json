@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "es6",
+        "typeRoots": [
+            "./node_modules/@types"
+        ],
+        "noImplicitAny": false,
+        "outDir": "./dist",
+        "sourceMap": true
+    }
+}
