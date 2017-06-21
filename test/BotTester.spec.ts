@@ -1,16 +1,13 @@
+import { UniversalBot, ConsoleConnector } from 'botbuilder';
 import BotTester from '../src/index';
 import * as echoDialog from './testBot/echoDialog';
 import * as promptDialog from './testBot/promptDialog';
 import * as setUserDataDialog from './testBot/setUserDataDialog';
 import createTestBot from './testBot/createTestBot';
+import { GIVE_RANDOM_COLOR_TRIGGER, COLORS } from './testBot/createTestBot';
 import * as chai from 'chai';
 
 const expect = chai.expect
-
-const address =  { channelId: 'console',
-    user: { id: 'user1', name: 'user1' }, 
-    bot: { id: 'bot', name: 'Bot' },
-    conversation: { id: 'user1Conversation' } };
 
 describe('Bot Tester Example Use', () => {
     let executeDialogTest;
@@ -19,7 +16,7 @@ describe('Bot Tester Example Use', () => {
 
     beforeEach(() =>  {
         const bot =  createTestBot();
-        const botTester = BotTester(bot, address);
+        const botTester = BotTester(bot);
 
         executeDialogTest = botTester.executeDialogTest;
         SendMessageToBotDialogStep = botTester.SendMessageToBotDialogStep;
@@ -36,6 +33,12 @@ describe('Bot Tester Example Use', () => {
                 [promptDialog.BOT_ECHO_USER_RESPONSE, promptDialog.BOT_LAST_MESSAGE])
         ]);
     })
+
+    it.only('can handle randomized responses', () => {
+        return new executeDialogTest([
+            new SendMessageToBotDialogStep(GIVE_RANDOM_COLOR_TRIGGER, [COLORS])
+        ])
+    });
 
     it('can inspect session', () => {
         const data = "this is data";

@@ -9,6 +9,12 @@ import InspectSessionDialogStepClassCreator from './InspectSessionDialogStep';
 
 const expect = chai.expect;
 
+const DEFAULT_ADDRESS: IAddress = { channelId: 'console',
+    user: { id: 'user1', name: 'user1' }, 
+    bot: { id: 'bot', name: 'Bot' },
+    conversation: { id: 'user1Conversation' } 
+};
+
 function getSendBotMessageFunctionForBot(bot: UniversalBot, printMessage = (msg: IMessage) => {}) {
     return (message: IMessage | string, address?: IAddress) => {
         let messageToSend: IMessage;
@@ -36,12 +42,12 @@ function getSendBotMessageFunctionForBot(bot: UniversalBot, printMessage = (msg:
 const defaultPrintUserMessage = (msg: IMessage) => console.log(colors.magenta(`${msg.address.user.name}: ${msg.text}`));
 const defaultPrintBotMessage = (msg: IMessage) => console.log(colors.blue(`bot: ${msg.text}`));
 
-export default function BotTester(bot: UniversalBot, defaultAddress?: IAddress, printUserMessage = defaultPrintUserMessage, printBotMessage = defaultPrintBotMessage) {
+function BotTester(bot: UniversalBot, defaultAddress = DEFAULT_ADDRESS, printUserMessage = defaultPrintUserMessage, printBotMessage = defaultPrintBotMessage) {
     const sendMessageToBot = getSendBotMessageFunctionForBot(bot, printUserMessage);
 
-    let botToUserMessageChecker = (msg: IMessage) => {}; 
-    const messageReceivedHandler = (msg: IMessage) => botToUserMessageChecker(msg);
-    const setBotToUserMessageChecker = (newMessageChecker: (msg: IMessage) => void) => botToUserMessageChecker = newMessageChecker;
+    let botToUserMessageChecker = (msg: IMessage | IMessage[]) => {}; 
+    const messageReceivedHandler = (msg: IMessage | IMessage[]) => botToUserMessageChecker(msg);
+    const setBotToUserMessageChecker = (newMessageChecker: (msg: IMessage | IMessage[]) => void) => botToUserMessageChecker = newMessageChecker;
 
     // routing is where create session is called. We're hihacking it to add our meta save function that will send the
     // messageReceivedHandler an event of type "save". This allows the executeDialogTest to continue the serial promise
@@ -65,10 +71,16 @@ export default function BotTester(bot: UniversalBot, defaultAddress?: IAddress, 
         }
     })
 
-    bot.on('outgoing', (e: IMessage) => {
-        if(e.type === 'messsage') {
-            printBotMessage(e);
+    bot.on('outgoing', (e: IMessage | IMessage[]) => {
+        if(!(e instanceof Array)) {
+            e = [e];
         }
+
+        e.forEach((msg) => {
+            if(msg.type === 'messsage') {
+                printBotMessage(msg);
+            }
+        });
 
         messageReceivedHandler(e);
     });
@@ -107,3 +119,6 @@ export default function BotTester(bot: UniversalBot, defaultAddress?: IAddress, 
         SendMessageToBotDialogStep
     }
 }
+
+export default BotTester;
+// module.exports = BotTester;
