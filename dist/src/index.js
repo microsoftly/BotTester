@@ -7,7 +7,6 @@ const colors = require("colors");
 const SendMessageToBotDialogStep_1 = require("./SendMessageToBotDialogStep");
 const InspectSessionDialogStep_1 = require("./InspectSessionDialogStep");
 const expect = chai.expect;
-;
 function getSendBotMessageFunctionForBot(bot, printMessage = (msg) => { }) {
     return (message, address) => {
         let messageToSend;
@@ -28,22 +27,58 @@ function getSendBotMessageFunctionForBot(bot, printMessage = (msg) => { }) {
             .then(() => printMessage(messageToSend));
     };
 }
-function isSendData(object) {
-    return 'text' in object &&
-        'address' in object;
-}
+// class RoutingSession {
+//     public saveUpdated: boolean;
+//     public session 
+//     constructor(session: Session) {
+//     }
+// }
 const defaultPrintUserMessage = (msg) => console.log(colors.magenta(`${msg.address.user.name}: ${msg.text}`));
 const defaultPrintBotMessage = (msg) => console.log(colors.blue(`bot: ${msg.text}`));
 function BotTester(bot, defaultAddress, printUserMessage = defaultPrintUserMessage, printBotMessage = defaultPrintBotMessage) {
     const sendMessageToBot = getSendBotMessageFunctionForBot(bot, printUserMessage);
-    let botToUserMessageChecker = (text, address) => { };
-    const messageReceivedHandler = (message) => botToUserMessageChecker(message.text, defaultAddress || message.address);
+    let botToUserMessageChecker = (msg) => { };
+    const messageReceivedHandler = (msg) => botToUserMessageChecker(msg);
     const setBotToUserMessageChecker = (newMessageChecker) => botToUserMessageChecker = newMessageChecker;
-    bot.on('send', (e) => {
-        printBotMessage(e);
-        if (isSendData(e)) {
-            messageReceivedHandler(e);
+    // const loadSession = () => console.log("I SHOULD BE DOING A THING");
+    // bot.loadSession = (address: IAddress, cb: (err: Error, session?: Session) => void) => {
+    //     const saveEvent = new Message()
+    //         .address(address)
+    //         .toMessage();
+    //     saveEvent.type = 'save';
+    //     // loadSession(address, (err: Error, session: Session) => {
+    //     //     if(err) return cb(err);
+    //     //     const sessionSave = session.save;
+    //     //     console.log('loading expected fucntion')
+    //     //     session.save = function() {
+    //     //         this.save();
+    //     //         session.send(saveEvent);
+    //     //         return this;
+    //     //     }.bind(session);
+    //     //     cb(err, session)
+    //     // });
+    // }
+    bot.on('routing', (session) => {
+        if (!session.saveUpdated) {
+            session.saveUpdated = true;
+            const saveEvent = new botbuilder_1.Message()
+                .address(session.message.address)
+                .toMessage();
+            saveEvent.type = 'save';
+            const save = session.save.bind(session);
+            session.save = function () {
+                save();
+                session.send(saveEvent);
+                return this;
+            }.bind(session);
         }
+    });
+    bot.on('outgoing', (e) => {
+        if (e.type === 'messsage') {
+            printBotMessage(e);
+        }
+        // console.log(e.type);
+        messageReceivedHandler(e);
     });
     function executeDialogTest(steps, done = () => { }) {
         return Promise.mapSeries(steps, (step) => step.execute())

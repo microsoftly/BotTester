@@ -9,12 +9,6 @@ import InspectSessionDialogStepClassCreator from './InspectSessionDialogStep';
 
 const expect = chai.expect;
 
-interface ISendData {
-    user?: IIdentity,
-    text: string,
-    address: IAddress
-};
-
 function getSendBotMessageFunctionForBot(bot: UniversalBot, printMessage = (msg: IMessage) => {}) {
     return (message: IMessage | string, address?: IAddress) => {
         let messageToSend: IMessage;
@@ -39,28 +33,44 @@ function getSendBotMessageFunctionForBot(bot: UniversalBot, printMessage = (msg:
     }
 }
 
-function isSendData(object: any): object is ISendData {
-    return 'text' in object &&
-        'address' in object;
-}
-
 const defaultPrintUserMessage = (msg: IMessage) => console.log(colors.magenta(`${msg.address.user.name}: ${msg.text}`));
 const defaultPrintBotMessage = (msg: IMessage) => console.log(colors.blue(`bot: ${msg.text}`));
-
 
 export default function BotTester(bot: UniversalBot, defaultAddress?: IAddress, printUserMessage = defaultPrintUserMessage, printBotMessage = defaultPrintBotMessage) {
     const sendMessageToBot = getSendBotMessageFunctionForBot(bot, printUserMessage);
 
-    let botToUserMessageChecker = (text: string, address: IAddress) => {}; 
-    const messageReceivedHandler = (message: ISendData) => botToUserMessageChecker(message.text, defaultAddress || message.address);
-    const setBotToUserMessageChecker = (newMessageChecker: (text: string, address: IAddress) => void) => botToUserMessageChecker = newMessageChecker;
+    let botToUserMessageChecker = (msg: IMessage) => {}; 
+    const messageReceivedHandler = (msg: IMessage) => botToUserMessageChecker(msg);
+    const setBotToUserMessageChecker = (newMessageChecker: (msg: IMessage) => void) => botToUserMessageChecker = newMessageChecker;
 
-    bot.on('send', (e) => {
-        printBotMessage(e);
+    // routing is where create session is called. We're hihacking it to add our meta save function that will send the
+    // messageReceivedHandler an event of type "save". This allows the executeDialogTest to continue the serial promise
+    // execution even if a message is not explicitly returned to the user but session state is saved. Note that saving 
+    // session and sending a message back to the user in one dialog step will cause an error, but is also bad practice.
+    // every time a message is sent to a user, session is saved implicitly.
+    bot.on('routing', (session) => {
+        if(!session.saveUpdated) {
+            session.saveUpdated = true;
+            const saveEvent = new Message()
+                .address(session.message.address)
+                .toMessage();
+            saveEvent.type = 'save';
 
-        if(isSendData(e)) {
-            messageReceivedHandler(e as ISendData);
+            const save = session.save.bind(session);
+            session.save = function() {
+                save();
+                session.send(saveEvent);
+                return this
+            }.bind(session);
         }
+    })
+
+    bot.on('outgoing', (e: IMessage) => {
+        if(e.type === 'messsage') {
+            printBotMessage(e);
+        }
+
+        messageReceivedHandler(e);
     });
 
     function executeDialogTest(steps: [IDialogTestStep], done = () => {}) {

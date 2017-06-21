@@ -7,7 +7,8 @@ const setUserDataDialog: [IDialogWaterfallStep] = [
     (session) => Prompts.text(session, BOT_PROMPT),
     (session, response: IPromptTextResult) => {
         session.userData = { data: response.response };
-        session.endDialog('ending');
+        // session.endDialog('ending');
+        session.save();
     }
 ];
 

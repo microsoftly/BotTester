@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-require("mocha");
 const index_1 = require("../src/index");
 const echoDialog = require("./testBot/echoDialog");
 const promptDialog = require("./testBot/promptDialog");
@@ -29,10 +28,10 @@ describe('Bot Tester Example Use', () => {
             new SendMessageToBotDialogStep(promptDialog.EXPECTED_USER_MESSAGE_RESPONSE, [promptDialog.BOT_ECHO_USER_RESPONSE, promptDialog.BOT_LAST_MESSAGE])
         ]);
     });
-    it('can inspect session', () => {
+    it.only('can inspect session', () => {
         const data = "this is data";
         return executeDialogTest([
-            new SendMessageToBotDialogStep(setUserDataDialog.USER_MESSAGE_TO_TRIGGER, setUserDataDialog.BOT_PROMPT),
+            new SendMessageToBotDialogStep(setUserDataDialog.USER_MESSAGE_TO_TRIGGER),
             new SendMessageToBotDialogStep(data),
             new InspectSessionDialogStep((session) => {
                 expect(session.userData.data).to.equal(data);

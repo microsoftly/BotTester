@@ -7,7 +7,8 @@ const setUserDataDialog = [
     (session) => botbuilder_1.Prompts.text(session, exports.BOT_PROMPT),
     (session, response) => {
         session.userData = { data: response.response };
-        session.endDialog('ending');
+        // session.endDialog('ending');
+        session.save();
     }
 ];
 exports.dialog = setUserDataDialog;

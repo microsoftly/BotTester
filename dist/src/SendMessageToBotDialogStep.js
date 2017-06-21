@@ -30,12 +30,12 @@ exports.default = (sendMessageToBot, setBotToUserMessageChecker, defaultAddress)
     }
     execute() {
         return new Promise((res, rej) => {
-            setBotToUserMessageChecker((text, address) => {
-                if (!this.expectedResponses)
+            setBotToUserMessageChecker((msg) => {
+                if (!this.expectedResponses || msg.type === 'save')
                     return res();
                 const currentExpectedResponse = this.expectedResponses.shift();
                 try {
-                    expect(text, `Bot should have responded with '${currentExpectedResponse}', but was '${text}`)
+                    expect(msg.text, `Bot should have responded with '${currentExpectedResponse}', but was '${msg.text}`)
                         .to.be.equal(currentExpectedResponse);
                 }
                 catch (e) {

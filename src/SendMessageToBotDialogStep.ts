@@ -6,7 +6,7 @@ import { UniversalBot, IMessage, Message, IAddress } from 'botbuilder';
 const expect = chai.expect;
 
 export default (sendMessageToBot: (message: IMessage | string, address?: IAddress) => any,
-                setBotToUserMessageChecker: (newMessageChecker: (text: string, address: IAddress) => any) => any,
+                setBotToUserMessageChecker: (newMessageChecker: (msg: IMessage) => any) => any,
                 defaultAddress?: IAddress) => 
     class SendMessageToBotDialogStep implements IDialogTestStep {
         private message: IMessage;
@@ -45,12 +45,12 @@ export default (sendMessageToBot: (message: IMessage | string, address?: IAddres
 
         execute() {
             return new Promise((res, rej) => {
-                setBotToUserMessageChecker((text: string, address: IAddress) => {
-                    if(!this.expectedResponses) return res();
+                setBotToUserMessageChecker((msg: IMessage) => {
+                    if(!this.expectedResponses || msg.type === 'save') return res();
 
                     const currentExpectedResponse = this.expectedResponses.shift();
                     try {
-                        expect(text, `Bot should have responded with '${currentExpectedResponse}', but was '${text}`)
+                        expect(msg.text, `Bot should have responded with '${currentExpectedResponse}', but was '${msg.text}`)
                             .to.be.equal(currentExpectedResponse);
                     } catch(e) {
                         return rej(e);
