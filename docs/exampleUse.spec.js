@@ -43,6 +43,26 @@ describe('BotTester Usage', () => {
         ])
     })
 
+    // re-run the test multiple times to guarantee that multiple colors are returned
+    let randomResponseRunCounter = 15;
+    while(randomResponseRunCounter--) {
+        const colors = ['red', 'green', 'blue', 'grey', 'gray', 'purple', 'magenta', 'cheese', 'orange', 'hazelnut'];
+        it('Can handle random responses', () => {
+            bot.dialog('/', (session) => {
+                session.send(colors)
+            });
+
+            const {
+                executeDialogTest,
+                SendMessageToBotDialogStep,
+            } = BotTester(bot);
+
+            return executeDialogTest([
+                new SendMessageToBotDialogStep('Tell me a color!', [colors]),
+            ])
+        })
+    }
+
     it('Can simulate conversation', () => {
         bot.dialog('/', [(session) => {
             new builder.Prompts.text(session, 'Hi there! Tell me something you like')
