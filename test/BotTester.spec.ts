@@ -37,7 +37,7 @@ describe('Bot Tester Example Use', () => {
         ]);
     })
 
-    it.only('can inspect session', () => {
+    it('can inspect session', () => {
         const data = "this is data";
 
         return executeDialogTest([
