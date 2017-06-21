@@ -5,7 +5,7 @@ import { UniversalBot, IConnector, ConsoleConnector } from 'botbuilder';
 import { IDialogWaterfallStep } from 'botbuilder';
 
 export const GIVE_RANDOM_COLOR_TRIGGER = 'tell me a random color';
-export const COLORS = ['red', 'blue', 'green'];
+export const COLORS = ['red', 'green', 'blue', 'grey', 'gray', 'purple', 'magenta', 'cheese', 'orange', 'hazelnut'];
 
 export default function create(connector: IConnector = new ConsoleConnector()): UniversalBot {
     const bot = new UniversalBot(connector);

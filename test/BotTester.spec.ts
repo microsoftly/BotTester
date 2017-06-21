@@ -34,11 +34,14 @@ describe('Bot Tester Example Use', () => {
         ]);
     })
 
-    it.only('can handle randomized responses', () => {
-        return new executeDialogTest([
-            new SendMessageToBotDialogStep(GIVE_RANDOM_COLOR_TRIGGER, [COLORS])
-        ])
-    });
+    let randomResponseRunCounter = 15;
+    while(randomResponseRunCounter--) {
+        it('can handle randomized responses', () => {
+            return new executeDialogTest([
+                new SendMessageToBotDialogStep(GIVE_RANDOM_COLOR_TRIGGER, [COLORS])
+            ])
+        });
+    }
 
     it('can inspect session', () => {
         const data = "this is data";
