@@ -4,7 +4,7 @@ Simple framework that allows for easy testing of a botbuiler chatbot using mocha
 ```bash
 npm install --save bot-tester
 ```
-## Example Usage
+# Example Usage
 ``` javascript
 const mocha = require('mocha');
 const builder = require('botbuilder');
@@ -23,6 +23,13 @@ describe('BotTester Usage', () => {
         bot = new builder.UniversalBot(connector);
     })
 
+    // ... TESTS LIVE HERE
+
+]);
+```
+## Simple use
+### Test for a single response
+``` javascript
     it('can handle a single response', () => {
         bot.dialog('/', (session) => {
             session.send('hello!');
@@ -37,7 +44,10 @@ describe('BotTester Usage', () => {
             new SendMessageToBotDialogStep('Hola!', 'hello!'),
         ])
     })
+```
 
+### Test for multiple responses
+``` javascript
     it('Can handle multiple responses', () => {
         bot.dialog('/', (session) => {
             session.send('hello!')
@@ -53,7 +63,10 @@ describe('BotTester Usage', () => {
             new SendMessageToBotDialogStep('Hola!', ['hello!', 'how are you doing?']),
         ])
     })
+```
 
+### Test for random response
+``` javascript
     // re-run the test multiple times to guarantee that multiple colors are returned
     let randomResponseRunCounter = 15;
     while(randomResponseRunCounter--) {
@@ -73,7 +86,10 @@ describe('BotTester Usage', () => {
             ])
         })
     }
+```
 
+### Test simulated conversation
+``` javascript
     it('Can simulate conversation', () => {
         bot.dialog('/', [(session) => {
             new builder.Prompts.text(session, 'Hi there! Tell me something you like')
@@ -94,7 +110,11 @@ describe('BotTester Usage', () => {
             new SendMessageToBotDialogStep('It\'s blue', 'Interesting. Well, that\'s all I have for now')
         ])
     })
+```
 
+## Advanced use
+### Can test against session 
+``` javascript
     it('Can inspect session state', () => {
         bot.dialog('/', [(session) => {
             new builder.Prompts.text(session, 'What would you like to set data to?')
@@ -120,7 +140,10 @@ describe('BotTester Usage', () => {
             })
         ])
     })
+```
 
+### Multiple user communication
+``` javascript
     it('Can communicate to multiple users', () => {
         const user1Address = { channelId: 'console',
             user: { id: 'user1', name: 'A' }, 
@@ -158,7 +181,10 @@ describe('BotTester Usage', () => {
             new SendMessageToBotDialogStep(askForUser2Name, 'B')
         ]);
     })
+```
 
+## Allows for custom implementation of dialog test steps
+``` javascript
     it('Can allow for custom DialogSteps', () => {
         bot.dialog('/', [(session) => {
             new builder.Prompts.text(session, 'What would you like to set data to?')
@@ -236,17 +262,3 @@ describe('BotTester Usage', () => {
     })
 }) 
 ```
-## BotTester Overview
-BotTester function has the following signature
-``` javascript
-funciton BotTester(bot, defaultAddress)
-```
-
-TODOS: 
-. add in linting
-. make sure types are properly exported
-. add in address testing
-. ensure multi user support
-. ensure multi channel support
-. ensure multi convo support 
-. create custom console connector for handling printing
