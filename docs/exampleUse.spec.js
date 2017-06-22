@@ -8,6 +8,9 @@ const connector = new builder.ConsoleConnector();
 describe('BotTester Usage', () => {
     let bot;
 
+    // Each test is showing the usage of the BotTester 
+    // via default dialogs, so reinstantiate a new 
+    // bot for each test
     beforeEach(() => {
         bot = new builder.UniversalBot(connector);
     })
