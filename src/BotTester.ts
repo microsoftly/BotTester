@@ -31,7 +31,6 @@ function getSendBotMessageFunctionForBot(bot: UniversalBot, printMessage = (msg:
         }
 
         return new Promise((res, rej) => {
-            console.log(JSON.stringify(messageToSend, null, 2));
             bot.receive(messageToSend, (e) => e ? rej(e) : res());
         })
         .then(() => printMessage(messageToSend));
