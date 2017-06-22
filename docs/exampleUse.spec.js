@@ -110,6 +110,44 @@ describe('BotTester Usage', () => {
         ])
     })
 
+    it('Can communicate to multiple users', () => {
+        const user1Address = { channelId: 'console',
+            user: { id: 'user1', name: 'A' }, 
+            bot: { id: 'bot', name: 'Bot' },
+            conversation: { id: 'user1Conversation' } 
+        };
+
+        const user2Address = { channelId: 'console',
+            user: { id: 'user2', name: 'B' }, 
+            bot: { id: 'bot', name: 'Bot' },
+            conversation: { id: 'user2Conversation' } 
+        };
+
+        bot.dialog('/', (session) => session.send(session.message.address.user.name));
+
+        const {
+            executeDialogTest,
+            SendMessageToBotDialogStep,
+        } = BotTester(bot);
+
+        // sendMessageToBotDialogStep can accept botbuilder messages!
+        const askForUser1Name = new builder.Message()
+            .text('What is my name?')
+            .address(user1Address)
+            .toMessage();
+        
+        const askForUser2Name = new builder.Message()
+            .text('What is my name?')
+            .address(user2Address)
+            .toMessage();
+
+
+        return executeDialogTest([
+            new SendMessageToBotDialogStep(askForUser1Name, 'A'),
+            new SendMessageToBotDialogStep(askForUser2Name, 'B')
+        ]);
+    })
+
     it('Can allow for custom DialogStepDefinitions', () => {
         bot.dialog('/', [(session) => {
             new builder.Prompts.text(session, 'What would you like to set data to?')
