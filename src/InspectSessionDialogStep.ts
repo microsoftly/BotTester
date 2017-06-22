@@ -1,4 +1,4 @@
-import IDialogTestStep from './IDialogTestStep';
+import { IDialogTestStep } from './IDialogTestStep';
 import { IAddress, Session } from 'botbuilder';
 
 export default (getSession: (addr: IAddress) => Promise<Session>, defaultAddress: IAddress) => 

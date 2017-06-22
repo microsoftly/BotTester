@@ -1,6 +1,6 @@
 import * as chai from 'chai';
 import * as Promise from 'bluebird';
-import IDialogTestStep from './IDialogTestStep';
+import { IDialogTestStep } from './IDialogTestStep';
 import { UniversalBot, IMessage, Message, IAddress } from 'botbuilder';
 
 const expect = chai.expect;

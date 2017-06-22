@@ -1,6 +1,6 @@
 import * as Promise from 'bluebird';
 
-interface IDialogTestStep {
+export interface IDialogTestStep {
     execute(): Promise<any>
 };
 
