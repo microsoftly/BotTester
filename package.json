@@ -13,7 +13,7 @@
     "build": "tsc",
     "watch": "tsc -w",
     "test": "node_modules/mocha/bin/_mocha --require node_modules/ts-node/register test/BotTester.spec.ts",
-    "jsTest": "node_modules/mocha/bin/_mocha ./docs/exampleUse.spec.js"
+    "jsTest": "npm run build && node_modules/mocha/bin/_mocha ./docs/exampleUse.spec.js"
   },
   "dependencies": {
     "@types/chai": "^4.0.0",
