@@ -24,7 +24,7 @@ export default (sendMessageToBot: (message: IMessage | string, address?: IAddres
                 throw new Error('if message is a string, an address must be provided');
             }
 
-            if(address) {
+            if(typeof(msg) === 'string') {
                 const text = msg as string;
                 this.message = new Message()
                     .text(text)
