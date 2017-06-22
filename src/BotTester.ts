@@ -42,7 +42,12 @@ function getSendBotMessageFunctionForBot(bot: UniversalBot, printMessage = (msg:
 const defaultPrintUserMessage = (msg: IMessage) => console.log(colors.magenta(`${msg.address.user.name}: ${msg.text}`));
 const defaultPrintBotMessage = (msg: IMessage) => console.log(colors.blue(`bot: ${msg.text}`));
 
-function BotTester(bot: UniversalBot, defaultAddress = DEFAULT_ADDRESS, printUserMessage = defaultPrintUserMessage, printBotMessage = defaultPrintBotMessage) {
+function BotTester(
+    bot: UniversalBot, 
+    defaultAddress = DEFAULT_ADDRESS, 
+    printUserMessage = defaultPrintUserMessage, 
+    printBotMessage = defaultPrintBotMessage
+) {
     const sendMessageToBot = getSendBotMessageFunctionForBot(bot, printUserMessage);
 
     let botToUserMessageChecker = (msg: IMessage | IMessage[]) => {}; 
@@ -91,7 +96,7 @@ function BotTester(bot: UniversalBot, defaultAddress = DEFAULT_ADDRESS, printUse
                 .then(() => done());
     }
 
-    const getSession = (addr: IAddress) => new Promise((res, rej) => {
+    const getSession = (addr: IAddress = DEFAULT_ADDRESS) => new Promise((res, rej) => {
         bot.loadSession(addr, (e, session) => {
             if(e) return rej(e);
 
@@ -121,4 +126,3 @@ function BotTester(bot: UniversalBot, defaultAddress = DEFAULT_ADDRESS, printUse
 }
 
 export default BotTester;
-// module.exports = BotTester;
