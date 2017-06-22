@@ -16,17 +16,17 @@
     "jsTest": "npm run build && node_modules/mocha/bin/_mocha ./docs/exampleUse.spec.js"
   },
   "dependencies": {
-    "@types/chai": "^4.0.0",
     "bluebird": "^3.5.0",
     "botbuilder": "^3.8.4",
     "chai": "^4.0.2",
-    "colors": "^1.1.2",
-    "typescript": "^2.3.4"
+    "colors": "^1.1.2"
   },
   "devDependencies": {
+    "@types/chai": "^4.0.0",
     "@types/mocha": "^2.2.41",
     "@types/node": "^7.0.31",
     "mocha": "^3.4.2",
-    "ts-node": "^3.0.6"
+    "ts-node": "^3.0.6",
+    "typescript": "^2.3.4"
   }
 }
