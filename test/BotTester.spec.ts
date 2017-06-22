@@ -1,4 +1,4 @@
-import { UniversalBot, ConsoleConnector } from 'botbuilder';
+import { UniversalBot, ConsoleConnector, Message } from 'botbuilder';
 import BotTester from '../src/index';
 import * as echoDialog from './testBot/echoDialog';
 import * as promptDialog from './testBot/promptDialog';
@@ -87,4 +87,44 @@ describe('Bot Tester Example Use', () => {
                 echoDialog.BOT_LAST_MESSAGE),
         ]);
     });
+
+    it('Can communicate to multiple users', () => {
+        const localBot = new UniversalBot(new ConsoleConnector());
+
+        const user1Address = { channelId: 'console',
+            user: { id: 'user1', name: 'A' }, 
+            bot: { id: 'bot', name: 'Bot' },
+            conversation: { id: 'user1Conversation' } 
+        };
+
+        const user2Address = { channelId: 'console',
+            user: { id: 'user2', name: 'B' }, 
+            bot: { id: 'bot', name: 'Bot' },
+            conversation: { id: 'user2Conversation' } 
+        };
+
+        localBot.dialog('/', (session) => session.send(session.message.address.user.name));
+
+        const {
+            executeDialogTest,
+            SendMessageToBotDialogStep,
+        } = BotTester(localBot);
+
+        // sendMessageToBotDialogStep can accept botbuilder messages!
+        const askForUser1Name = new Message()
+            .text('What is my name?')
+            .address(user1Address)
+            .toMessage();
+        
+        const askForUser2Name = new Message()
+            .text('What is my name?')
+            .address(user2Address)
+            .toMessage();
+
+
+        return executeDialogTest([
+            new SendMessageToBotDialogStep(askForUser1Name, 'A'),
+            new SendMessageToBotDialogStep(askForUser2Name, 'B')
+        ]);
+    })
 });
