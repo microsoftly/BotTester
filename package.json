@@ -1,6 +1,6 @@
 {
   "name": "bot-tester",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Easily test bots made with the bot builder framework",
   "main": "dist/src/index.js",
   "author": "Matt Schwartz <mattschwartz310@gmail.com>",
