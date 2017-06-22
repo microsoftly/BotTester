@@ -1,18 +1,22 @@
-import { UniversalBot, ConsoleConnector, Message } from 'botbuilder';
-import BotTester from '../src/index';
+import { ConsoleConnector, Message, UniversalBot } from 'botbuilder';
+import * as chai from 'chai';
+import { BotTester } from '../src/BotTester';
+import { createTestBot } from './testBot/createTestBot';
+import { COLORS, GIVE_RANDOM_COLOR_TRIGGER } from './testBot/createTestBot';
 import * as echoDialog from './testBot/echoDialog';
 import * as promptDialog from './testBot/promptDialog';
 import * as setUserDataDialog from './testBot/setUserDataDialog';
-import createTestBot from './testBot/createTestBot';
-import { GIVE_RANDOM_COLOR_TRIGGER, COLORS } from './testBot/createTestBot';
-import * as chai from 'chai';
 
-const expect = chai.expect
+
+const expect = chai.expect;
 
 describe('Bot Tester Example Use', () => {
     let executeDialogTest;
+
+    // tslint:disable
     let SendMessageToBotDialogStep;
     let InspectSessionDialogStep;
+    // tslint:disable
 
     beforeEach(() =>  {
         const bot =  createTestBot();
@@ -105,10 +109,7 @@ describe('Bot Tester Example Use', () => {
 
         localBot.dialog('/', (session) => session.send(session.message.address.user.name));
 
-        const {
-            executeDialogTest,
-            SendMessageToBotDialogStep,
-        } = BotTester(localBot);
+        const botTester = BotTester(localBot);
 
         // sendMessageToBotDialogStep can accept botbuilder messages!
         const askForUser1Name = new Message()
@@ -122,9 +123,9 @@ describe('Bot Tester Example Use', () => {
             .toMessage();
 
 
-        return executeDialogTest([
-            new SendMessageToBotDialogStep(askForUser1Name, 'A'),
-            new SendMessageToBotDialogStep(askForUser2Name, 'B')
+        return botTester.executeDialogTest([
+            new botTester.SendMessageToBotDialogStep(askForUser1Name, 'A'),
+            new botTester.SendMessageToBotDialogStep(askForUser2Name, 'B')
         ]);
     })
 });

@@ -1,16 +1,17 @@
-import { IDialogTestStep } from './IDialogTestStep';
+import * as Promise from 'bluebird';
 import { IAddress, Session } from 'botbuilder';
+import { IDialogTestStep } from './IDialogTestStep';
 
-export default (getSession: (addr: IAddress) => Promise<Session>, defaultAddress: IAddress) => 
-    class InspectSessionDialogStep implements IDialogTestStep {
+export function InspectSessionDialogStepClassCreator(getSession: (addr: IAddress) => Promise<Session>, defaultAddress: IAddress) {
+    return class InspectSessionDialogStep implements IDialogTestStep {
         private address: IAddress;
         private sessionInspector: (session: Session) => any;
 
         constructor(
-            sessionInspector: (session: Session) => any, 
+            sessionInspector: (session: Session) => any,
             address?: IAddress
         ) {
-            if(!address && !defaultAddress) {
+            if (!address && !defaultAddress) {
                 throw new Error('InspectSessionDialogStep requires a default address or an address be provided')
             }
 
@@ -18,8 +19,9 @@ export default (getSession: (addr: IAddress) => Promise<Session>, defaultAddress
             this.sessionInspector = sessionInspector;
         }
 
-        execute() {
+        public execute(): Promise {
             return getSession(this.address)
                 .then(this.sessionInspector);
         }
-    }
+    };
+}

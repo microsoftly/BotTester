@@ -1,16 +1,16 @@
-import * as promptDialog from './promptDialog';
-import * as echoDialog from './echoDialog';
-import * as setUserDataDialog from './setUserDataDialog';
-import { UniversalBot, IConnector, ConsoleConnector } from 'botbuilder';
+import { ConsoleConnector, IConnector, Session, UniversalBot } from 'botbuilder';
 import { IDialogWaterfallStep } from 'botbuilder';
+import * as echoDialog from './echoDialog';
+import * as promptDialog from './promptDialog';
+import * as setUserDataDialog from './setUserDataDialog';
 
 export const GIVE_RANDOM_COLOR_TRIGGER = 'tell me a random color';
 export const COLORS = ['red', 'green', 'blue', 'grey', 'gray', 'purple', 'magenta', 'cheese', 'orange', 'hazelnut'];
 
-export default function create(connector: IConnector = new ConsoleConnector()): UniversalBot {
+export function createTestBot(connector: IConnector = new ConsoleConnector()): UniversalBot {
     const bot = new UniversalBot(connector);
-    bot.dialog('/', (session) => {
-        switch(session.message.text) {
+    bot.dialog('/', (session: Session) => {
+        switch (session.message.text) {
             case setUserDataDialog.USER_MESSAGE_TO_TRIGGER:
                 session.beginDialog('userDataTest');
                 break;
@@ -18,7 +18,7 @@ export default function create(connector: IConnector = new ConsoleConnector()): 
                 session.beginDialog('promptTest');
                 break;
             case GIVE_RANDOM_COLOR_TRIGGER:
-                session.send(COLORS)
+                session.send(COLORS);
                 break;
             default:
                 session.beginDialog('echoTest');
@@ -31,5 +31,4 @@ export default function create(connector: IConnector = new ConsoleConnector()): 
     bot.dialog('userDataTest', setUserDataDialog.dialog);
 
     return bot;
-};
-
+}
