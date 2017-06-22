@@ -1,12 +1,12 @@
 {
   "name": "bot-tester",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Easily test bots made with the bot builder framework",
   "main": "dist/src/index.js",
   "author": "Matt Schwartz <mattschwartz310@gmail.com>",
   "license": "MIT",
   "repository": {
-    "url": "github.com:matts310/BotTester"
+    "url": "github.com:matts310/BotTester.git"
   },
   "scripts": {
     "postinstall": "tsc",
