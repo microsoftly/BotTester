@@ -16,12 +16,10 @@ const DEFAULT_ADDRESS: IAddress = { channelId: 'console',
 };
 
 function getSendBotMessageFunctionForBot(bot: UniversalBot, printMessage = (msg: IMessage) => {}) {
-    return (message: IMessage | string, address?: IAddress) => {
+    return (message: IMessage | string, address: IAddress = DEFAULT_ADDRESS) => {
         let messageToSend: IMessage;
 
         if(typeof message === 'string') {
-            expect(address).not.to.be.null;
-
             messageToSend = new Message()
                 .address(address)
                 .text(message)
@@ -33,6 +31,7 @@ function getSendBotMessageFunctionForBot(bot: UniversalBot, printMessage = (msg:
         }
 
         return new Promise((res, rej) => {
+            console.log(JSON.stringify(messageToSend, null, 2));
             bot.receive(messageToSend, (e) => e ? rej(e) : res());
         })
         .then(() => printMessage(messageToSend));
