@@ -1,5 +1,7 @@
-import BotTester from './BotTester';
+import bottester from './BotTester';
+
+export const BotTester = bottester;
 
 export {IDialogTestStep} from './IDialogTestStep';
 
-export default BotTester
+export default BotTester;
