@@ -10,6 +10,7 @@
         "sourceMap": true
     },
     "files": [
-        "./src/BotTester.ts"
+        "./src/BotTester.ts",
+        "./test/BotTester.spec.ts"
     ]
 }

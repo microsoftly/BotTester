@@ -91,49 +91,8 @@ describe('Bot Tester Example Use', () => {
         ]);
     });
 
-    it('Can ensure proper address being used for return', () => {
-        const localBot = new UniversalBot(new ConsoleConnector());
-
-        const user1Address = { channelId: 'console',
-            user: { id: 'user1', name: 'A' }, 
-            bot: { id: 'bot', name: 'Bot' },
-            conversation: { id: 'user1Conversation' } 
-        };
-
-        localBot.dialog('/', (session) => session.send(session.message.address.user.name));
-
-        const botTester = BotTester(localBot);
-
-        // sendMessageToBotDialogStep can accept botbuilder messages!
-        const askForUser1Name = new Message()
-            .text('What is my name?')
-            .address(user1Address)
-            .toMessage();
-        
-        const expectedAddressInMessage = new Message()
-            .address(user1Address)
-            .toMessage();
-
-        // partial addresses work as well (i.e. if you only want to check one field such as userId)
-        const expectedUserInMessage = new Message()
-            .address({
-                user: {
-                    id: 'user1'
-                }
-            } as IAddress)
-            .toMessage();
-
-
-        return botTester.executeDialogTest([
-            new botTester.SendMessageToBotDialogStep(askForUser1Name, expectedAddressInMessage),
-            new botTester.SendMessageToBotDialogStep(askForUser1Name, expectedUserInMessage),
-        ]);  
-    });
-
-    it('Can communicate to multiple users', () => {
-        const localBot = new UniversalBot(new ConsoleConnector());
-
-        const user1Address = { channelId: 'console',
+    describe('Address test features', () => {
+        const defaultAddress = { channelId: 'console',
             user: { id: 'user1', name: 'A' }, 
             bot: { id: 'bot', name: 'Bot' },
             conversation: { id: 'user1Conversation' } 
@@ -145,25 +104,87 @@ describe('Bot Tester Example Use', () => {
             conversation: { id: 'user2Conversation' } 
         };
 
-        localBot.dialog('/', (session) => session.send(session.message.address.user.name));
+        beforeEach(() => {
+            const bot =  new UniversalBot(new ConsoleConnector());
 
-        const botTester = BotTester(localBot);
+            // same dialog will be used for each address test. Any message just returns the user name from the 
+            // message address
+            bot.dialog('/', (session) => session.send(session.message.address.user.name));
 
-        // sendMessageToBotDialogStep can accept botbuilder messages!
-        const askForUser1Name = new Message()
-            .text('What is my name?')
-            .address(user1Address)
-            .toMessage();
-        
-        const askForUser2Name = new Message()
-            .text('What is my name?')
-            .address(user2Address)
-            .toMessage();
+            // Default address can be set when building the test components
+            const botTester = BotTester(bot, defaultAddress);
+
+            executeDialogTest = botTester.executeDialogTest;
+            SendMessageToBotDialogStep = botTester.SendMessageToBotDialogStep;
+            InspectSessionDialogStep = botTester.InspectSessionDialogStep;
+
+        })
+
+        it('Can ensure proper address being used for return', () => {
+            // SendMessageToBotDialogStep can accept botbuilder messages!
+            const askForUser1Name = new Message()
+                .text('What is my name?')
+                .address(defaultAddress)
+                .toMessage();
+            
+            const expectedAddressInMessage = new Message()
+                .address(defaultAddress)
+                .toMessage();
+
+            // partial addresses work as well (i.e. if you only want to check one field such as userId)
+            const expectedPartialAddress = new Message()
+                .address({
+                    user: {
+                        id: 'user1'
+                    }
+                } as IAddress)
+                .toMessage();
 
 
-        return botTester.executeDialogTest([
-            new botTester.SendMessageToBotDialogStep(askForUser1Name, 'A'),
-            new botTester.SendMessageToBotDialogStep(askForUser2Name, 'B')
-        ]);
-    })
+            return executeDialogTest([
+                new SendMessageToBotDialogStep(askForUser1Name, expectedAddressInMessage),
+                new SendMessageToBotDialogStep(askForUser1Name, expectedPartialAddress),
+            ]);  
+        });
+
+        // the bot can have a default address that messages are sent to. If needed, this address can always be overriden
+        it('Can have a default address assigned to it', () => {
+            const askForUser1Name = new Message()
+                .text('What is my name?')
+                .address(defaultAddress)
+                .toMessage();
+            
+            const askForUser2Name = new Message()
+                .text('What is my name?')
+                .address(user2Address)
+                .toMessage();
+
+            // when testing for an address that is not the default for the bot, the address must be passed in
+            return executeDialogTest([
+                new SendMessageToBotDialogStep(askForUser1Name, 'A'),
+                new SendMessageToBotDialogStep(askForUser1Name, 'A', defaultAddress),
+                new SendMessageToBotDialogStep(askForUser2Name, 'B', user2Address)
+            ]); 
+        })
+
+        it('Can communicate to multiple users', () => {
+            const askForUser1Name = new Message()
+                .text('What is my name?')
+                .address(defaultAddress)
+                .toMessage();
+            
+            const askForUser2Name = new Message()
+                .text('What is my name?')
+                .address(user2Address)
+                .toMessage();
+
+            // when testing for an address that is not the default for the bot, and only providing a string for a response, 
+            // an expected address can be appended as a third argument
+            return executeDialogTest([
+                new SendMessageToBotDialogStep(askForUser1Name, 'A'),
+                new SendMessageToBotDialogStep(askForUser1Name, 'A', defaultAddress),
+                new SendMessageToBotDialogStep(askForUser2Name, 'B', user2Address)
+            ]);
+        })
+    });
 });

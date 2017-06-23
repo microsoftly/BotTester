@@ -5,7 +5,7 @@ import * as colors from 'colors';
 import { IDialogTestStep } from './IDialogTestStep';
 import { InspectSessionDialogStepClassCreator } from './InspectSessionDialogStep';
 import { SendMessageToBotDialogStepClassCreator } from './SendMessageToBotDialogStep';
-
+import { convertStringToMessage } from './utils';
 const expect = chai.expect;
 
 const DEFAULT_ADDRESS: IAddress = { channelId: 'console',
@@ -19,11 +19,7 @@ function getSendBotMessageFunctionForBot(bot: UniversalBot, printMessage = (msg:
         let messageToSend: IMessage;
 
         if (typeof message === 'string') {
-            messageToSend = new Message()
-                .address(address)
-                .text(message)
-                .timestamp()
-                .toMessage();
+            messageToSend = convertStringToMessage(message, address);
 
         } else {
             messageToSend = message;
