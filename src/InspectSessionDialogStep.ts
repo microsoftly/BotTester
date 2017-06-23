@@ -19,7 +19,7 @@ export function InspectSessionDialogStepClassCreator(getSession: (addr: IAddress
             this.sessionInspector = sessionInspector;
         }
 
-        public execute(): Promise {
+        public execute(): Promise<any> {
             return getSession(this.address)
                 .then(this.sessionInspector);
         }

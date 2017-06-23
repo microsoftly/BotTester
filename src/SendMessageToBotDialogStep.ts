@@ -66,7 +66,7 @@ export function SendMessageToBotDialogStepClassCreator(
             this.expectedResponses = this.convertExpectedResponsesParameterTo2DIMessageArray(expectedResponses, address);
         }
 
-        public execute(): Promise {
+        public execute(): Promise<any> {
             return new Promise((res: () => void, rej: (error: Error) => void) => {
                 setBotToUserMessageChecker((messages: IMessage | IMessage[]) => {
                     if (!this.expectedResponses || !this.expectedResponses.length) {
@@ -93,8 +93,6 @@ export function SendMessageToBotDialogStepClassCreator(
                                 `Bot should have responded with '${errorStringExpectedResponseText}', but was '${msg.text}`;
 
                             expect(expctedResponseStrings, errorString).to.include(msg.text);
-
-
                         } catch (e) {
                             return rej(e);
                         }
