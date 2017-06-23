@@ -97,12 +97,12 @@ export function BotTester(
         messageReceivedHandler(e);
     });
 
-    function executeDialogTest(steps: [IDialogTestStep], done = () => {}): Promise {
+    function executeDialogTest(steps: [IDialogTestStep], done = () => {}): Promise<any> {
         return Promise.mapSeries(steps, (step: IDialogTestStep) => step.execute())
                                             .then(() => done());
     }
 
-    const getSession = (addr: IAddress = DEFAULT_ADDRESS) => new Promise((res: (s: Session) => void, rej: (e: Error) => void) => {
+    const getSession = (addr: IAddress = DEFAULT_ADDRESS) => new Promise<any>((res: (s: Session) => void, rej: (e: Error) => void) => {
         bot.loadSession(addr, (e: Error, session: Session) => {
             if (e) {
                 return rej(e);
