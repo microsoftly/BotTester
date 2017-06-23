@@ -226,5 +226,42 @@ describe('BotTester Usage', () => {
             new EnsureUserDataHasSevenStep()
         ]);
     })
-}) 
 
+
+    it('Can ensure proper address being used for return', () => {
+        const user1Address = { channelId: 'console',
+            user: { id: 'user1', name: 'A' }, 
+            bot: { id: 'bot', name: 'Bot' },
+            conversation: { id: 'user1Conversation' } 
+        };
+
+        bot.dialog('/', (session) => session.send(session.message.address.user.name));
+
+        const botTester = BotTester(bot);
+
+        // sendMessageToBotDialogStep can accept botbuilder messages!
+        const askForUser1Name = new builder.Message()
+            .text('What is my name?')
+            .address(user1Address)
+            .toMessage();
+        
+        const expectedAddressInMessage = new builder.Message()
+            .address(user1Address)
+            .toMessage();
+
+        // partial addresses work as well (i.e. if you only want to check one field such as userId)
+        const expectedUserInMessage = new builder.Message()
+            .address({
+                user: {
+                    id: 'user1'
+                }
+            })
+            .toMessage();
+
+
+        return botTester.executeDialogTest([
+            new botTester.SendMessageToBotDialogStep(askForUser1Name, expectedAddressInMessage),
+            new botTester.SendMessageToBotDialogStep(askForUser1Name, expectedUserInMessage),
+        ]);  
+    });
+})

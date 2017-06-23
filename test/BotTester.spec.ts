@@ -1,4 +1,4 @@
-import { ConsoleConnector, Message, UniversalBot } from 'botbuilder';
+import { ConsoleConnector, IAddress, Message, UniversalBot } from 'botbuilder';
 import * as chai from 'chai';
 import { BotTester } from '../src/BotTester';
 import { createTestBot } from './testBot/createTestBot';
@@ -6,7 +6,6 @@ import { COLORS, GIVE_RANDOM_COLOR_TRIGGER } from './testBot/createTestBot';
 import * as echoDialog from './testBot/echoDialog';
 import * as promptDialog from './testBot/promptDialog';
 import * as setUserDataDialog from './testBot/setUserDataDialog';
-
 
 const expect = chai.expect;
 
@@ -90,6 +89,45 @@ describe('Bot Tester Example Use', () => {
                 echoDialog.USER_MESSAGE_TO_END,
                 echoDialog.BOT_LAST_MESSAGE),
         ]);
+    });
+
+    it('Can ensure proper address being used for return', () => {
+        const localBot = new UniversalBot(new ConsoleConnector());
+
+        const user1Address = { channelId: 'console',
+            user: { id: 'user1', name: 'A' }, 
+            bot: { id: 'bot', name: 'Bot' },
+            conversation: { id: 'user1Conversation' } 
+        };
+
+        localBot.dialog('/', (session) => session.send(session.message.address.user.name));
+
+        const botTester = BotTester(localBot);
+
+        // sendMessageToBotDialogStep can accept botbuilder messages!
+        const askForUser1Name = new Message()
+            .text('What is my name?')
+            .address(user1Address)
+            .toMessage();
+        
+        const expectedAddressInMessage = new Message()
+            .address(user1Address)
+            .toMessage();
+
+        // partial addresses work as well (i.e. if you only want to check one field such as userId)
+        const expectedUserInMessage = new Message()
+            .address({
+                user: {
+                    id: 'user1'
+                }
+            } as IAddress)
+            .toMessage();
+
+
+        return botTester.executeDialogTest([
+            new botTester.SendMessageToBotDialogStep(askForUser1Name, expectedAddressInMessage),
+            new botTester.SendMessageToBotDialogStep(askForUser1Name, expectedUserInMessage),
+        ]);  
     });
 
     it('Can communicate to multiple users', () => {
