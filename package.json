@@ -9,11 +9,11 @@
     "url": "github.com:matts310/BotTester.git"
   },
   "scripts": {
-    "postinstall": "tsc",
+    "postinstall": "./node_modules/typescript/bin/tsc",
     "clean": "rm -r ./dist",
-    "build": "tsc",
+    "build": "./node_modules/typescript/bin/tsc",
     "cleanBuild": "npm run clean && npm run build",
-    "watch": "tsc -w",
+    "watch": "./node_modules/typescript/bin/tsc -w",
     "test": "node_modules/mocha/bin/_mocha --require node_modules/ts-node/register test/BotTester.spec.ts",
     "jsTest": "npm run cleanBuild && node_modules/mocha/bin/_mocha ./docs/exampleUse.spec.js"
   },
