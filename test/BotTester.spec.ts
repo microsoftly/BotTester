@@ -92,6 +92,41 @@ describe('Bot Tester Example Use', () => {
         ]);
     });
 
+    it('Can ensure proper address being used for return', () => {
+        const localBot = new UniversalBot(new ConsoleConnector());
+
+        const user1Address = { channelId: 'console',
+            user: { id: 'user1', name: 'A' }, 
+            bot: { id: 'bot', name: 'Bot' },
+            conversation: { id: 'user1Conversation' } 
+        };
+
+        const user2Address = { channelId: 'console',
+            user: { id: 'user2', name: 'B' }, 
+            bot: { id: 'bot', name: 'Bot' },
+            conversation: { id: 'user2Conversation' } 
+        };
+
+        localBot.dialog('/', (session) => session.send(session.message.address.user.name));
+
+        const botTester = BotTester(localBot);
+
+        // sendMessageToBotDialogStep can accept botbuilder messages!
+        const askForUser1Name = new Message()
+            .text('What is my name?')
+            .address(user1Address)
+            .toMessage();
+        
+        const expectedAddressInMessage = new Message()
+            .address(user1Address)
+            .toMessage();
+
+
+        return botTester.executeDialogTest([
+            new botTester.SendMessageToBotDialogStep(askForUser1Name, expectedAddressInMessage),
+        ]);  
+    });
+
     it('Can communicate to multiple users', () => {
         const localBot = new UniversalBot(new ConsoleConnector());
 
