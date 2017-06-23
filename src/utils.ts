@@ -29,7 +29,7 @@ export function is2DArray(o: any): boolean {
         !(o[0][0] instanceof Array);
 }
 
-export function compareMessageWtihExpectedMessages(actualResponse: IMessage, expectedResponseCollection: IMessage[]): void {
+export function compareMessageWithExpectedMessages(actualResponse: IMessage, expectedResponseCollection: IMessage[]): void {
     const expectedAddress = expectedResponseCollection[0].address;
     const expctedResponseStrings = expectedResponseCollection.map((r: IMessage) => r.text);
 

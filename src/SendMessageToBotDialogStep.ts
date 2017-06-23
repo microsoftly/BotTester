@@ -2,7 +2,8 @@ import * as Promise from 'bluebird';
 import { IAddress, IIdentity, IMessage, Message, UniversalBot } from 'botbuilder';
 import * as chai from 'chai';
 import { IDialogTestStep } from './IDialogTestStep';
-import { addressIsComposedOfOther, convertStringToMessage, convertStringArrayToMessageArray, convertStringArrayTo2DMessageArray, convert2DStringArrayTo2DMessageArray, is2DArray, compareMessageWtihExpectedMessages} from './utils';
+import { addressIsComposedOfOther, compareMessageWithExpectedMessages, convert2DStringArrayTo2DMessageArray,
+    convertStringArrayTo2DMessageArray, convertStringArrayToMessageArray, convertStringToMessage, is2DArray} from './utils';
 const expect = chai.expect;
 
 export function SendMessageToBotDialogStepClassCreator(
@@ -58,19 +59,8 @@ export function SendMessageToBotDialogStepClassCreator(
 
                         const currentExpectedResponseCollection = this.expectedResponses.shift();
 
-                        /*
-                        const expectedAddress = currentExpectedResponseCollection[0].address;
-                        const expctedResponseStrings = currentExpectedResponseCollection.map((r: IMessage) => r.text);
-
                         try {
-                            const errorStringExpectedResponseText =
-                                expctedResponseStrings.length > 1 ? `one of ${expctedResponseStrings}` : expctedResponseStrings[0];
-                            const errorString =
-                                `Bot should have responded with '${errorStringExpectedResponseText}', but was '${msg.text}`;
-
-                            expect(expctedResponseStrings, errorString).to.include(msg.text);*/
-                        try {
-                            compareMessageWtihExpectedMessages(msg, currentExpectedResponseCollection);
+                            compareMessageWithExpectedMessages(msg, currentExpectedResponseCollection);
                         } catch (e) {
                             return rej(e);
                         }
@@ -85,22 +75,6 @@ export function SendMessageToBotDialogStepClassCreator(
                 sendMessageToBot(this.message);
             });
         }
-
-        // if the insepcted address does not have a field defined, it ignores it on the next object
-        // private addressIsComposedOfOther(inspectedAddress: IAddress, otherAddress: IAddress): boolean {
-            // const identityIsComposedofOther = (id: IIdentity, otherId: IIdentity) => {
-            //     return (!id.id || id.id === otherId.id) && (!id.name || id.name === otherId.name);
-            // };
-
-        //     // if field is undef, do not check other for equivalencty
-        //     const botMatches = !inspectedAddress.bot || identityIsComposedofOther(inspectedAddress.bot, otherAddress.bot);
-        //     const channelIdMatches = !inspectedAddress.channelId || inspectedAddress.channelId === otherAddress.channelId;
-        //     const userMatches = !inspectedAddress.user || identityIsComposedofOther(inspectedAddress.user, otherAddress.user);
-        //     const convoMatches = !inspectedAddress.conversation ||
-        //         identityIsComposedofOther(inspectedAddress.conversation, otherAddress.conversation);
-
-        //     return botMatches && channelIdMatches && userMatches && convoMatches;
-        // }
 
         private convertExpectedResponsesParameterTo2DIMessageArray(
             expectedResponses: string | string[] | string[][] | IMessage | IMessage[] | IMessage[][], address: IAddress) : IMessage[][] {
