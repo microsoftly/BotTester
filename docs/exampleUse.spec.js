@@ -5,8 +5,6 @@ const { expect } = require('chai');
 
 const connector = new builder.ConsoleConnector();
 
-console.log(BotTester);
-
 describe('BotTester Usage', () => {
     let bot;
 
