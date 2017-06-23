@@ -8,5 +8,8 @@
         "noImplicitAny": false,
         "outDir": "./dist",
         "sourceMap": true
-    }
+    },
+    "files": [
+        "./src/BotTester.ts"
+    ]
 }
