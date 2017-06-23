@@ -8,7 +8,7 @@ npm install --save bot-tester
 ``` javascript
 const mocha = require('mocha');
 const builder = require('botbuilder');
-const BotTester = require('../dist/src').default;
+const { BotTester } = require('../dist/src').default;
 const { expect } = require('chai');
 
 const connector = new builder.ConsoleConnector();

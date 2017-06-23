@@ -33,7 +33,7 @@ function getSendBotMessageFunctionForBot(bot: UniversalBot, printMessage = (msg:
             bot.receive(messageToSend, (e: Error) => e ? rej(e) : res());
         })
         .then(() => printMessage(messageToSend));
-    }
+    };
 }
 
 const defaultPrintUserMessage = (msg: IMessage) => console.log(colors.magenta(`${msg.address.user.name}: ${msg.text}`));
