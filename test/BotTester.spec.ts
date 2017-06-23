@@ -9,7 +9,7 @@ import * as setUserDataDialog from './testBot/setUserDataDialog';
 
 const expect = chai.expect;
 
-describe('Bot Tester Example Use', () => {
+describe('Bot Tester', () => {
     let executeDialogTest;
 
     // tslint:disable
@@ -91,7 +91,7 @@ describe('Bot Tester Example Use', () => {
         ]);
     });
 
-    describe('Address test features', () => {
+    describe('Address/multi user', () => {
         const defaultAddress = { channelId: 'console',
             user: { id: 'user1', name: 'A' }, 
             bot: { id: 'bot', name: 'Bot' },
