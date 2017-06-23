@@ -2,7 +2,7 @@
   "name": "bot-tester",
   "version": "0.0.13",
   "description": "Easily test bots made with the bot builder framework",
-  "main": "dist/src/BotTester.js",
+  "main": "dist/BotTester.js",
   "author": "Matt Schwartz <mattschwartz310@gmail.com>",
   "license": "MIT",
   "repository": {

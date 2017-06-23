@@ -1,6 +1,6 @@
 const mocha = require('mocha');
 const builder = require('botbuilder');
-const { BotTester } = require('../dist/src/BotTester');
+const { BotTester } = require('../dist/BotTester');
 const { expect } = require('chai');
 
 const connector = new builder.ConsoleConnector();
