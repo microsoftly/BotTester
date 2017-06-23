@@ -13,7 +13,8 @@
     "build": "tsc",
     "watch": "tsc -w",
     "test": "node_modules/mocha/bin/_mocha --require node_modules/ts-node/register test/BotTester.spec.ts",
-    "jsTest": "npm run build && node_modules/mocha/bin/_mocha ./docs/exampleUse.spec.js"
+    "jsTest": "npm run build && node_modules/mocha/bin/_mocha ./docs/exampleUse.spec.js",
+    "publish": "npm run build && npm publish"
   },
   "dependencies": {
     "bluebird": "^3.5.0",
