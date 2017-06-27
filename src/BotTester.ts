@@ -156,7 +156,7 @@ class TestSuiteBuilder {
 
                 this.bot['createSession'] = createSessionOriginal;
 
-                return createSessionOriginal.apply(this.bot, arguments);
+                return createSessionOriginal.apply(this.bot, args);
             }.bind(this);
 
             this.currentSessionLoadResolver = res;
