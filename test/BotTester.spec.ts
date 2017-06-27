@@ -1,5 +1,6 @@
-import { ConsoleConnector, IAddress, Message, UniversalBot } from 'botbuilder';
+import { ConsoleConnector, IAddress, Message, Prompts, UniversalBot } from 'botbuilder';
 import * as chai from 'chai';
+import {} from 'mocha';
 import { BotTester } from '../src/BotTester';
 import { createTestBot } from './testBot/createTestBot';
 import { COLORS, GIVE_RANDOM_COLOR_TRIGGER } from './testBot/createTestBot';
@@ -40,7 +41,7 @@ describe('Bot Tester', () => {
     let randomResponseRunCounter = 15;
     while(randomResponseRunCounter--) {
         it('can handle randomized responses', () => {
-            return new executeDialogTest([
+            return executeDialogTest([
                 new SendMessageToBotDialogStep(GIVE_RANDOM_COLOR_TRIGGER, [COLORS])
             ])
         });
@@ -52,6 +53,51 @@ describe('Bot Tester', () => {
         return executeDialogTest([
             new SendMessageToBotDialogStep(setUserDataDialog.USER_MESSAGE_TO_TRIGGER),
             new SendMessageToBotDialogStep(data),
+            new InspectSessionDialogStep((session) => {
+                expect(session.userData.data).to.equal(data);
+            })
+        ]);
+    });
+
+    it('can inspect session after a dialog occurs', () => {
+        const bot =  new UniversalBot(new ConsoleConnector());
+
+        // same dialog will be used for each address test. Any message just returns the user name from the 
+        // message address
+        const PROMPT_RESPONSE = 'response will be user data';
+        const data = 'some data';
+        bot.dialog('/', [
+            (session) => Prompts.text(session, PROMPT_RESPONSE),
+            (session, res) => {
+                session.userData = { data: res.response };
+                session.endConversation('end');
+            }
+        ]);
+
+        const botTester = BotTester(bot);
+
+        bot.use({
+
+            botbuilder: (session, next) => {
+                session.send('hey')
+                next();
+            },
+            send: (e, next) => {
+                next();
+            }
+        })
+
+        executeDialogTest = botTester.executeDialogTest;
+        SendMessageToBotDialogStep = botTester.SendMessageToBotDialogStep;
+        InspectSessionDialogStep = botTester.InspectSessionDialogStep;
+
+        return executeDialogTest([
+            new SendMessageToBotDialogStep('hello', ['hey', PROMPT_RESPONSE]),
+            new InspectSessionDialogStep((session) => {
+                // expect(session.userData.data).to.equal(data);
+                console.log('doing this check now');
+            }),
+            new SendMessageToBotDialogStep(data, ['hey', 'end']),
             new InspectSessionDialogStep((session) => {
                 expect(session.userData.data).to.equal(data);
             })
