@@ -172,6 +172,6 @@ class TestSuiteBuilder {
     }
 }
 
-export function BotTester(bot: UniversalBot, defaultAddress: IAddress = DEFAULT_ADDRESS) {
-    return TestSuiteBuilder.createTestSuite(bot, defaultAddress);
+export function BotTester(bot: UniversalBot, defaultAddress?: IAddress) {
+    return TestSuiteBuilder.createTestSuite(bot, defaultAddress || DEFAULT_ADDRESS);
 }
