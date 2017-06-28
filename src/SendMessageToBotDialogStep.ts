@@ -95,9 +95,13 @@ export class SendMessageToBotDialogStep implements IDialogTestStep {
     }
 }
 
+export type curriedSendMessageToDialogStepConstructor = new (msg: IMessage | string,
+        expectedResponses?: string | string[] | string[][] | IMessage | IMessage[] | IMessage[][],
+        address?: IAddress) => SendMessageToBotDialogStep
+
 export function SendMessageToBotDialogStepClassCreator(
     sendMessageToBot: (message: IMessage | string, address?: IAddress) => any,
     setBotToUserMessageChecker: (newMessageChecker: (msg: IMessage | IMessage[]) => any) => any,
-    defaultAddress: IAddress): SendMessageToBotDialogStep {
+    defaultAddress: IAddress): curriedSendMessageToDialogStepConstructor {
     return SendMessageToBotDialogStep.bind(null, sendMessageToBot, setBotToUserMessageChecker, defaultAddress);
 }

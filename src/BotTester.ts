@@ -3,8 +3,8 @@ import { IAddress, IIdentity, IMessage, Message, Session, UniversalBot } from 'b
 import * as chai from 'chai';
 import * as colors from 'colors';
 import { IDialogTestStep } from './IDialogTestStep';
-import { InspectSessionDialogStep, InspectSessionDialogStepClassCreator } from './InspectSessionDialogStep';
-import { SendMessageToBotDialogStep, SendMessageToBotDialogStepClassCreator } from './SendMessageToBotDialogStep';
+import { curriedInspectSessionDialogStepConstructor, InspectSessionDialogStepClassCreator } from './InspectSessionDialogStep';
+import { curriedSendMessageToDialogStepConstructor, SendMessageToBotDialogStepClassCreator } from './SendMessageToBotDialogStep';
 import { convertStringToMessage } from './utils';
 const expect = chai.expect;
 
@@ -17,13 +17,14 @@ const DEFAULT_ADDRESS: IAddress = { channelId: 'console',
 const defaultPrintUserMessage = (msg: IMessage) => console.log(colors.magenta(`${msg.address.user.name}: ${msg.text}`));
 const defaultPrintBotMessage = (msg: IMessage) => console.log(colors.blue(`bot: ${msg.text}`));
 
+
 type TestSuite = {
-    InspectSessionDialogStep: InspectSessionDialogStep,
-    SendMessageToBotDialogStep: SendMessageToBotDialogStep
-    executeDialogTest(steps: IDialogTestStep[], done: Function): Promise<void>,
+    InspectSessionDialogStep: curriedInspectSessionDialogStepConstructor,
+    SendMessageToBotDialogStep: curriedSendMessageToDialogStepConstructor,
+    executeDialogTest(steps: IDialogTestStep[], done?: Function): Promise<void>,
     getSession(addr?: IAddress): Promise<Session>,
     sendMessageToBot(message: IMessage | string, address?: IAddress): Promise<any>,
-    setBotToUserMessageChecker(newBotToUserMessageChecker: (msg: IMessage | IMessage[]) => void) : void,
+    setBotToUserMessageChecker(newBotToUserMessageChecker: (msg: IMessage[]) => void) : void,
 };
 
 class TestSuiteBuilder {

@@ -1,6 +1,6 @@
 const mocha = require('mocha');
 const builder = require('botbuilder');
-const { BotTester } = require('../dist/src/BotTester');
+const { testSuiteBuilder } = require('../dist/src/');
 const { expect } = require('chai');
 
 const connector = new builder.ConsoleConnector();
@@ -23,11 +23,11 @@ describe('BotTester', () => {
         const {
             executeDialogTest,
             SendMessageToBotDialogStep,
-        } = BotTester(bot);
+        } = testSuiteBuilder(bot);
 
         return executeDialogTest([
-            new SendMessageToBotDialogStep('Hola!', 'hello!'),
-        ])
+            new SendMessageToBotDialogStep('Hola!', 'hello!')
+        ]);
     })
 
     it('Can handle multiple responses', () => {
@@ -39,7 +39,7 @@ describe('BotTester', () => {
         const {
             executeDialogTest,
             SendMessageToBotDialogStep,
-        } = BotTester(bot);
+        } = testSuiteBuilder(bot);
 
         return executeDialogTest([
             new SendMessageToBotDialogStep('Hola!', ['hello!', 'how are you doing?']),
@@ -58,7 +58,7 @@ describe('BotTester', () => {
             const {
                 executeDialogTest,
                 SendMessageToBotDialogStep,
-            } = BotTester(bot);
+            } = testSuiteBuilder(bot);
 
             return executeDialogTest([
                 new SendMessageToBotDialogStep('Tell me a color!', [colors]),
@@ -78,7 +78,7 @@ describe('BotTester', () => {
         const {
             executeDialogTest,
             SendMessageToBotDialogStep,
-        } = BotTester(bot);
+        } = testSuiteBuilder(bot);
         
         return executeDialogTest([
             new SendMessageToBotDialogStep('Hola!', 'Hi there! Tell me something you like'),
@@ -100,7 +100,7 @@ describe('BotTester', () => {
             executeDialogTest,
             SendMessageToBotDialogStep,
             InspectSessionDialogStep,
-        } = BotTester(bot);
+        } = testSuiteBuilder(bot);
 
         return executeDialogTest([
             // having expected responses is not necessary
@@ -136,7 +136,7 @@ describe('BotTester', () => {
             bot.dialog('/', (session) => session.send(session.message.address.user.name));
 
             // Default address can be set when building the test components
-            const botTester = BotTester(bot, defaultAddress);
+            const botTester = testSuiteBuilder(bot, defaultAddress);
 
             executeDialogTest = botTester.executeDialogTest;
             SendMessageToBotDialogStep = botTester.SendMessageToBotDialogStep;
@@ -227,7 +227,7 @@ describe('BotTester', () => {
             getSession,
             sendMessageToBot,
             setBotToUserMessageChecker,
-        } = BotTester(bot);
+        } = testSuiteBuilder(bot);
 
         // A DialogStep is a class that has an execute function that returns a promise whent he check is done
         class GreetingStep {

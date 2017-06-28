@@ -2,6 +2,8 @@ import * as Promise from 'bluebird';
 import { IAddress, Session } from 'botbuilder';
 import { IDialogTestStep } from './IDialogTestStep';
 
+export type curriedInspectSessionDialogStepConstructor = new (sessionInspector: (session: Session) => any, address?: IAddress) => InspectSessionDialogStep;
+
 export class InspectSessionDialogStep implements IDialogTestStep {
     private sessionInspector: (session: Session) => any;
     private getSession: (addr: IAddress) => Promise<Session>;
@@ -29,7 +31,7 @@ export class InspectSessionDialogStep implements IDialogTestStep {
 export function InspectSessionDialogStepClassCreator(
     getSession: (addr: IAddress) => Promise<Session>,
     defaultAddress: IAddress
-    ): InspectSessionDialogStep {
+    ): curriedInspectSessionDialogStepConstructor {
 
     return InspectSessionDialogStep.bind(null, getSession, defaultAddress);
 }
