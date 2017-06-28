@@ -2,14 +2,14 @@
   "name": "bot-tester",
   "version": "0.0.30",
   "description": "Easily test bots made with the bot builder framework",
-  "main": "dist/src/BotTester.js",
+  "main": "dist/src/  BotTester.js",
   "author": "Matt Schwartz <mattschwartz310@gmail.com>",
   "license": "MIT",
   "repository": {
     "url": "github.com:matts310/BotTester.git"
   },
   "scripts": {
-    "postinstall": "tsc",
+    "prepublish": "npm run cleanBuild",
     "clean": "rm -r ./dist",
     "build": "tsc",
     "cleanBuild": "npm run clean && npm run build",
@@ -24,13 +24,13 @@
     "colors": "^1.1.2",
     "global": "^4.3.2",
     "mocha": "^3.4.2",
-    "tslint": "^5.4.3",
-    "@types/chai": "^4.0.0",
-    "@types/mocha": "^2.2.41",
-    "@types/node": "^7.0.31",
-    "typescript": "^2.3.4"
+    "tslint": "^5.4.3"
   },
   "devDependencies": {
-    "ts-node": "^3.0.6"
+    "typescript": "^2.3.4",
+    "ts-node": "^3.0.6",
+    "@types/chai": "^4.0.0",
+    "@types/mocha": "^2.2.41",
+    "@types/node": "^7.0.31"
   }
 }
