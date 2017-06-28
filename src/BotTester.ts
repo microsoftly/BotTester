@@ -17,7 +17,6 @@ const DEFAULT_ADDRESS: IAddress = { channelId: 'console',
 const defaultPrintUserMessage = (msg: IMessage) => console.log(colors.magenta(`${msg.address.user.name}: ${msg.text}`));
 const defaultPrintBotMessage = (msg: IMessage) => console.log(colors.blue(`bot: ${msg.text}`));
 
-
 type TestSuite = {
     InspectSessionDialogStep: curriedInspectSessionDialogStepConstructor,
     SendMessageToBotDialogStep: curriedSendMessageToDialogStepConstructor,
@@ -192,21 +191,7 @@ class TestSuiteBuilder {
         });
     }
 }
-/*
-
-            executeDialogTest: TestSuite.executeDialogTest,
-
-            // utility functions to allow custom built dialog test steps
-            getSession,
-            sendMessageToBot,
-            setBotToUserMessageChecker,
-
-            // prebuilt dialog test steps
-            InspectSessionDialogStep: InspectSessionDialogStepClassCreator(getSession, defaultAddress),
-            SendMessageToBotDialogStep: SendMessageToBotDialogStepClassCreator(sendMessageToBot, setBotToUserMessageChecker, defaultAddress)
-*/
 
 export function testSuiteBuilder(bot: UniversalBot, defaultAddress?: IAddress) {
-
     return TestSuiteBuilder.createTestSuite(bot, defaultAddress || DEFAULT_ADDRESS);
 }
