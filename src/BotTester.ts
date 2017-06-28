@@ -32,7 +32,7 @@ class TestSuiteBuilder {
         this.applySessionLoadListener();
     }
 
-    public static executeDialogTest(steps: IDialogTestStep[], done = () => {}): Promise<void> {
+    public static executeDialogTest(steps: IDialogTestStep[], done: Function = () => {}): Promise<void> {
         return Promise.mapSeries(steps, (step: IDialogTestStep) => {
             return step.execute();
         }).then(() => done());
@@ -74,7 +74,6 @@ class TestSuiteBuilder {
 
         if (typeof message === 'string') {
             messageToSend = convertStringToMessage(message, address);
-
         } else {
             messageToSend = message;
         }
@@ -107,8 +106,8 @@ class TestSuiteBuilder {
                     save();
                     session.send(saveEvent);
 
-                    return this;
-                }.bind(session);
+                    return session;
+                };
             }
         });
     }
@@ -129,45 +128,56 @@ class TestSuiteBuilder {
         });
     }
 
+    // if load session is called, a load message will be sent to the middleware.
+    // this is a byproduct of createSession triggering dispatch which goes to the
+    // middleware. By passing along a message with type 'load' we know that an end
+    // user wants to inspect session, so we resolve any promise that he may be waiting
+    // on and prevent futher execution of the middleware
     private applySessionLoadListener(): void {
         this.bot.use({
             botbuilder: (session: Session, next: Function) => {
-                if (session.message.type !== 'load') {
-                    next();
-                } else {
+                if (session.message.type === 'load') {
+                    // its not actually supposed to be in the middleware, so unset this
                     session['inMiddleware'] = false;
                     this.currentSessionLoadResolver(session);
+                } else {
+                    next();
                 }
             }
         });
     }
 
     private getSession(addr?: IAddress): Promise<Session> {
-        return new Promise<Session>((res: (s: Session) => void, rej: Function) => {
-            const createSessionOriginal: Function = this.bot['createSession'];
+        addr = addr || this.defaultAddress;
+        const bot = this.bot;
 
-            this.bot['createSession'] = function() {
+        return new Promise<Session>((res: (s: Session) => void, rej: Function) => {
+            // This is a delicate hack that relies on knowing the private fields of a UniversalBot
+            // The net effect is calling createSession with a message of type 'load' that gets
+            // handled in the BotTester interception middleware (see applySessionLoadListener)
+            const createSessionOriginal: Function = bot['createSession'];
+
+            bot['createSession'] = function() {
                 const args: any[] = Array.prototype.slice.call(arguments);
 
-                const loadMsg = new Message().address(addr || this.defaultAddress).toMessage();
+                const loadMsg = new Message()
+                    .address(addr)
+                    .toMessage();
+
                 loadMsg.type = 'load';
 
                 args[1] = loadMsg;
 
-                this.bot['createSession'] = createSessionOriginal;
+                bot['createSession'] = createSessionOriginal;
 
-                return createSessionOriginal.apply(this.bot, args);
-            }.bind(this);
+                return createSessionOriginal.apply(bot, args);
+            };
 
             this.currentSessionLoadResolver = res;
 
-            this.bot.loadSession(addr, (error: Error, session: Session) => {
-                if (error) {
-                    return rej(error);
-                }
-
-                res(session);
-            });
+            // this callback will never actually get called, but it sets off the events allowing
+            // for the encapsulating promise to resolve
+            this.bot.loadSession(addr, () => {});
         });
     }
 }
