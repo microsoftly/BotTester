@@ -5,7 +5,21 @@
   "main": "dist/src/  BotTester.js",
   "author": "Matt Schwartz <mattschwartz310@gmail.com>",
   "license": "MIT",
+  "keywords": [
+    "botbuilder",
+    "dialog",
+    "mock",
+    "bot",
+    "chatbot",
+    "automation",
+    "test",
+    "unit test",
+    "integration test",
+    "component test",
+    "integration"
+  ],
   "repository": {
+    "type": "git",
     "url": "github.com:matts310/BotTester.git"
   },
   "scripts": {

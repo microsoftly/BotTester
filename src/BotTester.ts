@@ -112,6 +112,7 @@ class TestSuiteBuilder {
         });
     }
 
+    // used for checking if the messages sent to user are what was expected
     private applyOutgoingListener(): void {
         this.bot.on('outgoing', (e: IMessage | IMessage[]) => {
             if (!(e instanceof Array)) {
