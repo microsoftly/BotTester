@@ -3,8 +3,8 @@ import { IAddress, IIdentity, IMessage, Message, Session, UniversalBot } from 'b
 import * as chai from 'chai';
 import * as colors from 'colors';
 import { IDialogTestStep } from './IDialogTestStep';
-import { InspectSessionDialogStepClassCreator } from './InspectSessionDialogStep';
-import { SendMessageToBotDialogStepClassCreator } from './SendMessageToBotDialogStep';
+import { InspectSessionDialogStep, InspectSessionDialogStepClassCreator } from './InspectSessionDialogStep';
+import { SendMessageToBotDialogStep, SendMessageToBotDialogStepClassCreator } from './SendMessageToBotDialogStep';
 import { convertStringToMessage } from './utils';
 const expect = chai.expect;
 
@@ -17,7 +17,16 @@ const DEFAULT_ADDRESS: IAddress = { channelId: 'console',
 const defaultPrintUserMessage = (msg: IMessage) => console.log(colors.magenta(`${msg.address.user.name}: ${msg.text}`));
 const defaultPrintBotMessage = (msg: IMessage) => console.log(colors.blue(`bot: ${msg.text}`));
 
-class TestSuite {
+type TestSuite = {
+    InspectSessionDialogStep: InspectSessionDialogStep,
+    SendMessageToBotDialogStep: SendMessageToBotDialogStep
+    executeDialogTest(steps: IDialogTestStep[], done: Function): Promise<void>,
+    getSession(addr?: IAddress): Promise<Session>,
+    sendMessageToBot(message: IMessage | string, address?: IAddress): Promise<any>,
+    setBotToUserMessageChecker(newBotToUserMessageChecker: (msg: IMessage | IMessage[]) => void) : void,
+};
+
+class TestSuiteBuilder {
     private bot: UniversalBot;
     private defaultAddress: IAddress;
     private botToUserMessageChecker: (msg: IMessage | IMessage[]) => void;
@@ -40,9 +49,9 @@ class TestSuite {
 
     //tslint:disable
     // the return object will be crazy complex and i'm lazy .... 
-    public static createTestSuite(bot: UniversalBot, defaultAddress: IAddress = DEFAULT_ADDRESS) {
+    public static createTestSuite(bot: UniversalBot, defaultAddress: IAddress = DEFAULT_ADDRESS): TestSuite{
     //tslint:enable
-        const testSuite = new TestSuite(bot, defaultAddress);
+        const testSuite = new TestSuiteBuilder(bot, defaultAddress);
 
         // utility functions to allow custom built dialog test steps
         const getSession = testSuite.getSession.bind(testSuite);
@@ -50,7 +59,7 @@ class TestSuite {
         const setBotToUserMessageChecker = testSuite.setBotToUserMessageChecker.bind(testSuite);
 
         return {
-            executeDialogTest: TestSuite.executeDialogTest,
+            executeDialogTest: TestSuiteBuilder.executeDialogTest,
 
             // utility functions to allow custom built dialog test steps
             getSession,
@@ -182,7 +191,21 @@ class TestSuite {
         });
     }
 }
+/*
+
+            executeDialogTest: TestSuite.executeDialogTest,
+
+            // utility functions to allow custom built dialog test steps
+            getSession,
+            sendMessageToBot,
+            setBotToUserMessageChecker,
+
+            // prebuilt dialog test steps
+            InspectSessionDialogStep: InspectSessionDialogStepClassCreator(getSession, defaultAddress),
+            SendMessageToBotDialogStep: SendMessageToBotDialogStepClassCreator(sendMessageToBot, setBotToUserMessageChecker, defaultAddress)
+*/
 
 export function testSuiteBuilder(bot: UniversalBot, defaultAddress?: IAddress) {
-    return TestSuite.createTestSuite(bot, defaultAddress || DEFAULT_ADDRESS);
+
+    return TestSuiteBuilder.createTestSuite(bot, defaultAddress || DEFAULT_ADDRESS);
 }

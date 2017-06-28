@@ -29,7 +29,7 @@ export class InspectSessionDialogStep implements IDialogTestStep {
 export function InspectSessionDialogStepClassCreator(
     getSession: (addr: IAddress) => Promise<Session>,
     defaultAddress: IAddress
-    ): IDialogTestStep {
+    ): InspectSessionDialogStep {
 
     return InspectSessionDialogStep.bind(null, getSession, defaultAddress);
 }
