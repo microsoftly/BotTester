@@ -1,7 +1,7 @@
 import { ConsoleConnector, IAddress, Message, Prompts, UniversalBot } from 'botbuilder';
 import * as chai from 'chai';
 import {} from 'mocha';
-import { BotTester } from '../src/BotTester';
+import { testSuiteBuilder } from '../src/index';
 import { createTestBot } from './testBot/createTestBot';
 import { COLORS, GIVE_RANDOM_COLOR_TRIGGER } from './testBot/createTestBot';
 import * as echoDialog from './testBot/echoDialog';
@@ -20,7 +20,7 @@ describe('Bot Tester', () => {
 
     beforeEach(() =>  {
         const bot =  createTestBot();
-        const botTester = BotTester(bot);
+        const botTester = testSuiteBuilder(bot);
 
         executeDialogTest = botTester.executeDialogTest;
         SendMessageToBotDialogStep = botTester.SendMessageToBotDialogStep;
@@ -74,7 +74,7 @@ describe('Bot Tester', () => {
             }
         ]);
 
-        const botTester = BotTester(bot);
+        const botTester = testSuiteBuilder(bot);
 
         bot.use({
 
@@ -158,7 +158,7 @@ describe('Bot Tester', () => {
             bot.dialog('/', (session) => session.send(session.message.address.user.name));
 
             // Default address can be set when building the test components
-            const botTester = BotTester(bot, defaultAddress);
+            const botTester = testSuiteBuilder(bot, defaultAddress);
 
             executeDialogTest = botTester.executeDialogTest;
             SendMessageToBotDialogStep = botTester.SendMessageToBotDialogStep;

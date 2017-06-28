@@ -17,7 +17,7 @@ const DEFAULT_ADDRESS: IAddress = { channelId: 'console',
 const defaultPrintUserMessage = (msg: IMessage) => console.log(colors.magenta(`${msg.address.user.name}: ${msg.text}`));
 const defaultPrintBotMessage = (msg: IMessage) => console.log(colors.blue(`bot: ${msg.text}`));
 
-class TestSuiteBuilder {
+class TestSuite {
     private bot: UniversalBot;
     private defaultAddress: IAddress;
     private botToUserMessageChecker: (msg: IMessage | IMessage[]) => void;
@@ -42,15 +42,15 @@ class TestSuiteBuilder {
     // the return object will be crazy complex and i'm lazy .... 
     public static createTestSuite(bot: UniversalBot, defaultAddress: IAddress = DEFAULT_ADDRESS) {
     //tslint:enable
-        const testSuiteBuilder = new TestSuiteBuilder(bot, defaultAddress);
+        const testSuite = new TestSuite(bot, defaultAddress);
 
         // utility functions to allow custom built dialog test steps
-        const getSession = testSuiteBuilder.getSession.bind(testSuiteBuilder);
-        const sendMessageToBot = testSuiteBuilder.sendMessageToBot.bind(testSuiteBuilder);
-        const setBotToUserMessageChecker = testSuiteBuilder.setBotToUserMessageChecker.bind(testSuiteBuilder);
+        const getSession = testSuite.getSession.bind(testSuite);
+        const sendMessageToBot = testSuite.sendMessageToBot.bind(testSuite);
+        const setBotToUserMessageChecker = testSuite.setBotToUserMessageChecker.bind(testSuite);
 
         return {
-            executeDialogTest: TestSuiteBuilder.executeDialogTest,
+            executeDialogTest: TestSuite.executeDialogTest,
 
             // utility functions to allow custom built dialog test steps
             getSession,
@@ -183,6 +183,6 @@ class TestSuiteBuilder {
     }
 }
 
-export function BotTester(bot: UniversalBot, defaultAddress?: IAddress) {
-    return TestSuiteBuilder.createTestSuite(bot, defaultAddress || DEFAULT_ADDRESS);
+export function testSuiteBuilder(bot: UniversalBot, defaultAddress?: IAddress) {
+    return TestSuite.createTestSuite(bot, defaultAddress || DEFAULT_ADDRESS);
 }

@@ -3,15 +3,14 @@
         "module": "commonjs",
         "target": "es6",
         "typeRoots": [
-            "./node_modules/@types"
+            "../node_modules/@types"
         ],
         "noImplicitAny": false,
-        "outDir": "./dist",
+        "outDir": "../dist",
         "sourceMap": true,
         "declaration": true
     },
     "files": [
-        "./src/index.ts",
-        "./test/BotTester.spec.ts"
+        "./index.ts"
     ]
 }
