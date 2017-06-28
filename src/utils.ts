@@ -42,12 +42,7 @@ export function compareMessageWithExpectedMessages(actualResponse: IMessage, exp
     expect(expctedResponseStrings, errorString).to.include(actualResponse.text);
 
     addressIsComposedOfOtherTest(expectedAddress, actualResponse.address);
-    //tslint:disable
-    // expect(addressIsComposedOfOther(expectedAddress, actualResponse.address)).to.be.true;
-    //tslint:enable
 }
-
-// its here
 
 export function identityIsComposedOfOther(id: IIdentity, otherId: IIdentity) : boolean {
     return (!id.id || id.id === otherId.id) && (!id.name || id.name === otherId.name);
