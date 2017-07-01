@@ -8,7 +8,7 @@ npm install --save bot-tester
 ``` javascript
 const mocha = require('mocha');
 const builder = require('botbuilder');
-const { BotTester } = require('../dist/src').default;
+const { testSuiteBuilder } = require('../dist/src').default;
 const { expect } = require('chai');
 
 const connector = new builder.ConsoleConnector();
@@ -38,7 +38,7 @@ describe('BotTester Usage', () => {
         const {
             executeDialogTest,
             SendMessageToBotDialogStep,
-        } = BotTester(bot);
+        } = testSuiteBuilder(bot);
 
         return executeDialogTest([
             new SendMessageToBotDialogStep('Hola!', 'hello!'),
@@ -57,7 +57,7 @@ describe('BotTester Usage', () => {
         const {
             executeDialogTest,
             SendMessageToBotDialogStep,
-        } = BotTester(bot);
+        } = testSuiteBuilder(bot);
 
         return executeDialogTest([
             new SendMessageToBotDialogStep('Hola!', ['hello!', 'how are you doing?']),
@@ -79,7 +79,7 @@ describe('BotTester Usage', () => {
             const {
                 executeDialogTest,
                 SendMessageToBotDialogStep,
-            } = BotTester(bot);
+            } = testSuiteBuilder(bot);
 
             return executeDialogTest([
                 new SendMessageToBotDialogStep('Tell me a color!', [colors]),
@@ -102,7 +102,7 @@ describe('BotTester Usage', () => {
         const {
             executeDialogTest,
             SendMessageToBotDialogStep,
-        } = BotTester(bot);
+        } = testSuiteBuilder(bot);
         
         return executeDialogTest([
             new SendMessageToBotDialogStep('Hola!', 'Hi there! Tell me something you like'),
@@ -129,7 +129,7 @@ An important note is that every time ```Session.save()``` is called, the framewo
             executeDialogTest,
             SendMessageToBotDialogStep,
             InspectSessionDialogStep,
-        } = BotTester(bot);
+        } = testSuiteBuilder(bot);
 
         return executeDialogTest([
             // having expected responses is not necessary
@@ -168,11 +168,11 @@ An important note is that every time ```Session.save()``` is called, the framewo
 
             // Default address can be set when building the test components. All operations that send messages will
             // go to and check this address. It is automatically generated in the background if not provided
-            const botTester = BotTester(bot, defaultAddress);
+            const testSuiteBuilder = testSuiteBuilder(bot, defaultAddress);
 
-            executeDialogTest = botTester.executeDialogTest;
-            SendMessageToBotDialogStep = botTester.SendMessageToBotDialogStep;
-            InspectSessionDialogStep = botTester.InspectSessionDialogStep;
+            executeDialogTest = testSuiteBuilder.executeDialogTest;
+            SendMessageToBotDialogStep = testSuiteBuilder.SendMessageToBotDialogStep;
+            InspectSessionDialogStep = testSuiteBuilder.InspectSessionDialogStep;
 
         })
 
@@ -272,7 +272,7 @@ An important note is that every time ```Session.save()``` is called, the framewo
             getSession,
             sendMessageToBot,
             setBotToUserMessageChecker,
-        } = BotTester(bot);
+        } = testSuiteBuilder(bot);
 
         // A DialogStep is a class that has an execute function that returns a promise whent he check is done
         class GreetingStep {
