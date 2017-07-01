@@ -38,8 +38,9 @@ describe('BotTester', () => {
 
         const {
             executeDialogTest,
-            SendMessageToBotDialogStep,
+            SendMessageToBotDialogStep
         } = testSuiteBuilder(bot);
+
 
         return executeDialogTest([
             new SendMessageToBotDialogStep('Hola!', ['hello!', 'how are you doing?']),
@@ -212,7 +213,7 @@ describe('BotTester', () => {
         })
     });
 
-    it('Can allow for custom DialogStepDefinitions', () => {
+    it('Can allow for custom <DialogSte></DialogSte>pDefinitions', () => {
         bot.dialog('/', [(session) => {
             new builder.Prompts.text(session, 'What would you like to set data to?')
         }, (session, results) => {
