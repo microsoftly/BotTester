@@ -1,4 +1,4 @@
-# Bot Tester for Bot Builder Framework
+# Bot Tester for Bot Builder Framework [![CircleCI](https://circleci.com/gh/microsoftly/BotTester.svg?style=shield)](https://circleci.com/gh/microsoftly/BotTester)
 Simple framework that allows for easy testing of a botbuiler chatbot using mocha and chai.
 ## install
 ```bash

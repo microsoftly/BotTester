@@ -1,6 +1,6 @@
 {
   "name": "bot-tester",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Easily test bots made with the bot builder framework",
   "main": "dist/index.js",
   "author": "Matt Schwartz <mattschwartz310@gmail.com>",
@@ -29,7 +29,7 @@
     "type": "git",
     "url": "git://github.com/microsoftly/BotTester.git"
   },
-  "script": {
+  "scripts": {
     "buildSrc": "tsc -p src/tsconfig.json",
     "prepublish": "npm run clean && npm run buildSrc",
     "clean": "rm -rf ./dist",
