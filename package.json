@@ -29,7 +29,7 @@
     "type": "git",
     "url": "git://github.com/microsoftly/BotTester.git"
   },
-  "exp": {
+  "script": {
     "buildSrc": "tsc -p src/tsconfig.json",
     "prepublish": "npm run clean && npm run buildSrc",
     "clean": "rm -rf ./dist",
