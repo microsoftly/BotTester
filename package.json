@@ -1,6 +1,6 @@
 {
   "name": "bot-tester",
-  "version": "0.1.6",
+  "version": "1.0.0",
   "description": "Easily test bots made with the bot builder framework",
   "main": "dist/index.js",
   "author": "Matt Schwartz <mattschwartz310@gmail.com>",
@@ -31,13 +31,13 @@
   },
   "scripts": {
     "buildSrc": "tsc -p src/tsconfig.json",
-    "prepublish": "npm run clean && npm run buildSrc",
+    "prepublishOnly": "npm run cleanBuild && npm run testDist",
     "clean": "rm -rf ./dist",
     "build": "tsc",
     "cleanBuild": "npm run clean && npm run build",
     "watch": "tsc -w",
     "test": "node_modules/mocha/bin/_mocha --require node_modules/ts-node/register test/BotTester.spec.ts",
-    "jsTest": "npm run cleanBuild && node_modules/mocha/bin/_mocha ./docs/exampleUse.spec.js"
+    "testDist": "node_modules/mocha/bin/_mocha dist/test/BotTester.spec.js"
   },
   "dependencies": {
     "bluebird": "^3.5.0",
@@ -49,6 +49,7 @@
     "tslint": "^5.4.3"
   },
   "devDependencies": {
+    "@types/bluebird": "^3.5.8",
     "@types/chai": "^4.0.1",
     "@types/mocha": "^2.2.41",
     "@types/node": "^8.0.7",

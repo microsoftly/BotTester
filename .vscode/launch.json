@@ -12,7 +12,7 @@
             "console": "integratedTerminal",
             "program": "${workspaceRoot}/node_modules/mocha/bin/_mocha",
             "args": [
-                "${workspaceRoot}/dist/test/BotTester.spec.js",
+                "${workspaceRoot}/dist/test/v2/BotTester.spec.js",
                 "--timeout",
                 "10000000"
             ],
