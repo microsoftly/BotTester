@@ -1,6 +1,6 @@
 {
   "name": "bot-tester",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Easily test bots made with the bot builder framework",
   "main": "dist/index.js",
   "author": "Matt Schwartz <mattschwartz310@gmail.com>",
@@ -55,5 +55,8 @@
     "@types/node": "^8.0.7",
     "ts-node": "^3.1.0",
     "typescript": "^2.4.1"
-  }
+  },
+  "files": [
+    "dist"
+  ]
 }
