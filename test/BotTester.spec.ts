@@ -1,236 +1,148 @@
-import { ConsoleConnector, IAddress, Message, Prompts, UniversalBot } from 'botbuilder';
-import * as chai from 'chai';
-import {} from 'mocha';
-import { testSuiteBuilder } from '../src/index';
-import { createTestBot } from './testBot/createTestBot';
-import { COLORS, GIVE_RANDOM_COLOR_TRIGGER } from './testBot/createTestBot';
-import * as echoDialog from './testBot/echoDialog';
-import * as promptDialog from './testBot/promptDialog';
-import * as setUserDataDialog from './testBot/setUserDataDialog';
+import { ConsoleConnector, IAddress, Message, Prompts, Session, UniversalBot } from 'botbuilder';
+import { expect } from 'chai';
+import { BotTester } from './../src/BotTester';
 
-const expect = chai.expect;
+const connector = new ConsoleConnector();
 
-describe('Bot Tester', () => {
-    let executeDialogTest;
+describe('BotTester', () => {
+    let bot;
 
-    // tslint:disable
-    let SendMessageToBotDialogStep;
-    let InspectSessionDialogStep;
-    // tslint:disable
+    beforeEach(() => {
+        bot = new UniversalBot(connector);
+    });
 
-    beforeEach(() =>  {
-        const bot =  createTestBot();
-        const botTester = testSuiteBuilder(bot);
+    it('can handle a single response', () => {
+        bot.dialog('/', (session) => {
+            session.send('hello!');
+        });
 
-        executeDialogTest = botTester.executeDialogTest;
-        SendMessageToBotDialogStep = botTester.SendMessageToBotDialogStep;
-        InspectSessionDialogStep = botTester.InspectSessionDialogStep;
-    })
+        const botTester = new BotTester(bot)
+            .sendMessageToBot('Hola!', 'hello!');
 
-    it('run example for prompt dialog', () => {
-        return executeDialogTest([
-            new SendMessageToBotDialogStep(
-                promptDialog.USER_MESSAGE_TO_TRIGGER,
-                promptDialog.BOT_PROMPT_MESSAGE),
-            new SendMessageToBotDialogStep(
-                promptDialog.EXPECTED_USER_MESSAGE_RESPONSE,
-                [promptDialog.BOT_ECHO_USER_RESPONSE, promptDialog.BOT_LAST_MESSAGE])
-        ]);
-    })
+        return botTester.runTest();
+    });
 
+    it('can handle multiple responses', () => {
+        bot.dialog('/', (session) => {
+            session.send('hello!');
+            session.send('how are you doing?');
+        });
+
+        new BotTester(bot)
+            .sendMessageToBot('Hola!', ['hello!', 'how are you doing?'])
+            .runTest();
+    });
+
+    // re-run the test multiple times to guarantee that multiple colors are returned
     let randomResponseRunCounter = 15;
-    while(randomResponseRunCounter--) {
-        it('can handle randomized responses', () => {
-            return executeDialogTest([
-                new SendMessageToBotDialogStep(GIVE_RANDOM_COLOR_TRIGGER, [COLORS])
-            ])
+    const colors = ['red', 'green', 'blue', 'grey', 'gray', 'purple', 'magenta', 'cheese', 'orange', 'hazelnut'];
+    while (randomResponseRunCounter--) {
+        it('Can handle random responses', () => {
+            bot.dialog('/', (session) => {
+                session.send(colors);
+            });
+
+            return new BotTester(bot)
+                .sendMessageToBot('tell me a color!', [colors])
+                .runTest();
         });
     }
 
-    it('can inspect session', () => {
-        const data = "this is data";
+    it('can simulate conversation', () => {
+        bot.dialog('/', [(session) => {
+            new Prompts.text(session, 'Hi there! Tell me something you like');
+        }, (session, results) => {
+            session.send(`${results.response} is pretty cool.`);
+            new Prompts.text(session, 'Why do you like it?');
+        }, (session) => session.send('Interesting. Well, that\'s all I have for now')]);
 
-        return executeDialogTest([
-            new SendMessageToBotDialogStep(setUserDataDialog.USER_MESSAGE_TO_TRIGGER),
-            new SendMessageToBotDialogStep(data),
-            new InspectSessionDialogStep((session) => {
-                expect(session.userData.data).to.equal(data);
-            })
-        ]);
+        return new BotTester(bot)
+            .sendMessageToBot('Hola!', 'Hi there! Tell me something you like')
+            .sendMessageToBot('The sky', ['The sky is pretty cool.', 'Why do you like it?'])
+            .sendMessageToBot('It\'s blue', 'Interesting. Well, that\'s all I have for now')
+            .runTest();
     });
 
-    it('can inspect session after a dialog occurs', () => {
-        const bot =  new UniversalBot(new ConsoleConnector());
+    it('can inspect session state', () => {
+        bot.dialog('/', [(session) => {
+            new Prompts.text(session, 'What would you like to set data to?');
+        }, (session, results) => {
+            session.userData = { data: results.response };
+            session.save();
+        }]);
 
-        // same dialog will be used for each address test. Any message just returns the user name from the 
-        // message address
-        const PROMPT_RESPONSE = 'response will be user data';
-        const data = 'some data';
-        bot.dialog('/', [
-            (session) => Prompts.text(session, PROMPT_RESPONSE),
-            (session, res) => {
-                session.userData = { data: res.response };
-                session.endConversation('end');
-            }
-        ]);
-
-        const botTester = testSuiteBuilder(bot);
-
-        bot.use({
-
-            botbuilder: (session, next) => {
-                session.send('hey')
-                next();
-            },
-            send: (e, next) => {
-                next();
-            }
-        })
-
-        executeDialogTest = botTester.executeDialogTest;
-        SendMessageToBotDialogStep = botTester.SendMessageToBotDialogStep;
-        InspectSessionDialogStep = botTester.InspectSessionDialogStep;
-
-        return executeDialogTest([
-            new SendMessageToBotDialogStep('hello', ['hey', PROMPT_RESPONSE]),
-            new InspectSessionDialogStep((session) => {
-                // expect(session.userData.data).to.equal(data);
-                console.log('doing this check now');
-            }),
-            new SendMessageToBotDialogStep(data, ['hey', 'end']),
-            new InspectSessionDialogStep((session) => {
-                expect(session.userData.data).to.equal(data);
+        return new BotTester(bot)
+            .sendMessageToBot('Start this thing!',  'What would you like to set data to?')
+            .sendMessageToBot('This is data!')
+            .checkSession((session) => {
+                expect(session.userData).not.to.be.null;
+                expect(session.userData.data).to.be.equal('This is data!');
             })
-        ]);
-    });
-
-    it('example failure case', () => {
-        return executeDialogTest([
-            new SendMessageToBotDialogStep(
-                promptDialog.USER_MESSAGE_TO_TRIGGER,
-                "oh dear, this is definitely baaaad "),
-            new SendMessageToBotDialogStep(
-                promptDialog.EXPECTED_USER_MESSAGE_RESPONSE,
-                [promptDialog.BOT_ECHO_USER_RESPONSE, promptDialog.BOT_LAST_MESSAGE])
-        ]).catch(chai.AssertionError, e => {
-            // do nothing, this is the expected state
-        })
-    })
-
-    it('run example for echo dialog', () => {
-        return executeDialogTest([
-            new SendMessageToBotDialogStep(
-                echoDialog.USER_MESSAGE_TO_TRIGGER,
-                echoDialog.USER_MESSAGE_TO_TRIGGER),
-            new SendMessageToBotDialogStep(
-                "How are you doing?",
-                "How are you doing?"),
-            new SendMessageToBotDialogStep(
-                "Why do you keep copying me?",
-                "Why do you keep copying me?"),
-            new SendMessageToBotDialogStep(
-                "Will you even plagerize my spelling errors??",
-                "Will you even plagerize my spelling errors??"),
-            new SendMessageToBotDialogStep(
-                echoDialog.USER_MESSAGE_TO_END,
-                echoDialog.BOT_LAST_MESSAGE),
-        ]);
+            .runTest();
     });
 
     describe('Address/multi user', () => {
         const defaultAddress = { channelId: 'console',
-            user: { id: 'user1', name: 'A' }, 
+            user: { id: 'user1', name: 'A' },
             bot: { id: 'bot', name: 'Bot' },
-            conversation: { id: 'user1Conversation' } 
+            conversation: { id: 'user1Conversation' }
         };
 
         const user2Address = { channelId: 'console',
-            user: { id: 'user2', name: 'B' }, 
+            user: { id: 'user2', name: 'B' },
             bot: { id: 'bot', name: 'Bot' },
-            conversation: { id: 'user2Conversation' } 
+            conversation: { id: 'user2Conversation' }
         };
 
         beforeEach(() => {
-            const bot =  new UniversalBot(new ConsoleConnector());
-
-            // same dialog will be used for each address test. Any message just returns the user name from the 
-            // message address
             bot.dialog('/', (session) => session.send(session.message.address.user.name));
+        });
 
-            // Default address can be set when building the test components
-            const botTester = testSuiteBuilder(bot, defaultAddress);
-
-            executeDialogTest = botTester.executeDialogTest;
-            SendMessageToBotDialogStep = botTester.SendMessageToBotDialogStep;
-            InspectSessionDialogStep = botTester.InspectSessionDialogStep;
-
-        })
-
-        it('Can ensure proper address being used for return', () => {
-            // SendMessageToBotDialogStep can accept botbuilder messages!
+        it('can ensure proper address being used for routing. Includes partial address', () => {
             const askForUser1Name = new Message()
                 .text('What is my name?')
                 .address(defaultAddress)
                 .toMessage();
-            
+
             const expectedAddressInMessage = new Message()
                 .address(defaultAddress)
                 .toMessage();
 
+            const addr = {
+                user: {
+                    id: 'user1'
+                }
+            } as IAddress;
+
             // partial addresses work as well (i.e. if you only want to check one field such as userId)
             const expectedPartialAddress = new Message()
-                .address({
-                    user: {
-                        id: 'user1'
-                    }
-                } as IAddress)
+                .address(addr)
                 .toMessage();
 
-
-            return executeDialogTest([
-                new SendMessageToBotDialogStep(askForUser1Name, expectedAddressInMessage),
-                new SendMessageToBotDialogStep(askForUser1Name, expectedPartialAddress),
-            ]);  
+            return new BotTester(bot)
+                .sendMessageToBot(askForUser1Name, expectedAddressInMessage)
+                .sendMessageToBot(askForUser1Name, expectedPartialAddress)
+                .runTest();
         });
 
-        // the bot can have a default address that messages are sent to. If needed, this address can always be overriden
-        it('Can have a default address assigned to it', () => {
+                // the bot can have a default address that messages are sent to. If needed, this address can always be overriden
+        it('Can have a default address assigned to it and communicate to multiple users', () => {
             const askForUser1Name = new Message()
                 .text('What is my name?')
                 .address(defaultAddress)
                 .toMessage();
-            
+
             const askForUser2Name = new Message()
                 .text('What is my name?')
                 .address(user2Address)
                 .toMessage();
 
             // when testing for an address that is not the default for the bot, the address must be passed in
-            return executeDialogTest([
-                new SendMessageToBotDialogStep(askForUser1Name, 'A'),
-                new SendMessageToBotDialogStep(askForUser1Name, 'A', defaultAddress),
-                new SendMessageToBotDialogStep(askForUser2Name, 'B', user2Address)
-            ]); 
-        })
-
-        it('Can communicate to multiple users', () => {
-            const askForUser1Name = new Message()
-                .text('What is my name?')
-                .address(defaultAddress)
-                .toMessage();
-            
-            const askForUser2Name = new Message()
-                .text('What is my name?')
-                .address(user2Address)
-                .toMessage();
-
-            // when testing for an address that is not the default for the bot, and only providing a string for a response, 
-            // an expected address can be appended as a third argument
-            return executeDialogTest([
-                new SendMessageToBotDialogStep(askForUser1Name, 'A'),
-                new SendMessageToBotDialogStep(askForUser1Name, 'A', defaultAddress),
-                new SendMessageToBotDialogStep(askForUser2Name, 'B', user2Address)
-            ]);
-        })
+            return new BotTester(bot, defaultAddress)
+                .sendMessageToBot(askForUser1Name, 'A')
+                .sendMessageToBot(askForUser1Name, 'A', defaultAddress)
+                .sendMessageToBot(askForUser2Name, 'B', user2Address)
+                .runTest();
+        });
     });
 });
