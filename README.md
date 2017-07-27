@@ -30,6 +30,20 @@ takes in a UniversalBot instance and optinally takes a default address to be use
 ## ```checkSession(sessionCheckerFn, address?)```
 * sessionCheckerFunction is a function that takes a single parameter that is a session
 * address is optional and is the address of the session to be fetched. If not provided, the default address set on the bot is used.
+## ```runTest()```
+* executes the tests based on the script that has been built until this point.
+* returns a promise
+### note
+All methods allow for method chaining. Each returns the original instance of BotTester e.g.
+``` javascript
+new BotTester(bot)
+    .sendMessageToBot('Hello! My name is Elder Price')
+    .sendMessageToBot('and I would like to share with you')
+    .sendMessageToBot('the most amazing book')
+    .checkSession(session => expect(session.conversationData.book).to.be.equal('The Book of Mormon'))
+    .runTest()
+```
+
 # Example Usage
 ``` javascript
 const botbuilder = require("botbuilder");
