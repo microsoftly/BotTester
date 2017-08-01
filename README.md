@@ -48,7 +48,7 @@ new BotTester(bot)
 ``` javascript
 const botbuilder = require("botbuilder");
 const chai = require("chai");
-const BotTester = require("bot-tester");
+const { BotTester } = require("bot-tester");
 
 const connector = new botbuilder.ConsoleConnector();
 
@@ -68,7 +68,7 @@ describe('BotTester', () => {
             session.send('hello!');
         });
 
-        const botTester = new BotTester.BotTester(bot)
+        const botTester = new BotTester(bot)
             .sendMessageToBot('Hola!', 'hello!');
 
         return botTester.runTest();
@@ -82,7 +82,7 @@ describe('BotTester', () => {
             session.send('how are you doing?');
         });
 
-        new BotTester.BotTester(bot)
+        new BotTester(bot)
             .sendMessageToBot('Hola!', ['hello!', 'how are you doing?'])
             .runTest();
     });
@@ -98,7 +98,7 @@ describe('BotTester', () => {
                 session.send(colors);
             });
 
-            return new BotTester.BotTester(bot)
+            return new BotTester(bot)
                 .sendMessageToBot('tell me a color!', [colors])
                 .runTest();
         });
@@ -114,7 +114,7 @@ describe('BotTester', () => {
                 new botbuilder.Prompts.text(session, 'Why do you like it?');
             }, (session) => session.send('Interesting. Well, that\'s all I have for now')]);
 
-        return new BotTester.BotTester(bot)
+        return new BotTester(bot)
             .sendMessageToBot('Hola!', 'Hi there! Tell me something you like')
             .sendMessageToBot('The sky', ['The sky is pretty cool.', 'Why do you like it?'])
             .sendMessageToBot('It\'s blue', 'Interesting. Well, that\'s all I have for now')
@@ -131,7 +131,7 @@ describe('BotTester', () => {
                 session.save();
             }]);
 
-        return new BotTester.BotTester(bot)
+        return new BotTester(bot)
             .sendMessageToBot('Start this thing!', 'What would you like to set data to?')
             .sendMessageToBot('This is data!')
             .checkSession((session) => {
@@ -183,7 +183,7 @@ describe('BotTester', () => {
                 .address(addr)
                 .toMessage();
 
-            return new BotTester.BotTester(bot)
+            return new BotTester(bot)
                 .sendMessageToBot(askForUser1Name, expectedAddressInMessage)
                 .sendMessageToBot(askForUser1Name, expectedPartialAddress)
                 .runTest();
@@ -204,7 +204,7 @@ describe('BotTester', () => {
                 .toMessage();
 
             // when testing for an address that is not the default for the bot, the address must be passed in
-            return new BotTester.BotTester(bot, defaultAddress)
+            return new BotTester(bot, defaultAddress)
                 .sendMessageToBot(askForUser1Name, 'A')
                 .sendMessageToBot(askForUser1Name, 'A', defaultAddress)
                 .sendMessageToBot(askForUser2Name, 'B', user2Address)
