@@ -28,7 +28,9 @@ export class BotTester {
         this.testSteps = [] as TestStep[];
     }
 
-    public runTest(): Promise<{}> {
+    //tslint:disable
+    public runTest(): Promise<any> {
+    //tslint:enable
         return Promise.mapSeries(this.testSteps, (fn: TestStep) => fn());
     }
 
