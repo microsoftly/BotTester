@@ -19,16 +19,17 @@ export class MessageService {
         message: IMessage | string,
         address: IAddress,
         expectedResponses: IMessage[][]
-    ): Promise<void> {
+    ): Promise<{}> {
         const responsesFullyProcessedPromise = this.setBotToUserMessageChecker(expectedResponses);
         const messageToBot: IMessage = this.convertMessageToBotToIMessage(message, address);
 
-        messageToBot.address = address;
+        messageToBot.address = messageToBot.address || address;
 
-        return new Promise<void>((res: () => void, rej: (e: Error) => void) => {
+        const receiveMessagePromise = new Promise<void>((res: () => void, rej: (e: Error) => void) => {
             this.bot.receive(messageToBot, (e: Error) => e ? rej(e) : res());
-        })
-            .then(() => responsesFullyProcessedPromise);
+        });
+
+        return Promise.join(responsesFullyProcessedPromise, receiveMessagePromise);
     }
 
     private convertMessageToBotToIMessage(
