@@ -11,7 +11,9 @@ import {
 } from './utils';
 
 export type checkSessionFunction = (s: Session) => void;
-type TestStep = () => Promise<void>;
+//tslint:disable
+type TestStep = () => Promise<any>;
+//tslint:enable
 
 export class BotTester {
     private bot: UniversalBot;
