@@ -1,13 +1,24 @@
 import { IAddress, IIdentity, IMessage, Message } from 'botbuilder';
 import * as chai from 'chai';
+import * as chaiSamSam from 'chai-samsam';
+
+chai.use(chaiSamSam);
+type DeepMatchReturn = { to: {
+    deep: {
+        match(arg: {}): {}
+    }
+}};
+type DeepMatch = (args: {}, errMsg?: string) => DeepMatchReturn;
 
 const expect = chai.expect;
+//tslint:disable
+const expectWithDeepMatch: DeepMatch = expect as any;
+//tslint:enable
 
 export function convertStringToMessage(text: string, address: IAddress): IMessage {
     return new Message()
         .text(text)
         .address(address)
-        .timestamp()
         .toMessage();
 }
 
@@ -23,9 +34,9 @@ export function convert2DStringArrayTo2DMessageArray(collectionOfTexts: string[]
     return collectionOfTexts.map((texts: string[]) => convertStringArrayToMessageArray(texts, address));
 }
 
-export function is2DArray(o: any): boolean {
-    return o instanceof Array && (o as Array<any>).length &&
-        o[0] instanceof Array && (o[0] as Array<any>).length &&
+export function is2DArray(o: {}): boolean {
+    return o instanceof Array && (o as {}[]).length &&
+        o[0] instanceof Array && (o[0] as {}[]).length &&
         !(o[0][0] instanceof Array);
 }
 
@@ -35,13 +46,56 @@ export function compareMessageWithExpectedMessages(actualResponse: IMessage, exp
 
     const errorStringExpectedResponseText =
         expctedResponseStrings.length > 1 ? `one of ${expctedResponseStrings}` : expctedResponseStrings[0];
-
-    const errorString =
+    let errorString: string =
         `Bot should have responded with '${errorStringExpectedResponseText}', but was '${actualResponse.text}`;
 
-    expect(expctedResponseStrings, errorString).to.include(actualResponse.text);
+    if (errorStringExpectedResponseText) {
+        expect(expctedResponseStrings, errorString).to.include(actualResponse.text);
+    }
 
-    addressIsComposedOfOtherTest(expectedAddress, actualResponse.address);
+    let matchExists: boolean = false;
+
+    expectedResponseCollection.forEach((expectedResponse: IMessage) => {
+        if (matchExists) {
+            return;
+        }
+
+        const clone = Object.assign({}, actualResponse);
+
+        // ignore source event (not added to message until after sending)
+        delete expectedResponse.source;
+
+        // auto added by prompts, not needed
+        delete actualResponse.inputHint;
+
+        // always botbuilder
+        delete expectedResponse.agent;
+
+        try {
+            expectWithDeepMatch(clone).to.deep.match(expectedResponse);
+            matchExists = true;
+        } catch (e) {
+            // continue
+        }
+    });
+
+    if (!matchExists) {
+        const stringifiedActualResponse = JSON.stringify(actualResponse, null, 2);
+        let stringifiedExpectedResponse: string;
+
+        if (expectedResponseCollection.length === 1) {
+            stringifiedExpectedResponse = JSON.stringify(expectedResponseCollection[0], null, 2);
+
+            errorString = `${stringifiedActualResponse} was not a subset of expected response: ${stringifiedExpectedResponse}`;
+        } else {
+            stringifiedExpectedResponse = JSON.stringify(expectedResponseCollection, null, 2);
+
+            errorString =
+                `${stringifiedActualResponse} was not a subset of any message in expected responses: ${stringifiedExpectedResponse}`;
+        }
+
+        expect.fail(actualResponse, expectedResponseCollection, errorString);
+    }
 }
 
 export function identityIsComposedOfOther(id: IIdentity, otherId: IIdentity) : boolean {

@@ -56,12 +56,12 @@ export class BotTester {
         const message = typeof(msg) === 'string' ? convertStringToMessage(msg, address) : msg as IMessage;
         address = address || this.defaultAddress;
 
-        if (typeof(expectedResponses) === 'string') {
-            expectedResponses = [[expectedResponses]];
-        } else if (expectedResponses instanceof Array) {
+        if (expectedResponses instanceof Array) {
             if (expectedResponses.length > 0 && typeof(expectedResponses) === 'string') {
                 expectedResponses = [expectedResponses];
             }
+        } else {
+            expectedResponses = [[expectedResponses]] as IMessage[][] | string[][];
         }
 
         expectedResponses = this.convertExpectedResponsesParameterTo2DIMessageArray(expectedResponses, address) as IMessage[][];

@@ -40,7 +40,7 @@ export class MessageService {
     }
 
     private setBotToUserMessageChecker(expectedResponses: IMessage[][]): Promise<void> {
-        if (!expectedResponses || !expectedResponses.length) {
+        if (!expectedResponses ||  !expectedResponses.length) {
             return Promise.resolve();
         }
 

@@ -12,9 +12,9 @@
             "console": "integratedTerminal",
             "program": "${workspaceRoot}/node_modules/mocha/bin/_mocha",
             "args": [
-                "${workspaceRoot}/dist/test/v2/BotTester.spec.js",
                 "--timeout",
-                "10000000"
+                "10000000",
+                "${workspaceRoot}/dist/test/BotTester.spec.js"
             ],
             "runtimeArgs": [
                 "--no-lazy"
@@ -26,10 +26,10 @@
             "preLaunchTask": "compile"
         },
         {
-            "name": "Attach",
+            "name": "Attach to Process",
             "type": "node",
             "request": "attach",
-            "port": 5858
+            "port": 31136
         }
     ]
 }

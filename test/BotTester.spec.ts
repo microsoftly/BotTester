@@ -1,4 +1,4 @@
-import { ConsoleConnector, IAddress, Message, Prompts, Session, UniversalBot } from 'botbuilder';
+import { ConsoleConnector, IAddress, IMessage, Message, Prompts, Session, UniversalBot } from 'botbuilder';
 import { expect } from 'chai';
 import { BotTester } from './../src/BotTester';
 
@@ -34,7 +34,7 @@ describe('BotTester', () => {
     });
 
     // re-run the test multiple times to guarantee that multiple colors are returned
-    let randomResponseRunCounter = 15;
+    let randomResponseRunCounter = 5;
     const colors = ['red', 'green', 'blue', 'grey', 'gray', 'purple', 'magenta', 'cheese', 'orange', 'hazelnut'];
     while (randomResponseRunCounter--) {
         it('Can handle random responses', () => {
@@ -78,6 +78,39 @@ describe('BotTester', () => {
                 expect(session.userData).not.to.be.null;
                 expect(session.userData.data).to.be.equal('This is data!');
             })
+            .runTest();
+    });
+
+    it('can handle custom messages in response', () => {
+        const customMessage: { someField?: {} } & IMessage = new Message()
+            .text('this is text')
+            .toMessage();
+
+        customMessage.someField = {
+            a: 1
+        };
+        customMessage.type = 'newType';
+
+        const matchingCustomMessage: { someField?: {} } & IMessage = new Message()
+            .toMessage();
+
+        matchingCustomMessage.text = 'this is text';
+        matchingCustomMessage.type = 'newType';
+
+        const nonMatchingCustomMessage: { someField?: {} } & IMessage = new Message()
+            .text('this is text')
+            .toMessage();
+
+        nonMatchingCustomMessage.someField = 'nope';
+        nonMatchingCustomMessage.type = 'newType';
+
+        bot.dialog('/', (session: Session) => {
+            session.send(customMessage);
+        });
+
+        return new BotTester(bot)
+            .sendMessageToBot('anything', customMessage)
+            .sendMessageToBot('anything', matchingCustomMessage)
             .runTest();
     });
 
