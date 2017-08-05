@@ -41,15 +41,21 @@ export function is2DArray(o: {}): boolean {
 }
 
 export function compareMessageWithExpectedMessages(actualResponse: IMessage, expectedResponseCollection: IMessage[]): void {
-    const expectedAddress = expectedResponseCollection[0].address;
-    const expctedResponseStrings = expectedResponseCollection.map((r: IMessage) => r.text);
+    const expctedResponseStrings =
+        // remove all non text possible repsonses
+        expectedResponseCollection
+            .filter((msg: IMessage) => msg.text)
+            .map((r: IMessage) => r.text);
 
-    const errorStringExpectedResponseText =
-        expctedResponseStrings.length > 1 ? `one of ${expctedResponseStrings}` : expctedResponseStrings[0];
-    let errorString: string =
-        `Bot should have responded with '${errorStringExpectedResponseText}', but was '${actualResponse.text}`;
+    let errorString: string;
 
-    if (errorStringExpectedResponseText) {
+    if (expctedResponseStrings.length) {
+        const errorStringExpectedResponseText =
+            expctedResponseStrings.length > 1 ? `one of ${expctedResponseStrings}` : expctedResponseStrings[0];
+
+        errorString =
+            `Bot should have responded with '${errorStringExpectedResponseText}', but was '${actualResponse.text}`;
+
         expect(expctedResponseStrings, errorString).to.include(actualResponse.text);
     }
 
