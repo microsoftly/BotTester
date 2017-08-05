@@ -41,6 +41,10 @@ export function is2DArray(o: {}): boolean {
 }
 
 export function compareMessageWithExpectedMessages(actualResponse: IMessage, expectedResponseCollection: IMessage[]): void {
+    // short circuit, no responses are expected
+    if (!expectedResponseCollection.length) {
+        return;
+    }
     const expctedResponseStrings =
         // remove all non text possible repsonses
         expectedResponseCollection

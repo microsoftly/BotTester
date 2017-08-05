@@ -56,7 +56,9 @@ export class BotTester {
         const message = typeof(msg) === 'string' ? convertStringToMessage(msg, address) : msg as IMessage;
         address = address || this.defaultAddress;
 
-        if (expectedResponses instanceof Array) {
+        if (!expectedResponses) {
+            expectedResponses = [[]];
+        } else if (expectedResponses instanceof Array) {
             if (expectedResponses.length > 0 && typeof(expectedResponses) === 'string') {
                 expectedResponses = [expectedResponses];
             }
