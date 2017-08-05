@@ -19,7 +19,7 @@ export class MessageService {
         message: IMessage | string,
         address: IAddress,
         expectedResponses: IMessage[][]
-    ): Promise<{}> {
+    ): Promise<void> {
         const responsesFullyProcessedPromise = this.setBotToUserMessageChecker(expectedResponses);
         const messageToBot: IMessage = this.convertMessageToBotToIMessage(message, address);
 
@@ -29,7 +29,7 @@ export class MessageService {
             this.bot.receive(messageToBot, (e: Error) => e ? rej(e) : res());
         });
 
-        return Promise.join(responsesFullyProcessedPromise, receiveMessagePromise);
+        return responsesFullyProcessedPromise;
     }
 
     private convertMessageToBotToIMessage(

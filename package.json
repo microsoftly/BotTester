@@ -1,6 +1,6 @@
 {
   "name": "bot-tester",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Easily test bots made with the bot builder framework",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
@@ -59,6 +59,7 @@
     "typescript": "^2.4.1"
   },
   "files": [
-    "dist"
+    "dist",
+    "src"
   ]
 }
