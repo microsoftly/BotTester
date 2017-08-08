@@ -4,6 +4,10 @@ import { compareMessageWithExpectedMessages, convertStringToMessage } from './ut
 
 export type botToUserMessageCheckerFunction = (msg: IMessage | IMessage[]) => void;
 
+function expectedResponsesAreEmpty(expectedResponses: IMessage[][]): boolean {
+    return !expectedResponses ||  !expectedResponses.length || !expectedResponses[0].length;
+}
+
 export class MessageService {
     private bot: UniversalBot;
     private botToUserMessageChecker: botToUserMessageCheckerFunction;
@@ -29,7 +33,7 @@ export class MessageService {
             this.bot.receive(messageToBot, (e: Error) => e ? rej(e) : res());
         });
 
-        return responsesFullyProcessedPromise;
+        return expectedResponsesAreEmpty(expectedResponses) ? receiveMessagePromise : responsesFullyProcessedPromise;
     }
 
     private convertMessageToBotToIMessage(
@@ -40,7 +44,7 @@ export class MessageService {
     }
 
     private setBotToUserMessageChecker(expectedResponses: IMessage[][]): Promise<void> {
-        if (!expectedResponses ||  !expectedResponses.length) {
+        if (expectedResponsesAreEmpty(expectedResponses)) {
             return Promise.resolve();
         }
 

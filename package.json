@@ -1,6 +1,6 @@
 {
   "name": "bot-tester",
-  "version": "1.1.10",
+  "version": "1.1.12",
   "description": "Easily test bots made with the bot builder framework",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
@@ -47,10 +47,10 @@
     "chai-samsam": "^0.0.2",
     "colors": "^1.1.2",
     "global": "^4.3.2",
-    "mocha": "^3.4.2",
-    "tslint": "^5.4.3"
+    "mocha": "^3.4.2"
   },
   "devDependencies": {
+    "tslint": "^5.4.3",
     "@types/bluebird": "^3.5.8",
     "@types/chai": "^4.0.1",
     "@types/mocha": "^2.2.41",
