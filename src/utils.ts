@@ -1,6 +1,7 @@
 import { IAddress, IIdentity, IMessage, Message } from 'botbuilder';
 import * as chai from 'chai';
 import * as chaiSamSam from 'chai-samsam';
+import { ITestMessage, TestMessage } from './TestMessage'
 
 chai.use(chaiSamSam);
 type DeepMatchReturn = { to: {
@@ -15,23 +16,42 @@ const expect = chai.expect;
 const expectWithDeepMatch: DeepMatch = expect as any;
 //tslint:enable
 
-export function convertStringToMessage(text: string, address: IAddress): IMessage {
-    return new Message()
+export function convertStringToMessage(text: string, address: IAddress): ITestMessage {
+    return new TestMessage()
         .text(text)
         .address(address)
         .toMessage();
 }
 
-export function convertStringArrayToMessageArray(texts: string[], address: IAddress): IMessage[] {
+export function convertRegExpToMessage(regexp: RegExp, address: IAddress): ITestMessage {
+    return new TestMessage()
+        .regexp(regexp)
+        .address(address)
+        .toMessage();
+}
+
+export function convertStringArrayToMessageArray(texts: string[], address: IAddress): ITestMessage[] {
     return texts.map((text: string) => convertStringToMessage(text, address));
 }
 
-export function convertStringArrayTo2DMessageArray(texts: string[], address: IAddress): IMessage[][] {
+export function convertRegExpArrayToMessageArray(regexps: RegExp[], address: IAddress): ITestMessage[] {
+    return regexps.map((regexp: RegExp) => convertRegExpToMessage(regexp, address));
+}
+
+export function convertStringArrayTo2DMessageArray(texts: string[], address: IAddress): ITestMessage[][] {
     return texts.map((text: string) => convertStringArrayToMessageArray([text], address));
 }
 
-export function convert2DStringArrayTo2DMessageArray(collectionOfTexts: string[][], address: IAddress): IMessage[][] {
+export function convertRegExpArrayTo2DMessageArray(regexps: RegExp[], address: IAddress): ITestMessage[][] {
+    return regexps.map((regexp: RegExp) => convertRegExpArrayToMessageArray([regexp], address));
+}
+
+export function convert2DStringArrayTo2DMessageArray(collectionOfTexts: string[][], address: IAddress): ITestMessage[][] {
     return collectionOfTexts.map((texts: string[]) => convertStringArrayToMessageArray(texts, address));
+}
+
+export function convert2DRegExpArrayTo2DMessageArray(collectionOfRegexps: RegExp[][], address: IAddress): ITestMessage[][] {
+    return collectionOfRegexps.map((regexps: RegExp[]) => convertRegExpArrayToMessageArray(regexps, address));
 }
 
 export function is2DArray(o: {}): boolean {
@@ -40,32 +60,43 @@ export function is2DArray(o: {}): boolean {
         !(o[0][0] instanceof Array);
 }
 
-export function compareMessageWithExpectedMessages(actualResponse: IMessage, expectedResponseCollection: IMessage[]): void {
+export function compareMessageWithExpectedMessages(actualResponse: IMessage, expectedResponseCollection: ITestMessage[]): void {
     // short circuit, no responses are expected
     if (!expectedResponseCollection.length) {
         return;
     }
-    const expctedResponseStrings =
+    const expctedResponseStringsOrRegexps =
         // remove all non text possible repsonses
         expectedResponseCollection
-            .filter((msg: IMessage) => msg.text)
-            .map((r: IMessage) => r.text);
+            .filter((msg: ITestMessage) => {
+              return msg.regexp || msg.text;
+            })
+            .map((r: ITestMessage) => {
+              return r.regexp || r.text;
+            });
 
     let errorString: string;
 
-    if (expctedResponseStrings.length) {
-        const errorStringExpectedResponseText =
-            expctedResponseStrings.length > 1 ? `one of ${expctedResponseStrings}` : expctedResponseStrings[0];
+    if (expctedResponseStringsOrRegexps.length) {
+        const errorStringExpectedResponseTextOrRegexp =
+            expctedResponseStringsOrRegexps.length > 1 ? `one of ${expctedResponseStringsOrRegexps}` : expctedResponseStringsOrRegexps[0];
 
-        errorString =
-            `Bot should have responded with '${errorStringExpectedResponseText}', but was '${actualResponse.text}`;
+        if (typeof(errorStringExpectedResponseTextOrRegexp) == 'string') {
+          errorString =
+              `Bot should have responded with '${errorStringExpectedResponseTextOrRegexp}', but was '${actualResponse.text}`;
 
-        expect(expctedResponseStrings, errorString).to.include(actualResponse.text);
+          expect(errorStringExpectedResponseTextOrRegexp, errorString).to.include(actualResponse.text);
+        } else {
+          errorString =
+              `Bot should have responded with a message matching '${errorStringExpectedResponseTextOrRegexp}', but was '${actualResponse.text}`;
+
+          expect(actualResponse.text, errorString).to.match(errorStringExpectedResponseTextOrRegexp);
+        }
     }
 
     let matchExists: boolean = false;
 
-    expectedResponseCollection.forEach((expectedResponse: IMessage) => {
+    expectedResponseCollection.forEach((expectedResponse: ITestMessage) => {
         if (matchExists) {
             return;
         }
@@ -80,6 +111,14 @@ export function compareMessageWithExpectedMessages(actualResponse: IMessage, exp
 
         // always botbuilder
         delete expectedResponse.agent;
+
+        // If the test message contains a regex, delete the text for the comparison
+        if (expectedResponse.regexp) {
+          delete expectedResponse.text;
+        }
+
+        // Delete since IMessage doesn't have a regex
+        delete expectedResponse.regexp;
 
         try {
             expectWithDeepMatch(clone).to.deep.match(expectedResponse);

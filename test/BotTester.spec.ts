@@ -1,5 +1,6 @@
 import { ConsoleConnector, IAddress, IMessage, Message, Prompts, Session, UniversalBot } from 'botbuilder';
 import { expect } from 'chai';
+import 'mocha';
 import { BotTester } from './../src/BotTester';
 
 const connector = new ConsoleConnector();
@@ -11,7 +12,7 @@ describe('BotTester', () => {
         bot = new UniversalBot(connector);
     });
 
-    it('can handle a single response', () => {
+    it('can handle a single response with text', () => {
         bot.dialog('/', (session) => {
             session.send('hello!');
         });
@@ -22,7 +23,18 @@ describe('BotTester', () => {
         return botTester.runTest();
     });
 
-    it('can handle multiple responses', () => {
+    it('can handle a single response with regexp', () => {
+        bot.dialog('/', (session) => {
+            session.send('hello!');
+        });
+
+        const botTester = new BotTester(bot)
+            .sendMessageToBot('Hola!', /hello.{1}/);
+
+        return botTester.runTest();
+    });
+
+    it('can handle multiple responses with text', () => {
         bot.dialog('/', (session) => {
             session.send('hello!');
             session.send('how are you doing?');
@@ -30,6 +42,17 @@ describe('BotTester', () => {
 
         new BotTester(bot)
             .sendMessageToBot('Hola!', ['hello!', 'how are you doing?'])
+            .runTest();
+    });
+
+    it('can handle multiple responses with regexp', () => {
+        bot.dialog('/', (session) => {
+            session.send('hello!');
+            session.send('how are you doing?');
+        });
+
+        new BotTester(bot)
+            .sendMessageToBot('Hola!', [/'he.*'/, /how are you doing?/])
             .runTest();
     });
 
