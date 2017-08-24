@@ -87,12 +87,6 @@ export class MessageService {
                 e = [e];
             }
 
-            e.forEach((msg: IMessage) => {
-                if (msg.type === 'messsage') {
-                    // printBotMessage(msg);
-                }
-            });
-
             this.botToUserMessageChecker(e);
         });
     }

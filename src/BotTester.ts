@@ -73,7 +73,9 @@ export class BotTester {
         return this;
     }
 
-    public then(fn: () => {}): BotTester {
+    //tslint:disable
+    public then(fn: () => any): BotTester {
+    //tslint:enable
         this.testSteps.push(() => Promise.method(fn)());
 
         return this;

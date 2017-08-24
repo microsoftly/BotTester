@@ -178,4 +178,32 @@ describe('BotTester', () => {
                 .runTest();
         });
     });
+
+    const CUSTOMER_ADDRESS: IAddress = { channelId: 'console',
+        user: { id: 'userId1', name: 'user1' },
+        bot: { id: 'bot', name: 'Bot' },
+        conversation: { id: 'user1Conversation' }
+    };
+
+    it.only('can handle multiple messages in order at once', () => {
+        const msg1 = new Message()
+            .address(CUSTOMER_ADDRESS)
+            .text('hello')
+            .toMessage();
+
+        const msg2 = new Message()
+            .address(CUSTOMER_ADDRESS)
+            .text('there')
+            .toMessage();
+
+        bot.dialog('/', (session: Session) => {
+            bot.send([msg1, msg2]);
+        });
+
+        return new BotTester(bot, CUSTOMER_ADDRESS)
+            .sendMessageToBot('anything', ['hello', 'there'])
+            .sendMessageToBot('anything', ['there', 'hello'])
+            .then(() => new Promise((res) => setTimeout(res, 100)))
+            .runTest();
+    });
 });
