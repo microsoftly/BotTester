@@ -18,8 +18,7 @@ const expectWithDeepMatch: DeepMatch = expect as any;
 export enum ExpectedMessageType {
     String,
     IMessage,
-    Regex,
-    save
+    Regex
 }
 
 export type PossibleExpectedMessageType = string | IMessage | RegExp;
@@ -27,9 +26,6 @@ export type PossibleExpectedMessageCollections = PossibleExpectedMessageType[];
 
 function getExpectedMessageType(expectedResponseCollection: PossibleExpectedMessageCollections): ExpectedMessageType {
     const firstElt = expectedResponseCollection[0];
-    if (firstElt === undefined) {
-        return ExpectedMessageType.save;
-    }
 
     if (typeof firstElt === 'string') {
         return ExpectedMessageType.String;

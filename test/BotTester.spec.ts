@@ -215,4 +215,19 @@ describe('BotTester', () => {
             .sendMessageToBot('anything', ['hello', 'there'])
             .runTest();
     });
+
+    it('accepts RegExp', () => {
+        const numberRegex = /^\d+/;
+
+        bot.dialog('/', (session) => {
+            // send only numbers for this test case ....
+            session.send(session.message.text);
+        });
+
+        return new BotTester(bot)
+            .sendMessageToBot('1', numberRegex)
+            .sendMessageToBot('3156', numberRegex)
+            .sendMessageToBot('8675309', numberRegex)
+            .runTest();
+    });
 });
