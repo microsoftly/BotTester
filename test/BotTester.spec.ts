@@ -131,7 +131,7 @@ describe('BotTester', () => {
             bot.dialog('/', (session) => session.send(session.message.address.user.name));
         });
 
-        it.only('can ensure proper address being used for routing. Includes partial address', () => {
+        it('can ensure proper address being used for routing. Includes partial address', () => {
             const askForUser1Name = new Message()
                 .text('What is my name?')
                 .address(defaultAddress)

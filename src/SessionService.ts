@@ -19,6 +19,11 @@ export class SessionService {
         this.savePerformed = Promise.resolve();
     }
 
+    /**
+     * fetches a session
+     *
+     * @param addr address of session to load
+     */
     public getSession(addr: IAddress): Promise<Session> {
         return new Promise<Session>((res: (s: Session) => void, rej: Function) => {
             this.createSessionWrapperWithLoadMessageOverride(addr);

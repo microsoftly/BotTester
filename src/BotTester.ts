@@ -13,6 +13,9 @@ export type checkSessionFunction = (s: Session) => void;
 type TestStep = () => Promise<any>;
 //tslint:enable
 
+/**
+ * Test builder and runner for botbuilder bots
+ */
 export class BotTester {
     private bot: UniversalBot;
     private defaultAddress: IAddress;
@@ -20,6 +23,19 @@ export class BotTester {
     private messageService: MessageService;
     private testSteps: TestStep[];
 
+    //tslint:disable
+    /**
+     *
+     * @param bot bot that will be tested against
+     * @param defaultAddress (Optional) the address that will be assumed for all response expecations that do not include an address
+     * if not defined, it defaults to
+     { channelId: 'console',
+     user: { id: 'user1', name: 'user1' },
+     bot: { id: 'bot', name: 'Bot' },
+     conversation: { id: 'user1Conversation' }
+    };
+    */
+    //tslint:enable
     constructor(bot: UniversalBot, defaultAddress?: IAddress) {
         this.bot = bot;
         this.defaultAddress = defaultAddress || DEFAULT_ADDRESS;
@@ -28,24 +44,37 @@ export class BotTester {
         this.testSteps = [] as TestStep[];
     }
 
+    /**
+     * executes each test step serially
+     */
     //tslint:disable
     public runTest(): Promise<any> {
     //tslint:enable
         return Promise.mapSeries(this.testSteps, (fn: TestStep) => fn());
     }
 
+    /**
+     * loads a session associated with an address and passes it to a user defined function
+     * @param sessionCheckerFunction function passed in to inspect message
+     * @param address (Optional) address of the session to load. Defaults to bot's default address if not defined
+     */
     public checkSession(
-        sessionChecker: checkSessionFunction,
+        sessionCheckerFunction: checkSessionFunction,
         address?: IAddress
     ): BotTester {
         const runSessionChecker = () => this.sessionLoader.getSession(address || this.defaultAddress)
-                                                .then(sessionChecker);
+                                                .then(sessionCheckerFunction);
 
         this.testSteps.push(runSessionChecker);
 
         return this;
     }
 
+    /**
+     * sends a message to a bot and compares bot responses against expectedResponsess
+     * @param msg message to send to bot
+     * @param expectedResponses (Optional) responses the bot-tester framework checks against
+     */
     public sendMessageToBot(
         msg: IMessage | string,
         // currently only supports string RegExp IMessage
@@ -56,6 +85,12 @@ export class BotTester {
         return this.sendMessageToBotInternal(message, expectedResponses);
     }
 
+    /**
+     * sends a message to the bot. This should be used whenever session.save() is used without sending a reply to the user. This exists due
+     * to a limitation in the current implementation of the botbuilder framework
+     *
+     * @param msg message to send to bot
+     */
     public sendMessageToBotAndExpectSaveWithNoResponse(
         msg: IMessage | string
     ): BotTester {
@@ -64,8 +99,13 @@ export class BotTester {
         return this.sendMessageToBotInternal(message, this.sessionLoader.getInternalSaveMessage(message.address));
     }
 
+    /**
+     * Works exactly like Promise's .then function, except that the return value is not passed as an arg to the next function (even if its
+     * another .then)
+     * @param fn some function to run 
+     */
     //tslint:disable
-    public then(fn: () => any): BotTester {
+    public then(fn: Function): BotTester {
     //tslint:enable
         this.testSteps.push(() => Promise.method(fn)());
 

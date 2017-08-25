@@ -8,9 +8,6 @@ export class OutgoingMessageComparator {
         this.expectedMessages = expectedMessages;
     }
 
-    /**
-     * compares the outgoing message against the expected message. The type of check performed is dependent on the expected message type
-     */
     public compareOutgoingMessageToExpectedResponses(outgoingMessage: IMessage): void {
         const nextMessage = this.getNextExpectedMessage();
 
@@ -19,9 +16,6 @@ export class OutgoingMessageComparator {
         }
     }
 
-    /**
-     * @returns true if the test expects more messages, false otherwise
-     */
     public expectsAdditionalMessages(): boolean {
         return this.expectedMessages.length !== 0;
     }
