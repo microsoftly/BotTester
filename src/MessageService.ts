@@ -1,10 +1,12 @@
 import * as Promise from 'bluebird';
 import { IAddress, IMessage, Message, Session, UniversalBot } from 'botbuilder';
-import { compareMessageWithExpectedMessages, convertStringToMessage } from './utils';
+import { ExpectedMessage } from './ExpectedMessage';
+import { OutgoingMessageComparator } from './OutgoingMessageComparator';
+import { convertStringToMessage } from './utils';
 
 export type botToUserMessageCheckerFunction = (msg: IMessage | IMessage[]) => void;
 
-function expectedResponsesAreEmpty(expectedResponses: IMessage[][]): boolean {
+function expectedResponsesAreEmpty(expectedResponses: {}[][]): boolean {
     return !expectedResponses ||  !expectedResponses.length || !expectedResponses[0].length;
 }
 
@@ -20,20 +22,16 @@ export class MessageService {
     }
 
     public sendMessageToBot(
-        message: IMessage | string,
-        address: IAddress,
-        expectedResponses: IMessage[][]
+        message: IMessage,
+        expectedResponses: ExpectedMessage[]
     ): Promise<void> {
         const responsesFullyProcessedPromise = this.setBotToUserMessageChecker(expectedResponses);
-        const messageToBot: IMessage = this.convertMessageToBotToIMessage(message, address);
-
-        messageToBot.address = messageToBot.address || address;
 
         const receiveMessagePromise = new Promise<void>((res: () => void, rej: (e: Error) => void) => {
-            this.bot.receive(messageToBot, (e: Error) => e ? rej(e) : res());
+            this.bot.receive(message, (e: Error) => e ? rej(e) : res());
         });
 
-        return expectedResponsesAreEmpty(expectedResponses) ? receiveMessagePromise : responsesFullyProcessedPromise;
+        return expectedResponses && expectedResponses.length ? responsesFullyProcessedPromise : receiveMessagePromise;
     }
 
     private convertMessageToBotToIMessage(
@@ -43,39 +41,30 @@ export class MessageService {
         return typeof msg === 'string' ? convertStringToMessage(msg, address) : msg;
     }
 
-    private setBotToUserMessageChecker(expectedResponses: IMessage[][]): Promise<void> {
-        if (expectedResponsesAreEmpty(expectedResponses)) {
-            return Promise.resolve();
-        }
+    private setBotToUserMessageChecker(expectedResponses: ExpectedMessage[]): Promise<void> {
+        const outgoingMessageComparator = new OutgoingMessageComparator(expectedResponses);
 
         return new Promise<void>((res: () => void, rej: (error: Error) => void) => {
-            this.botToUserMessageChecker = (messages: IMessage | IMessage[]) => {
-                if (!expectedResponses || !expectedResponses.length) {
-                    return res();
-                }
+            if (!outgoingMessageComparator.expectsAdditionalMessages()) {
+                return res();
+            }
 
+            this.botToUserMessageChecker = (messages: IMessage | IMessage[]) => {
                 if (!(messages instanceof Array)) {
                     messages = [messages];
                 }
 
                 messages.forEach((msg: IMessage) => {
-                    // save message is in place of a send response
-                    if (msg.type === 'save') {
-                        return res();
-                    }
-
-                    const currentExpectedResponseCollection = expectedResponses.shift();
-
                     try {
-                        compareMessageWithExpectedMessages(msg, currentExpectedResponseCollection);
+                        outgoingMessageComparator.compareOutgoingMessageToExpectedResponses(msg);
                     } catch (e) {
                         return rej(e);
                     }
 
                 });
 
-                if (!expectedResponses.length) {
-                    res();
+                if (!outgoingMessageComparator.expectsAdditionalMessages()) {
+                    return res();
                 }
             };
         });

@@ -1,13 +1,11 @@
 import * as Promise from 'bluebird';
 import { IAddress, IMessage, Message, Session, UniversalBot } from 'botbuilder';
 import { DEFAULT_ADDRESS } from './defaultAddress';
+import { ExpectedMessage, PossibleExpectedMessageCollections, PossibleExpectedMessageType } from './ExpectedMessage';
 import { botToUserMessageCheckerFunction, MessageService } from './MessageService';
 import { SessionService } from './SessionService';
 import {
-    convert2DStringArrayTo2DMessageArray,
-    convertStringArrayTo2DMessageArray,
-    convertStringToMessage,
-    is2DArray
+    convertStringToMessage
 } from './utils';
 
 export type checkSessionFunction = (s: Session) => void;
@@ -50,27 +48,20 @@ export class BotTester {
 
     public sendMessageToBot(
         msg: IMessage | string,
-        expectedResponses?: string | string[] | string[][] | IMessage | IMessage[] | IMessage[][],
-        address?: IAddress
+        // currently only supports string RegExp IMessage
+        expectedResponses?: PossibleExpectedMessageType | PossibleExpectedMessageCollections | PossibleExpectedMessageCollections[]
     ): BotTester {
-        const message = typeof(msg) === 'string' ? convertStringToMessage(msg, address) : msg as IMessage;
-        address = address || this.defaultAddress;
+        const message = this.convertToIMessage(msg);
 
-        if (!expectedResponses) {
-            expectedResponses = [[]];
-        } else if (expectedResponses instanceof Array) {
-            if (expectedResponses.length > 0 && typeof(expectedResponses) === 'string') {
-                expectedResponses = [expectedResponses];
-            }
-        } else {
-            expectedResponses = [[expectedResponses]] as IMessage[][] | string[][];
-        }
+        return this.sendMessageToBotInternal(message, expectedResponses);
+    }
 
-        expectedResponses = this.convertExpectedResponsesParameterTo2DIMessageArray(expectedResponses, address) as IMessage[][];
+    public sendMessageToBotAndExpectSaveWithNoResponse(
+        msg: IMessage | string
+    ): BotTester {
+        const message = this.convertToIMessage(msg);
 
-        this.testSteps.push(() => this.messageService.sendMessageToBot(message, address, expectedResponses as IMessage[][]));
-
-        return this;
+        return this.sendMessageToBotInternal(message, this.sessionLoader.getInternalSaveMessage(message.address));
     }
 
     //tslint:disable
@@ -81,23 +72,32 @@ export class BotTester {
         return this;
     }
 
-    private convertExpectedResponsesParameterTo2DIMessageArray(
-        expectedResponses: string | string[] | string[][] | IMessage | IMessage[] | IMessage[][],
-        address: IAddress
-    ) : IMessage[][] {
+    private convertToIMessage(msg: string | IMessage): IMessage {
+        return typeof(msg) === 'string' ? convertStringToMessage(msg, this.defaultAddress) : msg;
+    }
 
-        expectedResponses = expectedResponses || [] as IMessage[][];
+    private sendMessageToBotInternal(
+        msg: IMessage,
+        // currently only supports string RegExp IMessage
+        expectedResponses: PossibleExpectedMessageType | PossibleExpectedMessageCollections | PossibleExpectedMessageCollections[]
+    ): BotTester {
+        let expectedMessages: ExpectedMessage[] = [];
 
-        if (is2DArray(expectedResponses)) {
-            const responses = (expectedResponses as {}[][]);
-            if (typeof(responses[0][0]) === 'string') {
-                expectedResponses = convert2DStringArrayTo2DMessageArray(expectedResponses as string[][], address);
+        if (!expectedResponses) {
+            expectedMessages = [];
+        } else if (!(expectedResponses instanceof Array)) {
+            expectedMessages = [new ExpectedMessage(expectedResponses)];
+        } else if (expectedResponses instanceof Array) {
+            if (expectedResponses.length > 0) {
+                expectedMessages = (expectedResponses as PossibleExpectedMessageCollections[])
+                // tslint:disable
+                .map((currentExpectedResponseCollection:  PossibleExpectedMessageCollections) => new ExpectedMessage(currentExpectedResponseCollection));
+                // tslint:enable
             }
-
-        } else if (expectedResponses instanceof Array && expectedResponses.length && typeof(expectedResponses[0]) === 'string') {
-            expectedResponses = convertStringArrayTo2DMessageArray(expectedResponses as string[], address);
         }
 
-        return expectedResponses as IMessage[][];
+        this.testSteps.push(() => this.messageService.sendMessageToBot(msg, expectedMessages));
+
+        return this;
     }
 }

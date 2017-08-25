@@ -1,7 +1,7 @@
 import { IMessage } from 'botbuilder';
 import { ExpectedMessage } from './ExpectedMessage';
 
-class OutgoingMessageComparator {
+export class OutgoingMessageComparator {
     private readonly expectedMessages: ExpectedMessage[];
 
     constructor(expectedMessages: ExpectedMessage[]) {

@@ -29,6 +29,16 @@ export class SessionService {
         }).bind(this);
     }
 
+    public getInternalSaveMessage(address: IAddress): IMessage {
+        const saveEvent = new Message()
+            .address(address)
+            .toMessage();
+
+        saveEvent.type = 'save';
+
+        return saveEvent;
+    }
+
     private createSessionWrapperWithLoadMessageOverride(addr: IAddress): void {
         // This is a delicate hack that relies on knowing the private fields of a UniversalBot
         // The net effect is calling createSessio n with a message of type 'load' that gets
@@ -93,13 +103,10 @@ export class SessionService {
         // this is a critical hack that attaches an extra field onto session. Gonna just ignore this lint issue for now
         this.bot.on('routing', (session: ISaveUpdatableSession) => {
         // tslint:enable
-            if (!session.saveUpdated) {
+            if (!session.saveUpdated ) {
                 session.saveUpdated = true;
-                const saveEvent = new Message()
-                    .address(session.message.address)
-                    .toMessage();
 
-                saveEvent.type = 'save';
+                const saveEvent = this.getInternalSaveMessage(session.message.address);
 
                 const save = session.save.bind(session);
                 session.save = function(): Session {

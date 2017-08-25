@@ -14,7 +14,9 @@
             "args": [
                 "--timeout",
                 "10000000",
-                "${workspaceRoot}/dist/test/BotTester.spec.js"
+                "--require",
+                "${workspaceRoot}/node_modules/ts-node/register",
+                "${workspaceRoot}/test/BotTester.spec.ts"
             ],
             "runtimeArgs": [
                 "--no-lazy"
@@ -22,8 +24,8 @@
             "runtimeExecutable": null,
             "sourceMaps": true,
             "stopOnEntry": false,
-            "protocol": "inspector",
-            "preLaunchTask": "compile"
+            "protocol": "inspector"
+            // "preLaunchTask": "compile"
         },
         {
             "name": "Attach to Process",

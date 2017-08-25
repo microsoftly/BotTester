@@ -73,7 +73,7 @@ describe('BotTester', () => {
 
         return new BotTester(bot)
             .sendMessageToBot('Start this thing!',  'What would you like to set data to?')
-            .sendMessageToBot('This is data!')
+            .sendMessageToBotAndExpectSaveWithNoResponse('This is data!')
             .checkSession((session) => {
                 expect(session.userData).not.to.be.null;
                 expect(session.userData.data).to.be.equal('This is data!');
@@ -131,7 +131,7 @@ describe('BotTester', () => {
             bot.dialog('/', (session) => session.send(session.message.address.user.name));
         });
 
-        it('can ensure proper address being used for routing. Includes partial address', () => {
+        it.only('can ensure proper address being used for routing. Includes partial address', () => {
             const askForUser1Name = new Message()
                 .text('What is my name?')
                 .address(defaultAddress)
@@ -154,11 +154,11 @@ describe('BotTester', () => {
 
             return new BotTester(bot)
                 .sendMessageToBot(askForUser1Name, expectedAddressInMessage)
-                .sendMessageToBot(askForUser1Name, expectedPartialAddress)
+                // .sendMessageToBot(askForUser1Name, expectedPartialAddress)
                 .runTest();
         });
 
-                // the bot can have a default address that messages are sent to. If needed, this address can always be overriden
+        // the bot can have a default address that messages are sent to. If needed, the default address can be ignored by sending an IMessage
         it('Can have a default address assigned to it and communicate to multiple users', () => {
             const askForUser1Name = new Message()
                 .text('What is my name?')
@@ -170,11 +170,22 @@ describe('BotTester', () => {
                 .address(user2Address)
                 .toMessage();
 
+            const user1ExpectedResponse = new Message()
+                .text('A')
+                .address(defaultAddress)
+                .toMessage();
+
+            const user2ExpectedResponse = new Message()
+                .text('B')
+                .address(user2Address)
+                .toMessage();
+
             // when testing for an address that is not the default for the bot, the address must be passed in
             return new BotTester(bot, defaultAddress)
+                // because user 1 is the default address, the expected responses can be a string
                 .sendMessageToBot(askForUser1Name, 'A')
-                .sendMessageToBot(askForUser1Name, 'A', defaultAddress)
-                .sendMessageToBot(askForUser2Name, 'B', user2Address)
+                .sendMessageToBot(askForUser1Name, user1ExpectedResponse)
+                .sendMessageToBot(askForUser2Name, user2ExpectedResponse)
                 .runTest();
         });
     });
@@ -185,7 +196,7 @@ describe('BotTester', () => {
         conversation: { id: 'user1Conversation' }
     };
 
-    it.only('can handle multiple messages in order at once', () => {
+    it('can handle multiple messages in order at once', () => {
         const msg1 = new Message()
             .address(CUSTOMER_ADDRESS)
             .text('hello')
@@ -202,8 +213,6 @@ describe('BotTester', () => {
 
         return new BotTester(bot, CUSTOMER_ADDRESS)
             .sendMessageToBot('anything', ['hello', 'there'])
-            .sendMessageToBot('anything', ['there', 'hello'])
-            .then(() => new Promise((res) => setTimeout(res, 100)))
             .runTest();
     });
 });

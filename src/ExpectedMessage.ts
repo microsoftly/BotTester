@@ -18,13 +18,19 @@ const expectWithDeepMatch: DeepMatch = expect as any;
 export enum ExpectedMessageType {
     String,
     IMessage,
-    Regex
+    Regex,
+    save
 }
 
-type PossibleExpectedMessageCollections = string[] | IMessage[] | RegExp[];
+export type PossibleExpectedMessageType = string | IMessage | RegExp;
+export type PossibleExpectedMessageCollections = PossibleExpectedMessageType[];
 
 function getExpectedMessageType(expectedResponseCollection: PossibleExpectedMessageCollections): ExpectedMessageType {
     const firstElt = expectedResponseCollection[0];
+    if (firstElt === undefined) {
+        return ExpectedMessageType.save;
+    }
+
     if (typeof firstElt === 'string') {
         return ExpectedMessageType.String;
     } else if (firstElt.constructor.name === 'RegExp') {
@@ -38,16 +44,20 @@ export class ExpectedMessage {
     // if length > 1, random response
     private readonly expectedResponseCollection: PossibleExpectedMessageCollections;
 
-    constructor(expectedResponseCollection: PossibleExpectedMessageCollections) {
-        expect(expectedResponseCollection, 'expected response collections cannot be empty').not.to.be.empty;
+    constructor(expectedResponseCollection: PossibleExpectedMessageType | PossibleExpectedMessageCollections) {
+        if (!(expectedResponseCollection instanceof Array)) {
+            this.expectedResponseCollection = [expectedResponseCollection as PossibleExpectedMessageType];
+        } else {
+            this.expectedResponseCollection = expectedResponseCollection as PossibleExpectedMessageCollections;
+        }
 
-        this.expectedResponseCollection = expectedResponseCollection;
+        expect(this.expectedResponseCollection, 'expected response collections cannot be empty').not.to.be.empty;
     }
 
     public checkForMessageMatch(outgoingMessage: IMessage): void {
         switch (getExpectedMessageType(this.expectedResponseCollection)) {
             case ExpectedMessageType.String:
-                this.checkMessageTextForExactStringMatch(outgoingMessage);
+                this.checkMessageTextForExactStringMatch(outgoingMessage, this.expectedResponseCollection as string[]);
                 break;
             case ExpectedMessageType.Regex:
                 this.checkMessageTextForRegex(outgoingMessage);
@@ -55,7 +65,10 @@ export class ExpectedMessage {
             case ExpectedMessageType.IMessage:
                 // doing this check will highlight if the diff in text instead of a large IMessage diff
                 this.deepMessageMatchCheck(outgoingMessage);
+                break;
             default:
+                expect(outgoingMessage.type).to.equal('save');
+
         }
     }
 
@@ -81,10 +94,16 @@ export class ExpectedMessage {
     // add on additional checks here (e.g. address match, attachment match, etc ...)
     private deepMessageMatchCheck(outgoingMessage: IMessage): void {
         const expectedResponseCollectionAsIMessage = this.expectedResponseCollection as IMessage[];
-        const expectedResponseStrings = expectedResponseCollectionAsIMessage.map((expectedResponse: IMessage) => expectedResponse.text);
+        const expectedResponseStrings =
+            // get all possible responses as strings. It is possible that the expected responses have no text, so filter out those values
+            expectedResponseCollectionAsIMessage
+                .map((expectedResponse: IMessage) => expectedResponse.text)
+                .filter((text: string) => text);
 
-        // doing this check will highlight if the diff in text instead of a large IMessage diff
-        this.checkMessageTextForExactStringMatch(outgoingMessage, expectedResponseStrings);
+        if (expectedResponseStrings.length) {
+            // doing this check will highlight if the diff in text instead of a large IMessage diff
+            this.checkMessageTextForExactStringMatch(outgoingMessage, expectedResponseStrings);
+        }
 
         let matchExists: boolean = false;
 
@@ -110,5 +129,6 @@ export class ExpectedMessage {
             } catch (e) {
                 // continue
             }
-    };
+        });
+    }
 }
