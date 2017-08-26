@@ -207,7 +207,7 @@ describe('BotTester', () => {
     };
 
 //# Can test batch responses
-    it.only('can handle batch responses', () => {
+    it('can handle batch responses', () => {
         const msg1 = new Message()
             .address(CUSTOMER_ADDRESS)
             .text('hello')
