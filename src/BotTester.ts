@@ -73,7 +73,9 @@ export class BotTester {
     }
 
     /**
-     * sends a message to a bot and compares bot responses against expectedResponsess
+     * sends a message to a bot and compares bot responses against expectedResponsess. Expected responses can be a variable number of args,
+     * each of which can be a single expected response of any PossibleExpectedMessageType or a collection of PossibleExpectedMessageType
+     * that mocks a randomly selected response by the bot
      * @param msg message to send to bot
      * @param expectedResponses (Optional) responses the bot-tester framework checks against
      */
