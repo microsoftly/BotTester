@@ -1,16 +1,16 @@
 {
-    "compilerOptions": {
-        "module": "commonjs",
-        "target": "es6",
-        "typeRoots": [
-            "../node_modules/@types"
+    'compilerOptions'; : {
+        'module'; : 'commonjs',
+        'target'; : 'es6',
+        'typeRoots'; : [
+            '../node_modules/@types'
         ],
-        "noImplicitAny": false,
-        "outDir": "../dist",
-        "sourceMap": true,
-        "declaration": true
+        'noImplicitAny'; : false,
+        'outDir'; : '../dist',
+        'sourceMap'; : true,
+        'declaration'; : true;
     },
-    "files": [
-        "./index.ts"
-    ]
+    'files'; : [
+        './index.ts'
+    ];
 }

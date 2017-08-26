@@ -2,12 +2,14 @@ import { IMessage } from 'botbuilder';
 import * as chai from 'chai';
 import * as chaiSamSam from 'chai-samsam';
 
-chai.use(chaiSamSam);
+// chai.use(chaiSamSam);/
 type DeepMatchReturn = { to: {
     deep: {
         match(arg: {}): {}
     }
 }};
+
+// type hack to get the ts to be happy
 type DeepMatch = (args: {}, errMsg?: string) => DeepMatchReturn;
 
 const expect = chai.expect;
@@ -21,7 +23,15 @@ export enum ExpectedMessageType {
     Regex
 }
 
+/**
+ * Types accepted for responses checkers
+ */
 export type PossibleExpectedMessageType = string | IMessage | RegExp;
+
+/**
+ * Response expectations area always collections. The collection is the set of possible responses, chosen at random. If the collection size
+ * is 1, then there is only one response that is expected
+ */
 export type PossibleExpectedMessageCollections = PossibleExpectedMessageType[];
 
 function getExpectedMessageType(expectedResponseCollection: PossibleExpectedMessageCollections): ExpectedMessageType {
@@ -36,8 +46,14 @@ function getExpectedMessageType(expectedResponseCollection: PossibleExpectedMess
     }
 }
 
+/**
+ * Class that wraps expectedResponseCollections for comparison against an outgoing message. One instance of ExpectedMessage represents one
+ * response from the bot.
+ */
 export class ExpectedMessage {
-    // if length > 1, random response
+    /**
+     * set of possible responses, chosen at random. If the collection size is 1, then there is only one response that is expected
+     */
     private readonly expectedResponseCollection: PossibleExpectedMessageCollections;
 
     constructor(expectedResponseCollection: PossibleExpectedMessageType | PossibleExpectedMessageCollections) {
@@ -50,6 +66,12 @@ export class ExpectedMessage {
         expect(this.expectedResponseCollection, 'expected response collections cannot be empty').not.to.be.empty;
     }
 
+    /**
+     * routes the outgoingMessage to the proper comparison method based on the expectedResponseCollection. This switch based method exists
+     * due to typescript's lack of polymorphism support.
+     *
+     * @param outgoingMessage outgoing message that is being compared
+     */
     public checkForMessageMatch(outgoingMessage: IMessage): void {
         switch (getExpectedMessageType(this.expectedResponseCollection)) {
             case ExpectedMessageType.String:
@@ -68,6 +90,12 @@ export class ExpectedMessage {
         }
     }
 
+    /**
+     * Asserts that outgoingMessage.text is within the expectedResponseStrings collection
+     *
+     * @param outgoingMessage outgoing message being compared
+     * @param expectedResponseStrings collection of possible string values for comparison
+     */
     private checkMessageTextForExactStringMatch(outgoingMessage: IMessage, expectedResponseStrings: string[]): void {
         const outgoingText = outgoingMessage.text;
 
@@ -80,6 +108,12 @@ export class ExpectedMessage {
         expect(expectedResponseStrings, errorString).to.include(outgoingText);
     }
 
+    /**
+     * Assumes the expectedResponseCollection are regexs. Asserts that outgoingMessage.text matches at least of the regexs in
+     * expectedResponseCollection
+     *
+     * @param outgoingMessage outgoing message being compared
+     */
     private checkMessageTextForRegex(outgoingMessage: IMessage): void {
         const text = outgoingMessage.text;
         const regexCollection: RegExp[] = this.expectedResponseCollection as RegExp[];
@@ -87,7 +121,13 @@ export class ExpectedMessage {
                `${text} did not match any regex in ${regexCollection}`).to.be.true;
     }
 
-    // add on additional checks here (e.g. address match, attachment match, etc ...)
+    /**
+     * Assumes the expectedResponseCollection is an IMessage[]. Asserts that at least one IMessage in expectedResponseCollection is fully
+     * contained within the outgoingMessage (i.e. the outgoingMessage  {type: 'message', text:'hello'}) would be matched successfully
+     * against {type: 'message', text: 'hello', user: { id: user1 }} because the outgoing message is contained within the response. It would
+     * not successfulyl be matched against {text: 'hello', user: { id: user1 }} because the expected response is missing { type: 'message' }
+     * @param outgoingMessage outgoing message being compared
+     */
     private deepMessageMatchCheck(outgoingMessage: IMessage): void {
         const expectedResponseCollectionAsIMessage = this.expectedResponseCollection as IMessage[];
         const expectedResponseStrings =

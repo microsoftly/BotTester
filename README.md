@@ -4,46 +4,6 @@ Simple framework that allows for easy testing of a botbuiler chatbot using mocha
 ```bash
 npm install --save bot-tester
 ```
-
-# Methods
-## ``` constructor(UniversalBot, defaultAddress?)) ```
-takes in a UniversalBot instance and optinally takes a default address to be used for all addresses without an explicit address. If not supplied, the default address is 
-``` javascript
-{ 
-    channelId: 'console',
-    user: { id: 'user1', name: 'user1' },
-    bot: { id: 'bot', name: 'Bot' },
-    conversation: { id: 'user1Conversation' }
-}
-```
-## ``` sendMessageToBot(message, expectedResponseOrExpectedAddress?, expectedAddress?) ```
-* message can be either a string or an IMessage
-* responses can be one of teh following:
-  * string, text that the bot responds with is compared directly
-  * IMessage, text is compared and address has a partial comparison performed, only the fields provided in the expected response are compared
-  * an array of either string or IMessage
-    * These are if multiple messages are sent in a row without a user response
-  * an array of array of string or IMessage
-    * Each array represents a collection of possible responses ( for random responses)
- * expectedResponseOrExpectedAddress is optional
- * expectedAddress is optional, defaults to the default address on the BotTester
-## ```checkSession(sessionCheckerFn, address?)```
-* sessionCheckerFunction is a function that takes a single parameter that is a session
-* address is optional and is the address of the session to be fetched. If not provided, the default address set on the bot is used.
-## ```runTest()```
-* executes the tests based on the script that has been built until this point.
-* returns a promise
-### note
-All methods allow for method chaining. Each returns the original instance of BotTester e.g.
-``` javascript
-new BotTester(bot)
-    .sendMessageToBot('Hello! My name is Elder Price')
-    .sendMessageToBot('and I would like to share with you')
-    .sendMessageToBot('the most amazing book')
-    .checkSession(session => expect(session.conversationData.book).to.be.equal('The Book of Mormon'))
-    .runTest()
-```
-
 # Example Usage
 ``` javascript
 const botbuilder = require("botbuilder");

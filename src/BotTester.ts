@@ -1,12 +1,14 @@
 import * as Promise from 'bluebird';
 import { IAddress, IMessage, Message, Session, UniversalBot } from 'botbuilder';
-import { DEFAULT_ADDRESS } from './defaultAddress';
 import { ExpectedMessage, PossibleExpectedMessageCollections, PossibleExpectedMessageType } from './ExpectedMessage';
 import { botToUserMessageCheckerFunction, MessageService } from './MessageService';
 import { SessionService } from './SessionService';
-import {
-    convertStringToMessage
-} from './utils';
+
+const DEFAULT_ADDRESS: IAddress = { channelId: 'console',
+    user: { id: 'user1', name: 'user1' },
+    bot: { id: 'bot', name: 'Bot' },
+    conversation: { id: 'user1Conversation' }
+};
 
 export type checkSessionFunction = (s: Session) => void;
 //tslint:disable
@@ -30,9 +32,9 @@ export class BotTester {
      * @param defaultAddress (Optional) the address that will be assumed for all response expecations that do not include an address
      * if not defined, it defaults to
      { channelId: 'console',
-     user: { id: 'user1', name: 'user1' },
-     bot: { id: 'bot', name: 'Bot' },
-     conversation: { id: 'user1Conversation' }
+        user: { id: 'user1', name: 'user1' },
+        bot: { id: 'bot', name: 'Bot' },
+        conversation: { id: 'user1Conversation' }
     };
     */
     //tslint:enable
@@ -102,7 +104,7 @@ export class BotTester {
     /**
      * Works exactly like Promise's .then function, except that the return value is not passed as an arg to the next function (even if its
      * another .then)
-     * @param fn some function to run 
+     * @param fn some function to run
      */
     //tslint:disable
     public then(fn: Function): BotTester {
@@ -113,11 +115,23 @@ export class BotTester {
     }
 
     private convertToIMessage(msg: string | IMessage): IMessage {
-        return typeof(msg) === 'string' ? convertStringToMessage(msg, this.defaultAddress) : msg;
+        if (typeof(msg) === 'string') {
+            return new Message()
+                .text(msg as string)
+                .address(this.defaultAddress)
+                .toMessage();
+        }
+
+        return msg;
     }
 
+    /**
+     * Packages the expected messages into an ExpectedMessage collection to be handed off to the MessageService's sendMessageToBot function
+     * @param message message to be sent to bot
+     * @param expectedResponses expected responses
+     */
     private sendMessageToBotInternal(
-        msg: IMessage,
+        message: IMessage,
         // currently only supports string RegExp IMessage
         expectedResponses: PossibleExpectedMessageType | PossibleExpectedMessageCollections | PossibleExpectedMessageCollections[]
     ): BotTester {
@@ -136,7 +150,7 @@ export class BotTester {
             }
         }
 
-        this.testSteps.push(() => this.messageService.sendMessageToBot(msg, expectedMessages));
+        this.testSteps.push(() => this.messageService.sendMessageToBot(message, expectedMessages));
 
         return this;
     }

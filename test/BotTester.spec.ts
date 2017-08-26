@@ -4,6 +4,7 @@ import { BotTester } from './../src/BotTester';
 
 const connector = new ConsoleConnector();
 
+// lines with //# should be converted to headers for markdown docs
 describe('BotTester', () => {
     let bot;
 
@@ -11,6 +12,7 @@ describe('BotTester', () => {
         bot = new UniversalBot(connector);
     });
 
+//# Test for single response
     it('can handle a single response', () => {
         bot.dialog('/', (session) => {
             session.send('hello!');
@@ -22,6 +24,7 @@ describe('BotTester', () => {
         return botTester.runTest();
     });
 
+//# Test for multiple responses
     it('can handle multiple responses', () => {
         bot.dialog('/', (session) => {
             session.send('hello!');
@@ -33,6 +36,7 @@ describe('BotTester', () => {
             .runTest();
     });
 
+//# Test for random response arrays
     // re-run the test multiple times to guarantee that multiple colors are returned
     let randomResponseRunCounter = 5;
     const colors = ['red', 'green', 'blue', 'grey', 'gray', 'purple', 'magenta', 'cheese', 'orange', 'hazelnut'];
@@ -48,7 +52,8 @@ describe('BotTester', () => {
         });
     }
 
-    it('can simulate conversation', () => {
+//# Test with prompts
+    it('can test prompts', () => {
         bot.dialog('/', [(session) => {
             new Prompts.text(session, 'Hi there! Tell me something you like');
         }, (session, results) => {
@@ -63,6 +68,7 @@ describe('BotTester', () => {
             .runTest();
     });
 
+//# Inspect session
     it('can inspect session state', () => {
         bot.dialog('/', [(session) => {
             new Prompts.text(session, 'What would you like to set data to?');
@@ -81,6 +87,7 @@ describe('BotTester', () => {
             .runTest();
     });
 
+//# Test custom messages
     it('can handle custom messages in response', () => {
         const customMessage: { someField?: {} } & IMessage = new Message()
             .text('this is text')
@@ -114,6 +121,7 @@ describe('BotTester', () => {
             .runTest();
     });
 
+//# Address/multiuser cases
     describe('Address/multi user', () => {
         const defaultAddress = { channelId: 'console',
             user: { id: 'user1', name: 'A' },
@@ -131,6 +139,7 @@ describe('BotTester', () => {
             bot.dialog('/', (session) => session.send(session.message.address.user.name));
         });
 
+//## Can check addressess, including partial addresses
         it('can ensure proper address being used for routing. Includes partial address', () => {
             const askForUser1Name = new Message()
                 .text('What is my name?')
@@ -158,6 +167,7 @@ describe('BotTester', () => {
                 .runTest();
         });
 
+//## Can have a default address assigned to the bot
         // the bot can have a default address that messages are sent to. If needed, the default address can be ignored by sending an IMessage
         it('Can have a default address assigned to it and communicate to multiple users', () => {
             const askForUser1Name = new Message()
@@ -196,7 +206,8 @@ describe('BotTester', () => {
         conversation: { id: 'user1Conversation' }
     };
 
-    it('can handle multiple messages in order at once', () => {
+//# Can test batch responses
+    it('can handle batch responses', () => {
         const msg1 = new Message()
             .address(CUSTOMER_ADDRESS)
             .text('hello')
@@ -216,6 +227,7 @@ describe('BotTester', () => {
             .runTest();
     });
 
+//# Can test using regex
     it('accepts RegExp', () => {
         const numberRegex = /^\d+/;
 
@@ -228,6 +240,22 @@ describe('BotTester', () => {
             .sendMessageToBot('1', numberRegex)
             .sendMessageToBot('3156', numberRegex)
             .sendMessageToBot('8675309', numberRegex)
+            .runTest();
+    });
+
+//# Can perform arbitrary work between test steps
+    it('can do arbitrary work between test steps', () => {
+        let responseString = 'goodbye';
+
+        bot.dialog('/', (session) => {
+            // send only numbers for this test case ....
+            session.send(responseString);
+        });
+
+        return new BotTester(bot)
+            .sendMessageToBot('you say', 'goodbye')
+            .then(() => responseString = 'hello')
+            .sendMessageToBot('and i say', 'hello')
             .runTest();
     });
 });
