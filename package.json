@@ -1,9 +1,9 @@
 {
   "name": "bot-tester",
-  "version": "1.1.13",
+  "version": "2.0.0",
   "description": "Easily test bots made with the bot builder framework",
-  "main": "dist/src/index.js",
-  "types": "dist/src/index.d.ts",
+  "main": "dist/BotTester.js",
+  "types": "dist/BotTester.d.ts",
   "author": "Matt Schwartz <mattschwartz310@gmail.com>",
   "license": "MIT",
   "keywords": [
@@ -32,13 +32,15 @@
   },
   "scripts": {
     "buildSrc": "tsc -p src/tsconfig.json",
-    "prepublishOnly": "npm run cleanBuild && npm run testDist",
+    "prepublishOnly": "npm run cleanBuild && npm run test && npm run buildTypeDocs",
     "clean": "rm -rf ./dist",
     "build": "tsc",
+    "lint": "tslint 'src/**/*.ts'",
+    "lint:fix": "tslint 'src/**/*.ts' --fix",
     "cleanBuild": "npm run clean && npm run build",
     "watch": "tsc -w",
     "test": "node_modules/mocha/bin/_mocha --require node_modules/ts-node/register test/BotTester.spec.ts",
-    "testDist": "node_modules/mocha/bin/_mocha dist/test/BotTester.spec.js"
+    "buildTypeDocs": "yarn cleanBuild && typedoc --excludeNotExported --out docs --hideGenerator src/BotTester.ts --module commonjs --gaID UA-105358964-1"
   },
   "dependencies": {
     "bluebird": "^3.5.0",
@@ -53,7 +55,7 @@
     "@types/bluebird": "^3.5.8",
     "@types/chai": "^4.0.1",
     "@types/mocha": "^2.2.41",
-    "@types/node": "^8.0.7",
+    "@types/node": "^8.0.25",
     "ts-node": "^3.1.0",
     "tslint": "^5.4.3",
     "typescript": "^2.4.1"

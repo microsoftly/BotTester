@@ -1,0 +1,339 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>bot-tester</title>
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="assets/js/search.js" data-base=".">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="index.html" class="title">bot-tester</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="globals.html">Globals</a>
+				</li>
+			</ul>
+			<h1> bot-tester</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<div class="tsd-panel tsd-typography">
+				<h1 id="bot-tester-for-bot-builder-framework-circleci-https-circleci-com-gh-microsoftly-bottester-svg-style-shield-https-circleci-com-gh-microsoftly-bottester-">Bot Tester for Bot Builder Framework <a href="https://circleci.com/gh/microsoftly/BotTester"><img src="https://circleci.com/gh/microsoftly/BotTester.svg?style=shield" alt="CircleCI"></a></h1>
+				<p>Simple framework that allows for easy testing of a botbuiler chatbot using mocha and chai.</p>
+				<h2 id="install">install</h2>
+				<pre><code class="lang-bash">npm install --save bot-tester
+</code></pre>
+				<h1 id="example-usage">Example Usage</h1>
+				<pre><code class="lang-javascript"><span class="hljs-keyword">const</span> botbuilder = <span class="hljs-built_in">require</span>(<span class="hljs-string">"botbuilder"</span>);
+<span class="hljs-keyword">const</span> chai = <span class="hljs-built_in">require</span>(<span class="hljs-string">"chai"</span>);
+<span class="hljs-keyword">const</span> { BotTester } = <span class="hljs-built_in">require</span>(<span class="hljs-string">"bot-tester"</span>);
+
+<span class="hljs-keyword">const</span> connector = <span class="hljs-keyword">new</span> botbuilder.ConsoleConnector();
+
+describe(<span class="hljs-string">'BotTester'</span>, () =&gt; {
+    <span class="hljs-keyword">let</span> bot;
+
+    beforeEach(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+        bot = <span class="hljs-keyword">new</span> botbuilder.UniversalBot(connector);
+    });
+
+    <span class="hljs-comment">// ... tests live here!</span>
+</code></pre>
+				<h2 id="test-for-single-response">Test for single response</h2>
+				<pre><code class="lang-javascript">    it(<span class="hljs-string">'can handle a single response'</span>, () =&gt; {
+        bot.dialog(<span class="hljs-string">'/'</span>, (session) =&gt; {
+            session.send(<span class="hljs-string">'hello!'</span>);
+        });
+
+        <span class="hljs-keyword">const</span> botTester = <span class="hljs-keyword">new</span> BotTester(bot)
+            .sendMessageToBot(<span class="hljs-string">'Hola!'</span>, <span class="hljs-string">'hello!'</span>);
+
+        <span class="hljs-keyword">return</span> botTester.runTest();
+    });
+</code></pre>
+				<h2 id="test-for-multiple-responses">Test for multiple responses</h2>
+				<pre><code class="lang-javascript">    it(<span class="hljs-string">'can handle multiple responses'</span>, () =&gt; {
+        bot.dialog(<span class="hljs-string">'/'</span>, (session) =&gt; {
+            session.send(<span class="hljs-string">'hello!'</span>);
+            session.send(<span class="hljs-string">'how are you doing?'</span>);
+        });
+
+        <span class="hljs-keyword">new</span> BotTester(bot)
+            .sendMessageToBot(<span class="hljs-string">'Hola!'</span>, [<span class="hljs-string">'hello!'</span>, <span class="hljs-string">'how are you doing?'</span>])
+            .runTest();
+    });
+</code></pre>
+				<h2 id="can-test-against-random-response-arrays">Can test against random response arrays</h2>
+				<pre><code class="lang-javascript">    <span class="hljs-comment">// re-run the test multiple times to guarantee that multiple colors are returned</span>
+    <span class="hljs-keyword">let</span> randomResponseRunCounter = <span class="hljs-number">15</span>;
+    <span class="hljs-keyword">const</span> colors = [<span class="hljs-string">'red'</span>, <span class="hljs-string">'green'</span>, <span class="hljs-string">'blue'</span>, <span class="hljs-string">'grey'</span>, <span class="hljs-string">'gray'</span>, <span class="hljs-string">'purple'</span>, <span class="hljs-string">'magenta'</span>, <span class="hljs-string">'cheese'</span>, <span class="hljs-string">'orange'</span>, <span class="hljs-string">'hazelnut'</span>];
+    <span class="hljs-keyword">while</span> (randomResponseRunCounter--) {
+        it(<span class="hljs-string">'Can handle random responses'</span>, () =&gt; {
+            bot.dialog(<span class="hljs-string">'/'</span>, (session) =&gt; {
+                session.send(colors);
+            });
+
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> BotTester(bot)
+                .sendMessageToBot(<span class="hljs-string">'tell me a color!'</span>, [colors])
+                .runTest();
+        });
+    }
+</code></pre>
+				<h3 id="simulate-conversation">Simulate conversation</h3>
+				<pre><code class="lang-javascript">    it(<span class="hljs-string">'can simulate conversation'</span>, () =&gt; {
+        bot.dialog(<span class="hljs-string">'/'</span>, [<span class="hljs-function">(<span class="hljs-params">session</span>) =&gt;</span> {
+                <span class="hljs-keyword">new</span> botbuilder.Prompts.text(session, <span class="hljs-string">'Hi there! Tell me something you like'</span>);
+            }, (session, results) =&gt; {
+                session.send(<span class="hljs-string">`<span class="hljs-subst">${results.response}</span> is pretty cool.`</span>);
+                <span class="hljs-keyword">new</span> botbuilder.Prompts.text(session, <span class="hljs-string">'Why do you like it?'</span>);
+            }, (session) =&gt; session.send(<span class="hljs-string">'Interesting. Well, that\'s all I have for now'</span>)]);
+
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> BotTester(bot)
+            .sendMessageToBot(<span class="hljs-string">'Hola!'</span>, <span class="hljs-string">'Hi there! Tell me something you like'</span>)
+            .sendMessageToBot(<span class="hljs-string">'The sky'</span>, [<span class="hljs-string">'The sky is pretty cool.'</span>, <span class="hljs-string">'Why do you like it?'</span>])
+            .sendMessageToBot(<span class="hljs-string">'It\'s blue'</span>, <span class="hljs-string">'Interesting. Well, that\'s all I have for now'</span>)
+            .runTest();
+    });
+</code></pre>
+				<h2 id="inspect-session-state">Inspect session state</h2>
+				<pre><code class="lang-javascript">    it(<span class="hljs-string">'can inspect session state'</span>, () =&gt; {
+        bot.dialog(<span class="hljs-string">'/'</span>, [<span class="hljs-function">(<span class="hljs-params">session</span>) =&gt;</span> {
+                <span class="hljs-keyword">new</span> botbuilder.Prompts.text(session, <span class="hljs-string">'What would you like to set data to?'</span>);
+            }, (session, results) =&gt; {
+                session.userData = { <span class="hljs-attr">data</span>: results.response };
+                session.save();
+            }]);
+
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> BotTester(bot)
+            .sendMessageToBot(<span class="hljs-string">'Start this thing!'</span>, <span class="hljs-string">'What would you like to set data to?'</span>)
+            .sendMessageToBot(<span class="hljs-string">'This is data!'</span>)
+            .checkSession(<span class="hljs-function">(<span class="hljs-params">session</span>) =&gt;</span> {
+            chai.expect(session.userData).not.to.be.null;
+            chai.expect(session.userData.data).to.be.equal(<span class="hljs-string">'This is data!'</span>);
+        })
+            .runTest();
+    });
+</code></pre>
+				<h4 id="address-multi-user-cases">Address/multi user cases</h4>
+				<pre><code class="lang-javascript">    describe(<span class="hljs-string">'Address/multi user'</span>, () =&gt; {
+        <span class="hljs-keyword">const</span> defaultAddress = { <span class="hljs-attr">channelId</span>: <span class="hljs-string">'console'</span>,
+            <span class="hljs-attr">user</span>: { <span class="hljs-attr">id</span>: <span class="hljs-string">'user1'</span>, <span class="hljs-attr">name</span>: <span class="hljs-string">'A'</span> },
+            <span class="hljs-attr">bot</span>: { <span class="hljs-attr">id</span>: <span class="hljs-string">'bot'</span>, <span class="hljs-attr">name</span>: <span class="hljs-string">'Bot'</span> },
+            <span class="hljs-attr">conversation</span>: { <span class="hljs-attr">id</span>: <span class="hljs-string">'user1Conversation'</span> }
+        };
+        <span class="hljs-keyword">const</span> user2Address = { <span class="hljs-attr">channelId</span>: <span class="hljs-string">'console'</span>,
+            <span class="hljs-attr">user</span>: { <span class="hljs-attr">id</span>: <span class="hljs-string">'user2'</span>, <span class="hljs-attr">name</span>: <span class="hljs-string">'B'</span> },
+            <span class="hljs-attr">bot</span>: { <span class="hljs-attr">id</span>: <span class="hljs-string">'bot'</span>, <span class="hljs-attr">name</span>: <span class="hljs-string">'Bot'</span> },
+            <span class="hljs-attr">conversation</span>: { <span class="hljs-attr">id</span>: <span class="hljs-string">'user2Conversation'</span> }
+        };
+
+        beforeEach(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+            bot.dialog(<span class="hljs-string">'/'</span>, (session) =&gt; session.send(session.message.address.user.name));
+        });
+</code></pre>
+				<h2 id="ensure-proper-address-is-used-for-routing">Ensure proper address is used for routing</h2>
+				<pre><code class="lang-javascript">        it(<span class="hljs-string">'can ensure proper address being used for routing. Includes partial address'</span>, () =&gt; {
+            <span class="hljs-keyword">const</span> askForUser1Name = <span class="hljs-keyword">new</span> botbuilder.Message()
+                .text(<span class="hljs-string">'What is my name?'</span>)
+                .address(defaultAddress)
+                .toMessage();
+
+            <span class="hljs-keyword">const</span> expectedAddressInMessage = <span class="hljs-keyword">new</span> botbuilder.Message()
+                .address(defaultAddress)
+                .toMessage();
+
+            <span class="hljs-keyword">const</span> addr = {
+                <span class="hljs-attr">user</span>: {
+                    <span class="hljs-attr">id</span>: <span class="hljs-string">'user1'</span>
+                }
+            };
+
+            <span class="hljs-comment">// partial addresses work as well (i.e. if you only want to check one field such as userId)</span>
+            <span class="hljs-keyword">const</span> expectedPartialAddress = <span class="hljs-keyword">new</span> botbuilder.Message()
+                .address(addr)
+                .toMessage();
+
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> BotTester(bot)
+                .sendMessageToBot(askForUser1Name, expectedAddressInMessage)
+                .sendMessageToBot(askForUser1Name, expectedPartialAddress)
+                .runTest();
+        });
+</code></pre>
+				<h2 id="assign-default-addresses-and-communicate-to-multiple-users">Assign default addresses and communicate to multiple users</h2>
+				<pre><code class="lang-javascript">        <span class="hljs-comment">// the bot can have a default address that messages are sent to. If needed, this address can always be overriden</span>
+        it(<span class="hljs-string">'Can have a default address assigned to it and communicate to multiple users'</span>, () =&gt; {
+            <span class="hljs-keyword">const</span> askForUser1Name = <span class="hljs-keyword">new</span> botbuilder.Message()
+                .text(<span class="hljs-string">'What is my name?'</span>)
+                .address(defaultAddress)
+                .toMessage();
+
+            <span class="hljs-keyword">const</span> askForUser2Name = <span class="hljs-keyword">new</span> botbuilder.Message()
+                .text(<span class="hljs-string">'What is my name?'</span>)
+                .address(user2Address)
+                .toMessage();
+
+            <span class="hljs-comment">// when testing for an address that is not the default for the bot, the address must be passed in</span>
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> BotTester(bot, defaultAddress)
+                .sendMessageToBot(askForUser1Name, <span class="hljs-string">'A'</span>)
+                .sendMessageToBot(askForUser1Name, <span class="hljs-string">'A'</span>, defaultAddress)
+                .sendMessageToBot(askForUser2Name, <span class="hljs-string">'B'</span>, user2Address)
+                .runTest();
+        });
+    });
+});
+</code></pre>
+			</div>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="globals.html"><em>Globals</em></a>
+					</li>
+					<li class="label tsd-is-external">
+						<span>Internals</span>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_bottester_.html">"<wbr>Bot<wbr>Tester"</a>
+					</li>
+					<li class="label tsd-is-external">
+						<span>Externals</span>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_expectedmessage_.html">"<wbr>Expected<wbr>Message"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_messageservice_.html">"<wbr>Message<wbr>Service"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_outgoingmessagecomparator_.html">"<wbr>Outgoing<wbr>Message<wbr>Comparator"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_sessionservice_.html">"<wbr>Session<wbr>Service"</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer>
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-module"><span class="tsd-kind-icon">Module</span></li>
+				<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object literal</span></li>
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
+				<li class="tsd-kind-index-signature"><span class="tsd-kind-icon">Index signature</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
+				<li class="tsd-kind-enum-member"><span class="tsd-kind-icon">Enumeration member</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-enum"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-enum"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-interface"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-interface"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class"><span class="tsd-kind-icon">Accessor</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-class"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static property</span></li>
+				<li class="tsd-kind-call-signature tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="overlay"></div>
+<script src="assets/js/main.js"></script>
+<script>if (location.protocol == 'file:') document.write('<script src="assets/js/search.js"><' + '/script>');</script>
+<script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-105358964-1', '');
+        ga('send', 'pageview');
+    </script>
+</body>
+</html>

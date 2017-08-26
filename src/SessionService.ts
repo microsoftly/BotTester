@@ -5,9 +5,18 @@ interface ISaveUpdatableSession extends Session {
     saveUpdated: boolean;
 }
 
+/**
+ * Service that provides session for addresses. Injects code into a Universal bot to allow session save and load listeners to work
+ */
 export class SessionService {
     private bot: UniversalBot;
     private currentSessionLoadResolver: (s: Session) => void;
+    /**
+     * This is a crucial field to proper serial execution of the BotTester framework. session.save occurs asynchronously in UniversalBot
+     * batch executions. We do not want to be able to load a session if session.save has been called, but the bot's batch has yet to
+     * execute. This promise will be set to resolved when the bot's latest batch has finished, should the framework be watching for a save
+     * call. This value is defaulted to a resolved promise.
+     */
     //tslint:disable
     private savePerformed: Promise<any>;
     //tslint:enable
@@ -19,6 +28,11 @@ export class SessionService {
         this.savePerformed = Promise.resolve();
     }
 
+    /**
+     * fetches a session for a particular address
+     *
+     * @param addr address of session to load
+     */
     public getSession(addr: IAddress): Promise<Session> {
         return new Promise<Session>((res: (s: Session) => void, rej: Function) => {
             this.createSessionWrapperWithLoadMessageOverride(addr);
@@ -29,10 +43,29 @@ export class SessionService {
         }).bind(this);
     }
 
+    /**
+     * a message internal to the BotTester framework. Due limitations in the botbuilder framework, this message is sent to the bot whenever
+     * session.save is called. This allows the framework to know when session.save is called and resolve accordingly. Without this, the
+     * session state may not be persisted before the next test step is run
+     * @param address address that the save message should come from
+     */
+    public getInternalSaveMessage(address: IAddress): IMessage {
+        const saveEvent = new Message()
+            .address(address)
+            .toMessage();
+
+        saveEvent.type = '__save__';
+
+        return saveEvent;
+    }
+
+    /**
+     * This is a delicate hack that relies on accessing and modifying the private field createSession on UniversalBot.
+     * This makes the bot's next createSession call result in a session with a message of type 'load'. This allows the sessionLoadListener
+     * to know if a message that the bot thinks it received was actually the result of a call to bot.createSession
+     * @param addr address of the message that is being loaded
+     */
     private createSessionWrapperWithLoadMessageOverride(addr: IAddress): void {
-        // This is a delicate hack that relies on knowing the private fields of a UniversalBot
-        // The net effect is calling createSessio n with a message of type 'load' that gets
-        // handled in the BotTester interception middleware (see applySessionLoadListener)
         // tslint:disable
         const createSessionOriginal: Function = this.bot['createSession'];
 
@@ -55,21 +88,31 @@ export class SessionService {
         }.bind(this);
     }
 
-    // loads session immediately, or waits for previous save request to finish before loading
-    private loadSession(addr: IAddress): void {
+    /**
+     * Loads a session associated with an address. 
+     * @param address address to be loaded
+     */
+    private loadSession(address: IAddress): void {
         this.savePerformed
             .then(() => {
                 //tslint:disable
                 // this callback will never actually get called, but it sets off the events allowing
                 // for the encapsulating promise to resolve
-                this.bot.loadSession(addr, (a) => {});
+                this.bot.loadSession(address, (a) => {});
                 //tslint:enable
             });
     }
 
+    /**
+     * adds middleware to the bot that checks for incoming load messages sent by createSessionWrapperWithLoadMessageOverride's
+     * bot.createSession wrapper. This lets us know that the message was never meant to go through the bot's middelware and ignore it.
+     * The session loaded into this message is then used as the value that the Promise returned from getSession resolves to
+     */
     private applySessionLoadListener(): void {
         this.bot.use({
             botbuilder: (session: Session, next: Function) => {
+                // TODO add in address comparison with address encoded in createSessionWrapperWithLoadMessageOverride's wrapper to
+                // createSession
                 if (session.message.type === 'load') {
                     //tslint:disable
                     // its not actually supposed to be in the middleware, so unset this
@@ -83,23 +126,22 @@ export class SessionService {
         });
     }
 
+    /**
+     * Adds a routing event listner which is the first execution path called after a session has been successfully loaded. If this session
+     * has not already gone through this listener, then it wraps session.save in a function that sends the internal save message that is
+     * mocked to be sent to the user, and thereby intercepted by the MessageService. This ensures that the test runner does not continue
+     * preemptively. When the session's save method is called, the message is actually sent and alerts the BotTester framework
+     */
     private applySessionSaveListener(): void {
-        // routing is where after session.save is called. We're hihacking it to add our meta save function that will send the
-        // messageReceivedHandler an event of type "save". This allows the test runner to continue the serial promise
-        // execution even if a message is not explicitly returned to the user but session state is saved. Note that saving
-        // session and sending a message back to the user in one dialog step will cause an error, but is also bad practice.
-        // every time a message is sent to a user, session is saved implicitly.
-
         // this is a critical hack that attaches an extra field onto session. Gonna just ignore this lint issue for now
         this.bot.on('routing', (session: ISaveUpdatableSession) => {
         // tslint:enable
-            if (!session.saveUpdated) {
+            // if session.saveUpdated === true, then we should ignore this session being routed because it has already had its save method
+            // hijacked
+            if (!session.saveUpdated ) {
                 session.saveUpdated = true;
-                const saveEvent = new Message()
-                    .address(session.message.address)
-                    .toMessage();
 
-                saveEvent.type = 'save';
+                const saveEvent = this.getInternalSaveMessage(session.message.address);
 
                 const save = session.save.bind(session);
                 session.save = function(): Session {
