@@ -4,7 +4,7 @@ Simple framework that allows for easy testing of a botbuiler chatbot using mocha
 ```bash
 npm install --save bot-tester
 ```
-## Class definitions, see the [BotTester Framework reference docs](https://microsoftly.github.io/BotTester/)
+## Class definitions, see the [BotTester Framework reference docs](https://microsoftly.github.io/BotTester/classes/_bottester_.bottester.html)
 
 # Example Usage
 ```javascript
