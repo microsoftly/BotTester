@@ -32,22 +32,22 @@ describe('BotTester', () => {
         });
 
         new BotTester(bot)
-            .sendMessageToBot('Hola!', ['hello!', 'how are you doing?'])
+            .sendMessageToBot('Hola!', 'hello!', 'how are you doing?')
             .runTest();
     });
 
 //# Test for random response arrays
     // re-run the test multiple times to guarantee that multiple colors are returned
     let randomResponseRunCounter = 5;
-    const colors = ['red', 'green', 'blue', 'grey', 'gray', 'purple', 'magenta', 'cheese', 'orange', 'hazelnut'];
+    const randomColors = ['red', 'green', 'blue', 'grey', 'gray', 'purple', 'magenta', 'cheese', 'orange', 'hazelnut'];
     while (randomResponseRunCounter--) {
         it('Can handle random responses', () => {
             bot.dialog('/', (session) => {
-                session.send(colors);
+                session.send(randomColors);
             });
 
             return new BotTester(bot)
-                .sendMessageToBot('tell me a color!', [colors])
+                .sendMessageToBot('tell me a color!', randomColors)
                 .runTest();
         });
     }
@@ -207,7 +207,7 @@ describe('BotTester', () => {
     };
 
 //# Can test batch responses
-    it('can handle batch responses', () => {
+    it.only('can handle batch responses', () => {
         const msg1 = new Message()
             .address(CUSTOMER_ADDRESS)
             .text('hello')
@@ -223,7 +223,7 @@ describe('BotTester', () => {
         });
 
         return new BotTester(bot, CUSTOMER_ADDRESS)
-            .sendMessageToBot('anything', ['hello', 'there'])
+            .sendMessageToBot('anything', 'hello', 'there')
             .runTest();
     });
 
@@ -240,6 +240,21 @@ describe('BotTester', () => {
             .sendMessageToBot('1', numberRegex)
             .sendMessageToBot('3156', numberRegex)
             .sendMessageToBot('8675309', numberRegex)
+            .runTest();
+    });
+
+//# variable # args can have mixed type
+    it('rest params can have mixed type', () => {
+        const numberRegex = /^\d+/;
+
+        bot.dialog('/', (session) => {
+            // send only numbers for this test case ....
+            session.send(session.message.text);
+            session.send(session.message.text);
+        });
+
+        return new BotTester(bot)
+            .sendMessageToBot('123', numberRegex, '123')
             .runTest();
     });
 

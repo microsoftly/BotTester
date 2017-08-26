@@ -80,7 +80,7 @@ export class BotTester {
     public sendMessageToBot(
         msg: IMessage | string,
         // currently only supports string RegExp IMessage
-        expectedResponses?: PossibleExpectedMessageType | PossibleExpectedMessageCollections | PossibleExpectedMessageCollections[]
+        ...expectedResponses: (PossibleExpectedMessageType | PossibleExpectedMessageType[])[]
     ): BotTester {
         const message = this.convertToIMessage(msg);
 
@@ -98,7 +98,7 @@ export class BotTester {
     ): BotTester {
         const message = this.convertToIMessage(msg);
 
-        return this.sendMessageToBotInternal(message, this.sessionLoader.getInternalSaveMessage(message.address));
+        return this.sendMessageToBotInternal(message, [this.sessionLoader.getInternalSaveMessage(message.address)]);
     }
 
     /**
@@ -133,7 +133,8 @@ export class BotTester {
     private sendMessageToBotInternal(
         message: IMessage,
         // currently only supports string RegExp IMessage
-        expectedResponses: PossibleExpectedMessageType | PossibleExpectedMessageCollections | PossibleExpectedMessageCollections[]
+        expectedResponses: (PossibleExpectedMessageType | PossibleExpectedMessageType[])[]
+        //PossibleExpectedMessageCollections | PossibleExpectedMessageCollections[]
     ): BotTester {
         let expectedMessages: ExpectedMessage[] = [];
 
