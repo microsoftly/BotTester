@@ -40,7 +40,7 @@
     "cleanBuild": "npm run clean && npm run build",
     "watch": "tsc -w",
     "test": "node_modules/mocha/bin/_mocha --require node_modules/ts-node/register test/BotTester.spec.ts",
-    "buildTypeDocs": "yarn cleanBuild && typedoc --excludeNotExported --out docs --hideGenerator src/BotTester.ts --module commonjs --gaID UA-105358964-1"
+    "buildTypeDocs": "yarn cleanBuild && typedoc --excludeNotExported --out docs --hideGenerator src/BotTester.ts --module commonjs --gaID UA-105358964-1 --readme none"
   },
   "dependencies": {
     "bluebird": "^3.5.0",
