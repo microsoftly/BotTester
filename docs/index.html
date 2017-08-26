@@ -66,22 +66,22 @@
 				<p>Simple framework that allows for easy testing of a botbuiler chatbot using mocha and chai.</p>
 				<h2 id="install">install</h2>
 				<pre><code class="lang-bash">npm install --save bot-tester
-<span class="hljs-comment"># Example Usage</span>
-``` javascript
-const botbuilder = require(<span class="hljs-string">"botbuilder"</span>);
-const chai = require(<span class="hljs-string">"chai"</span>);
-const { BotTester } = require(<span class="hljs-string">"bot-tester"</span>);
+</code></pre>
+				<h1 id="example-usage">Example Usage</h1>
+				<pre><code class="lang-javascript"><span class="hljs-keyword">const</span> botbuilder = <span class="hljs-built_in">require</span>(<span class="hljs-string">"botbuilder"</span>);
+<span class="hljs-keyword">const</span> chai = <span class="hljs-built_in">require</span>(<span class="hljs-string">"chai"</span>);
+<span class="hljs-keyword">const</span> { BotTester } = <span class="hljs-built_in">require</span>(<span class="hljs-string">"bot-tester"</span>);
 
-const connector = new botbuilder.ConsoleConnector();
+<span class="hljs-keyword">const</span> connector = <span class="hljs-keyword">new</span> botbuilder.ConsoleConnector();
 
 describe(<span class="hljs-string">'BotTester'</span>, () =&gt; {
-    <span class="hljs-built_in">let</span> bot;
+    <span class="hljs-keyword">let</span> bot;
 
-    beforeEach(() =&gt; {
-        bot = new botbuilder.UniversalBot(connector);
+    beforeEach(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+        bot = <span class="hljs-keyword">new</span> botbuilder.UniversalBot(connector);
     });
 
-    // ... tests live here!
+    <span class="hljs-comment">// ... tests live here!</span>
 </code></pre>
 				<h2 id="test-for-single-response">Test for single response</h2>
 				<pre><code class="lang-javascript">    it(<span class="hljs-string">'can handle a single response'</span>, () =&gt; {
