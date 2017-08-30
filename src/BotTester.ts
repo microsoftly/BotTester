@@ -86,6 +86,9 @@ export class BotTester {
     ): BotTester {
         const message = this.convertToIMessage(msg);
 
+        // possible that expected responses may be undefined. Remove them
+        expectedResponses = expectedResponses.filter((expectedResponse: {}) => expectedResponse);
+
         return this.sendMessageToBotInternal(message, expectedResponses);
     }
 
