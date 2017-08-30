@@ -83,7 +83,7 @@ describe('BotTester', () => {
 
         return new BotTester(bot)
             .sendMessageToBot('Hola!', 'Hi there! Tell me something you like')
-            .sendMessageToBot('The sky', ['The sky is pretty cool.', 'Why do you like it?'])
+            .sendMessageToBot('The sky', 'The sky is pretty cool.', 'Why do you like it?')
             .sendMessageToBot('It\'s blue', 'Interesting. Well, that\'s all I have for now')
             .runTest();
     });
@@ -301,7 +301,6 @@ describe('BotTester', () => {
         let responseString = 'goodbye';
 
         bot.dialog('/', (session) => {
-            // send only numbers for this test case ....
             session.send(responseString);
         });
 
