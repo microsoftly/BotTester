@@ -302,5 +302,18 @@ describe('BotTester', () => {
             .sendMessageToBot('and i say', 'hello')
             .runTest();
     });
-});
 //```
+    describe('Cases not for docs', () => {
+        it('can handle undefined expectedResponses', () => {
+            bot.dialog('/', (session: Session) => {
+                session.send('hello');
+            });
+
+            return new BotTester(bot)
+                .sendMessageToBot('this IS another thing')
+                // send second message to make sure the tests can continue as expected
+                .sendMessageToBot('this could be anything!', 'hello')
+                .runTest();
+        });
+    });
+});
