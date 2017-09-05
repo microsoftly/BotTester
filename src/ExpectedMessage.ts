@@ -1,22 +1,6 @@
 import { IMessage } from 'botbuilder';
-import * as chai from 'chai';
-import * as chaiSamSam from 'chai-samsam';
+import { expect } from './Expectation';
 
-// chai.use(chaiSamSam);/
-type DeepMatchReturn = { to: {
-    deep: {
-        match(arg: {}): {}
-    }
-}};
-
-// type hack to get the ts to be happy
-type DeepMatch = (args: {}, errMsg?: string) => DeepMatchReturn;
-
-const expect = chai.expect;
-
-//tslint:disable
-const expectWithDeepMatch: DeepMatch = expect as any;
-//tslint:enable
 export enum ExpectedMessageType {
     String,
     IMessage,
@@ -63,7 +47,7 @@ export class ExpectedMessage {
             this.expectedResponseCollection = expectedResponseCollection as PossibleExpectedMessageCollections;
         }
 
-        expect(this.expectedResponseCollection, 'expected response collections cannot be empty').not.to.be.empty;
+        expect(this.expectedResponseCollection, 'expected response collections cannot be empty').notToBeEmpty();
     }
 
     /**
@@ -85,8 +69,7 @@ export class ExpectedMessage {
                 this.deepMessageMatchCheck(outgoingMessage);
                 break;
             default:
-                expect(outgoingMessage.type).to.equal('save');
-
+                expect(outgoingMessage.type).toEqual('save');
         }
     }
 
@@ -105,7 +88,7 @@ export class ExpectedMessage {
         const errorString =
             `Bot should have responded with '${errorStringExpectedResponseText}', but was '${outgoingText}`;
 
-        expect(expectedResponseStrings, errorString).to.include(outgoingText);
+        expect(expectedResponseStrings, errorString).toInclude(outgoingText);
     }
 
     /**
@@ -118,7 +101,7 @@ export class ExpectedMessage {
         const text = outgoingMessage.text;
         const regexCollection: RegExp[] = this.expectedResponseCollection as RegExp[];
         expect(regexCollection.some((regex: RegExp) => regex.test(text)),
-               `${text} did not match any regex in ${regexCollection}`).to.be.true;
+               `${text} did not match any regex in ${regexCollection}`).toBeTrue();
     }
 
     /**
@@ -160,7 +143,7 @@ export class ExpectedMessage {
             delete expectedResponse.agent;
 
             try {
-                expectWithDeepMatch(clone).to.deep.match(expectedResponse);
+                expect(clone).toDeeplyInclude(expectedResponse);
                 matchExists = true;
             } catch (e) {
                 // continue
