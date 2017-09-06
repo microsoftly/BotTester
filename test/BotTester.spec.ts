@@ -182,7 +182,7 @@ describe('BotTester', () => {
 
             return new BotTester(bot)
                 .sendMessageToBot(askForUser1Name, expectedAddressInMessage)
-                // .sendMessageToBot(askForUser1Name, expectedPartialAddress)
+                .sendMessageToBot(askForUser1Name, expectedPartialAddress)
                 .runTest();
         });
 //```
