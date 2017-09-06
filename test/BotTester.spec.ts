@@ -119,13 +119,6 @@ describe('BotTester', () => {
         matchingCustomMessage.text = 'this is text';
         matchingCustomMessage.type = 'newType';
 
-        const nonMatchingCustomMessage: { someField?: {} } & IMessage = new Message()
-            .text('this is text')
-            .toMessage();
-
-        nonMatchingCustomMessage.someField = 'nope';
-        nonMatchingCustomMessage.type = 'newType';
-
         bot.dialog('/', (session: Session) => {
             session.send(customMessage);
         });
