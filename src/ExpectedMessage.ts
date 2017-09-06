@@ -1,5 +1,5 @@
 import { IMessage } from 'botbuilder';
-import { expect } from './Expectation';
+import { expect } from './IExpectation';
 
 export enum ExpectedMessageType {
     String,
@@ -124,30 +124,6 @@ export class ExpectedMessage {
             this.checkMessageTextForExactStringMatch(outgoingMessage, expectedResponseStrings);
         }
 
-        let matchExists: boolean = false;
-
-        expectedResponseCollectionAsIMessage.forEach((expectedResponse: IMessage) => {
-            if (matchExists) {
-                return;
-            }
-
-            const clone = Object.assign({}, outgoingMessage);
-
-            // ignore source event (not added to message until after sending)
-            delete expectedResponse.source;
-
-            // auto added by prompts, not needed
-            delete outgoingMessage.inputHint;
-
-            // always botbuilder
-            delete expectedResponse.agent;
-
-            try {
-                expect(clone).toDeeplyInclude(expectedResponse);
-                matchExists = true;
-            } catch (e) {
-                // continue
-            }
-        });
+        expect(expectedResponseCollectionAsIMessage).toDeeplyInclude(outgoingMessage);
     }
 }
