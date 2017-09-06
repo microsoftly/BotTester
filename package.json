@@ -39,8 +39,9 @@
     "lint:fix": "tslint 'src/**/*.ts' --fix",
     "cleanBuild": "npm run clean && npm run build",
     "watch": "tsc -w",
-    "test": "node_modules/mocha/bin/_mocha --require node_modules/ts-node/register test/*.spec.ts",
-    "buildTypeDocs": "yarn cleanBuild && typedoc --excludeNotExported --out docs --hideGenerator src/BotTester.ts --module commonjs --gaID UA-105358964-1 --readme none"
+    "test": "node_modules/mocha/bin/_mocha --require node_modules/ts-node/register test/BotTester.spec.ts",
+    "buildTypeDocs": "yarn cleanBuild && typedoc --excludeNotExported --out docs --hideGenerator src/BotTester.ts --module commonjs --gaID UA-105358964-1 --readme none",
+    "ci": "yarn lint && yarn test"
   },
   "dependencies": {
     "bluebird": "^3.5.0",
@@ -61,6 +62,7 @@
     "mocha": "^3.4.2",
     "ts-node": "^3.1.0",
     "tslint": "^5.4.3",
+    "typedoc": "^0.8.0",
     "typescript": "^2.4.1"
   },
   "files": [
