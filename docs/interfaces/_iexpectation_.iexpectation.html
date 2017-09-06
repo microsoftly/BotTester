@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>ExpectedMessageType | bot-tester</title>
+	<title>IExpectation | bot-tester</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -54,65 +54,161 @@
 					<a href="../index.html">Globals</a>
 				</li>
 				<li>
-					<a href="../modules/_expectedmessage_.html">&quot;ExpectedMessage&quot;</a>
+					<a href="../modules/_iexpectation_.html">&quot;IExpectation&quot;</a>
 				</li>
 				<li>
-					<a href="_expectedmessage_.expectedmessagetype.html">ExpectedMessageType</a>
+					<a href="_iexpectation_.iexpectation.html">IExpectation</a>
 				</li>
 			</ul>
-			<h1>Enumeration ExpectedMessageType</h1>
+			<h1>Interface IExpectation</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>framework based extractions. New frameworks will implement this interface to be able to be used seamlessly within the framework</p>
+					</div>
+				</div>
+			</section>
+			<section class="tsd-panel tsd-hierarchy">
+				<h3>Hierarchy</h3>
+				<ul class="tsd-hierarchy">
+					<li>
+						<span class="target">IExpectation</span>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel">
+				<h3>Implemented by</h3>
+				<ul class="tsd-hierarchy">
+					<li><a href="../classes/_chaiexpectation_.chaiexpectation.html" class="tsd-signature-type">ChaiExpectation</a></li>
+				</ul>
+			</section>
 			<section class="tsd-panel-group tsd-index-group">
 				<h2>Index</h2>
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
 						<section class="tsd-index-section tsd-is-external">
-							<h3>Enumeration members</h3>
+							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-enum-member tsd-parent-kind-enum tsd-is-external"><a href="_expectedmessage_.expectedmessagetype.html#imessage" class="tsd-kind-icon">IMessage</a></li>
-								<li class="tsd-kind-enum-member tsd-parent-kind-enum tsd-is-external"><a href="_expectedmessage_.expectedmessagetype.html#regex" class="tsd-kind-icon">Regex</a></li>
-								<li class="tsd-kind-enum-member tsd-parent-kind-enum tsd-is-external"><a href="_expectedmessage_.expectedmessagetype.html#string" class="tsd-kind-icon">String</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-external"><a href="_iexpectation_.iexpectation.html#nottobeempty" class="tsd-kind-icon">not<wbr>ToBe<wbr>Empty</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-external"><a href="_iexpectation_.iexpectation.html#tobetrue" class="tsd-kind-icon">to<wbr>BeTrue</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-external"><a href="_iexpectation_.iexpectation.html#todeeplyinclude" class="tsd-kind-icon">to<wbr>Deeply<wbr>Include</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-external"><a href="_iexpectation_.iexpectation.html#toequal" class="tsd-kind-icon">to<wbr>Equal</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-external"><a href="_iexpectation_.iexpectation.html#toinclude" class="tsd-kind-icon">to<wbr>Include</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group tsd-is-external">
-				<h2>Enumeration members</h2>
-				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum tsd-is-external">
-					<a name="imessage" class="tsd-anchor"></a>
-					<h3>IMessage</h3>
-					<div class="tsd-signature tsd-kind-icon">IMessage<span class="tsd-signature-symbol">:</span> </div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/microsoftly/BotTester/blob/07aad93/src/ExpectedMessage.ts#L6">ExpectedMessage.ts:6</a></li>
-						</ul>
-					</aside>
+				<h2>Methods</h2>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-external">
+					<a name="nottobeempty" class="tsd-anchor"></a>
+					<h3>not<wbr>ToBe<wbr>Empty</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-external">
+						<li class="tsd-signature tsd-kind-icon">not<wbr>ToBe<wbr>Empty<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/microsoftly/BotTester/blob/07aad93/src/IExpectation.ts#L7">IExpectation.ts:7</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum tsd-is-external">
-					<a name="regex" class="tsd-anchor"></a>
-					<h3>Regex</h3>
-					<div class="tsd-signature tsd-kind-icon">Regex<span class="tsd-signature-symbol">:</span> </div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/microsoftly/BotTester/blob/07aad93/src/ExpectedMessage.ts#L7">ExpectedMessage.ts:7</a></li>
-						</ul>
-					</aside>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-external">
+					<a name="tobetrue" class="tsd-anchor"></a>
+					<h3>to<wbr>BeTrue</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-external">
+						<li class="tsd-signature tsd-kind-icon">to<wbr>BeTrue<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/microsoftly/BotTester/blob/07aad93/src/IExpectation.ts#L10">IExpectation.ts:10</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum tsd-is-external">
-					<a name="string" class="tsd-anchor"></a>
-					<h3>String</h3>
-					<div class="tsd-signature tsd-kind-icon">String<span class="tsd-signature-symbol">:</span> </div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/microsoftly/BotTester/blob/07aad93/src/ExpectedMessage.ts#L5">ExpectedMessage.ts:5</a></li>
-						</ul>
-					</aside>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-external">
+					<a name="todeeplyinclude" class="tsd-anchor"></a>
+					<h3>to<wbr>Deeply<wbr>Include</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-external">
+						<li class="tsd-signature tsd-kind-icon">to<wbr>Deeply<wbr>Include<span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">__type</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/microsoftly/BotTester/blob/07aad93/src/IExpectation.ts#L11">IExpectation.ts:11</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>value: <span class="tsd-signature-type">__type</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-external">
+					<a name="toequal" class="tsd-anchor"></a>
+					<h3>to<wbr>Equal</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-external">
+						<li class="tsd-signature tsd-kind-icon">to<wbr>Equal<span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">__type</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/microsoftly/BotTester/blob/07aad93/src/IExpectation.ts#L8">IExpectation.ts:8</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>value: <span class="tsd-signature-type">__type</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-external">
+					<a name="toinclude" class="tsd-anchor"></a>
+					<h3>to<wbr>Include</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-external">
+						<li class="tsd-signature tsd-kind-icon">to<wbr>Include<span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">__type</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/microsoftly/BotTester/blob/07aad93/src/IExpectation.ts#L9">IExpectation.ts:9</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>value: <span class="tsd-signature-type">__type</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
 				</section>
 			</section>
 		</div>
@@ -134,10 +230,10 @@
 					<li class=" tsd-kind-external-module tsd-is-external">
 						<a href="../modules/_chaiexpectation_.html">"<wbr>Chai<wbr>Expectation"</a>
 					</li>
-					<li class="current tsd-kind-external-module tsd-is-external">
+					<li class=" tsd-kind-external-module tsd-is-external">
 						<a href="../modules/_expectedmessage_.html">"<wbr>Expected<wbr>Message"</a>
 					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
+					<li class="current tsd-kind-external-module tsd-is-external">
 						<a href="../modules/_iexpectation_.html">"IExpectation"</a>
 					</li>
 					<li class=" tsd-kind-external-module tsd-is-external">
@@ -155,30 +251,30 @@
 				<ul class="before-current">
 				</ul>
 				<ul class="current">
-					<li class="current tsd-kind-enum tsd-parent-kind-external-module tsd-is-external">
-						<a href="_expectedmessage_.expectedmessagetype.html" class="tsd-kind-icon">Expected<wbr>Message<wbr>Type</a>
+					<li class="current tsd-kind-interface tsd-parent-kind-external-module tsd-is-external">
+						<a href="_iexpectation_.iexpectation.html" class="tsd-kind-icon">IExpectation</a>
 						<ul>
-							<li class=" tsd-kind-enum-member tsd-parent-kind-enum tsd-is-external">
-								<a href="_expectedmessage_.expectedmessagetype.html#imessage" class="tsd-kind-icon">IMessage</a>
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-external">
+								<a href="_iexpectation_.iexpectation.html#nottobeempty" class="tsd-kind-icon">not<wbr>ToBe<wbr>Empty</a>
 							</li>
-							<li class=" tsd-kind-enum-member tsd-parent-kind-enum tsd-is-external">
-								<a href="_expectedmessage_.expectedmessagetype.html#regex" class="tsd-kind-icon">Regex</a>
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-external">
+								<a href="_iexpectation_.iexpectation.html#tobetrue" class="tsd-kind-icon">to<wbr>BeTrue</a>
 							</li>
-							<li class=" tsd-kind-enum-member tsd-parent-kind-enum tsd-is-external">
-								<a href="_expectedmessage_.expectedmessagetype.html#string" class="tsd-kind-icon">String</a>
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-external">
+								<a href="_iexpectation_.iexpectation.html#todeeplyinclude" class="tsd-kind-icon">to<wbr>Deeply<wbr>Include</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-external">
+								<a href="_iexpectation_.iexpectation.html#toequal" class="tsd-kind-icon">to<wbr>Equal</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-external">
+								<a href="_iexpectation_.iexpectation.html#toinclude" class="tsd-kind-icon">to<wbr>Include</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
-					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-is-external">
-						<a href="../classes/_expectedmessage_.expectedmessage.html" class="tsd-kind-icon">Expected<wbr>Message</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-external">
-						<a href="../modules/_expectedmessage_.html#possibleexpectedmessagecollections" class="tsd-kind-icon">Possible<wbr>Expected<wbr>Message<wbr>Collections</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-external">
-						<a href="../modules/_expectedmessage_.html#possibleexpectedmessagetype" class="tsd-kind-icon">Possible<wbr>Expected<wbr>Message<wbr>Type</a>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-external">
+						<a href="../modules/_iexpectation_.html#expect" class="tsd-kind-icon">expect</a>
 					</li>
 				</ul>
 			</nav>
