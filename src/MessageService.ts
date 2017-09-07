@@ -36,7 +36,8 @@ export class MessageService {
      */
     public sendMessageToBot(
         message: IMessage,
-        expectedResponses: ExpectedMessage[]
+        expectedResponses: ExpectedMessage[],
+        ignoreOrder: boolean = false
     ): Promise<void> {
         const outgoingMessageComparator = new OutgoingMessageComparator(expectedResponses);
         const responsesFullyProcessedPromise = this.setBotToUserMessageChecker(expectedResponses, outgoingMessageComparator);

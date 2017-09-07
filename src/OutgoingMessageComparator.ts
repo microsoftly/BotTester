@@ -6,19 +6,21 @@ import { ExpectedMessage } from './ExpectedMessage';
  */
 export class OutgoingMessageComparator {
     private readonly expectedMessages: ExpectedMessage[];
+    private readonly ignoreOrder: boolean;
 
-    constructor(expectedMessages: ExpectedMessage[]) {
+    constructor(expectedMessages: ExpectedMessage[], ignoreOrder: boolean) {
         this.expectedMessages = expectedMessages;
+        this.ignoreOrder = ignoreOrder;
     }
 
     /**
      * compares the current outgoing message against the current expected message
      */
     public compareOutgoingMessageToExpectedResponses(outgoingMessage: IMessage): void {
-        const nextMessage = this.dequeueNextExpectedMessage();
-
-        if (nextMessage) {
-            nextMessage.checkForMessageMatch(outgoingMessage);
+        if (this.ignoreOrder) {
+            this.compareOutgoingMessageToExpectedResponsesWithoutOrder(outgoingMessage);
+        } else {
+            this.compareOutgoingMessageToExpectedResponsesInOrder(outgoingMessage);
         }
     }
 
@@ -31,6 +33,39 @@ export class OutgoingMessageComparator {
 
     public getTimeoutErrorMessage(): string {
         return `timedout while waiting to receive ${this.expectedMessages[0].toString()}`;
+    }
+
+    private compareOutgoingMessageToExpectedResponsesInOrder(outgoingMessage: IMessage): void {
+        const nextMessage = this.dequeueNextExpectedMessage();
+
+        if (nextMessage) {
+            nextMessage.checkForMessageMatch(outgoingMessage);
+        }
+    }
+
+    private compareOutgoingMessageToExpectedResponsesWithoutOrder(outgoingMessage: IMessage): void {
+        const nextMessage = this.dequeueNextExpectedMessage();
+        const expectedItemCount = this.expectedMessages.length;
+
+        let matchingMessageFound: boolean = false;
+        this.expectedMessages.filter((expectedMessage: ExpectedMessage, i: number) => {
+            if (matchingMessageFound) {
+                return true;
+            }
+
+            try {
+                expectedMessage.checkForMessageMatch(outgoingMessage);
+
+                matchingMessageFound = true;
+
+                return false;
+            } catch (e) {
+                return true;
+            }
+        });
+        if (nextMessage) {
+            nextMessage.checkForMessageMatch(outgoingMessage);
+        }
     }
 
     /**
