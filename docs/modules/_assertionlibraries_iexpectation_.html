@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>&quot;ChaiExpectation&quot; | bot-tester</title>
+	<title>&quot;assertionLibraries/IExpectation&quot; | bot-tester</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -54,10 +54,10 @@
 					<a href="../index.html">Globals</a>
 				</li>
 				<li>
-					<a href="_chaiexpectation_.html">&quot;ChaiExpectation&quot;</a>
+					<a href="_assertionlibraries_iexpectation_.html">&quot;assertionLibraries/IExpectation&quot;</a>
 				</li>
 			</ul>
-			<h1>External module &quot;ChaiExpectation&quot;</h1>
+			<h1>External module &quot;assertionLibraries/IExpectation&quot;</h1>
 		</div>
 	</div>
 </header>
@@ -69,12 +69,58 @@
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
 						<section class="tsd-index-section tsd-is-external">
-							<h3>Classes</h3>
+							<h3>Interfaces</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-class tsd-parent-kind-external-module tsd-is-external"><a href="../classes/_chaiexpectation_.chaiexpectation.html" class="tsd-kind-icon">Chai<wbr>Expectation</a></li>
+								<li class="tsd-kind-interface tsd-parent-kind-external-module tsd-is-external"><a href="../interfaces/_assertionlibraries_iexpectation_.iexpectation.html" class="tsd-kind-icon">IExpectation</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section tsd-is-external">
+							<h3>Functions</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-external"><a href="_assertionlibraries_iexpectation_.html#expect" class="tsd-kind-icon">expect</a></li>
 							</ul>
 						</section>
 					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group tsd-is-external">
+				<h2>Functions</h2>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-is-external">
+					<a name="expect" class="tsd-anchor"></a>
+					<h3>expect</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-is-external">
+						<li class="tsd-signature tsd-kind-icon">expect<span class="tsd-signature-symbol">(</span>subject<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">__type</span>, message<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_assertionlibraries_iexpectation_.iexpectation.html" class="tsd-signature-type">IExpectation</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/microsoftly/BotTester/blob/7312ba3/src/assertionLibraries/IExpectation.ts#L20">assertionLibraries/IExpectation.ts:20</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Creates a wrapper instance around an assertion class</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>subject: <span class="tsd-signature-type">__type</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>object being tested against</p>
+									</div>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> message: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>error message to print if expectation fails</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_assertionlibraries_iexpectation_.iexpectation.html" class="tsd-signature-type">IExpectation</a></h4>
+						</li>
+					</ul>
 				</section>
 			</section>
 		</div>
@@ -93,14 +139,8 @@
 					<li class="label tsd-is-external">
 						<span>Externals</span>
 					</li>
-					<li class="current tsd-kind-external-module tsd-is-external">
-						<a href="_chaiexpectation_.html">"<wbr>Chai<wbr>Expectation"</a>
-					</li>
 					<li class=" tsd-kind-external-module tsd-is-external">
 						<a href="_expectedmessage_.html">"<wbr>Expected<wbr>Message"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="_iexpectation_.html">"IExpectation"</a>
 					</li>
 					<li class=" tsd-kind-external-module tsd-is-external">
 						<a href="_messageservice_.html">"<wbr>Message<wbr>Service"</a>
@@ -112,14 +152,23 @@
 						<a href="_sessionservice_.html">"<wbr>Session<wbr>Service"</a>
 					</li>
 					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="_assertionlibraries_chaiexpectation_.html">"assertion<wbr>Libraries/<wbr>Chai<wbr>Expectation"</a>
+					</li>
+					<li class="current tsd-kind-external-module tsd-is-external">
+						<a href="_assertionlibraries_iexpectation_.html">"assertion<wbr>Libraries/IExpectation"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
 						<a href="_config_.html">"config"</a>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-is-external">
-						<a href="../classes/_chaiexpectation_.chaiexpectation.html" class="tsd-kind-icon">Chai<wbr>Expectation</a>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-external">
+						<a href="../interfaces/_assertionlibraries_iexpectation_.iexpectation.html" class="tsd-kind-icon">IExpectation</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-external">
+						<a href="_assertionlibraries_iexpectation_.html#expect" class="tsd-kind-icon">expect</a>
 					</li>
 				</ul>
 			</nav>
