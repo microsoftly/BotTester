@@ -1,4 +1,3 @@
-import { TimeoutError } from 'Bluebird';
 import * as Promise from 'bluebird';
 import { IAddress, IMessage, Message, Session, UniversalBot } from 'botbuilder';
 import { setTimeout } from 'timers';
@@ -53,7 +52,7 @@ export class MessageService {
         }
 
         return promiseToReturn
-            .catch(TimeoutError, (e) => {
+            .catch(Promise.TimeoutError, (e) => {
                 return Promise.reject(outgoingMessageComparator.getTimeoutErrorMessage());
             });
     }
