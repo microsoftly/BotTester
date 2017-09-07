@@ -10,16 +10,12 @@ const expect = chai.expect;
 
 const connector = new ConsoleConnector();
 
-// lines with //# should be converted to headers for markdown docs
 describe('BotTester', () => {
     let bot: UniversalBot;
 
     beforeEach(() => {
         bot = new UniversalBot(connector);
     });
-
-    // ... tests live here!
-//```
 
     it('it will fail if an incorrect response is returned', (done: Function) => {
         bot.dialog('/', (session: Session) => {
@@ -44,28 +40,26 @@ describe('BotTester', () => {
         ).to.eventually.be.rejectedWith('expected [ \'NOPE\' ] to include \'how are you doing?\'').notify(done);
     });
 
-    // re-run the test multiple times to guarantee that multiple colors are returned
-    let randomResponseRunCounter = 5;
-    const randomColors = ['red', 'green', 'blue', 'grey', 'gray', 'purple', 'magenta', 'cheese', 'orange', 'hazelnut'];
-    while (randomResponseRunCounter--) {
-        it('Will fail if response is not in the random response collection', (done: Function) => {
-            bot.dialog('/', (session: Session) => {
-                session.send(randomColors);
-            });
-
-            expect(new BotTester(bot)
-                .sendMessageToBot('tell me a color!', ['this', 'is', 'not', 'in', 'the', 'collection'])
-                .runTest()
-            ).to.be.rejected.notify(done);
+    it('Will fail if response is not in the random response collection', (done: Function) => {
+        const randomColors = ['red', 'green', 'blue', 'grey', 'gray', 'purple', 'magenta', 'cheese', 'orange', 'hazelnut'];
+        bot.dialog('/', (session: Session) => {
+            session.send(randomColors);
         });
-    }
+
+        expect(new BotTester(bot)
+            .sendMessageToBot('tell me a color!', ['this', 'is', 'not', 'in', 'the', 'collection'])
+            .runTest()
+        ).to.be.rejected.notify(done);
+    });
 
     it('will fail if response to a prompt is not as expected', (done: Function) => {
+        //tslint:disable
         bot.dialog('/', [(session: Session) => {
             new Prompts.text(session, 'Hi there! Tell me something you like');
         }, (session: Session, results: IDialogResult<string>) => {
             session.send(`${results.response} is pretty cool.`);
             new Prompts.text(session, 'Why do you like it?');
+        //tslint:enable
         }, (session: Session) => session.send('Interesting. Well, that\'s all I have for now')]);
 
         expect(new BotTester(bot)
@@ -78,7 +72,9 @@ describe('BotTester', () => {
 
     xit('NOT SURE HOW TO TEST THIS ONE, IF AT ALLcan inspect session state', () => {
         bot.dialog('/', [(session: Session) => {
+            //tslint:disable
             new Prompts.text(session, 'What would you like to set data to?');
+            //tslint:enable
         }, (session: Session, results: IDialogResult<string>) => {
             session.userData = { data: results.response };
             session.save();
@@ -87,8 +83,10 @@ describe('BotTester', () => {
         return new BotTester(bot)
             .sendMessageToBot('Start this thing!',  'What would you like to set data to?')
             .sendMessageToBotAndExpectSaveWithNoResponse('This is data!')
-            .checkSession((session) => {
+            .checkSession((session: Session) => {
+                //tslint:disable
                 expect(session.userData).not.to.be.null;
+                //tslint:enable
                 expect(session.userData.data).to.be.equal('This is data!');
             })
             .runTest();
@@ -201,5 +199,17 @@ describe('BotTester', () => {
             .sendMessageToBot('abcd', numberRegex)
             .runTest()
         ).to.be.rejected.notify(done);
+    });
+
+    it('can timeout', (done: Function) => {
+        const timeout = 1000;
+        bot.dialog('/', (session: Session) => {
+            // send only numbers for this test case ....
+            setTimeout(() => session.send('hi there'), timeout * 2 );
+        });
+
+        expect(new BotTester(bot, { timeout })
+            .sendMessageToBot('hey', 'hi there')
+            .runTest()).to.be.rejected.notify(done);
     });
 });

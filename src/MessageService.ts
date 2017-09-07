@@ -1,5 +1,7 @@
 import * as Promise from 'bluebird';
 import { IAddress, IMessage, Message, Session, UniversalBot } from 'botbuilder';
+import { setTimeout } from 'timers';
+import { IConfig, NO_TIMEOUT } from './config';
 import { ExpectedMessage } from './ExpectedMessage';
 import { OutgoingMessageComparator } from './OutgoingMessageComparator';
 
@@ -16,14 +18,16 @@ function expectedResponsesAreEmpty(expectedResponses: {}[][]): boolean {
 export class MessageService {
     private bot: UniversalBot;
     private botToUserMessageChecker: botToUserMessageCheckerFunction;
+    private config: IConfig;
 
-    constructor(bot: UniversalBot) {
+    constructor(bot: UniversalBot, config: IConfig) {
         this.bot = bot;
         this.applyOutgoingMessageListener();
         // in case messages aren't checked in the frist step(s)
         //tslint:disable
         this.botToUserMessageChecker = (msg: IMessage | IMessage[]) => {};
         //tslint:enable
+        this.config = config;
     }
 
     /**
@@ -36,13 +40,23 @@ export class MessageService {
         message: IMessage,
         expectedResponses: ExpectedMessage[]
     ): Promise<void> {
-        const responsesFullyProcessedPromise = this.setBotToUserMessageChecker(expectedResponses);
+        const outgoingMessageComparator = new OutgoingMessageComparator(expectedResponses);
+        const responsesFullyProcessedPromise = this.setBotToUserMessageChecker(expectedResponses, outgoingMessageComparator);
 
         const receiveMessagePromise = new Promise<void>((res: () => void, rej: (e: Error) => void) => {
             this.bot.receive(message, (e: Error) => e ? rej(e) : res());
         });
 
-        return expectedResponses && expectedResponses.length ? responsesFullyProcessedPromise : receiveMessagePromise;
+        let promiseToReturn = expectedResponses && expectedResponses.length ? responsesFullyProcessedPromise : receiveMessagePromise;
+
+        if (this.config.timeout !== NO_TIMEOUT) {
+            promiseToReturn = promiseToReturn.timeout(this.config.timeout);
+        }
+
+        return promiseToReturn
+            .catch(Promise.TimeoutError, (e) => {
+                return Promise.reject(outgoingMessageComparator.getTimeoutErrorMessage());
+            });
     }
 
     /**
@@ -52,9 +66,10 @@ export class MessageService {
      *
      * @param expectedResponses collection of expected responses for a particular step
      */
-    private setBotToUserMessageChecker(expectedResponses: ExpectedMessage[]): Promise<void> {
-        const outgoingMessageComparator = new OutgoingMessageComparator(expectedResponses);
-
+    private setBotToUserMessageChecker(
+        expectedResponses: ExpectedMessage[],
+        outgoingMessageComparator: OutgoingMessageComparator
+    ): Promise<void> {
         return new Promise<void>((res: () => void, rej: (error: Error) => void) => {
             if (!outgoingMessageComparator.expectsAdditionalMessages()) {
                 return res();

@@ -35,13 +35,13 @@
     "prepublishOnly": "npm run cleanBuild && npm run test && npm run buildTypeDocs",
     "clean": "rm -rf ./dist",
     "build": "tsc",
-    "lint": "tslint 'src/**/*.ts'",
+    "lint": "tslint src/**/*.ts && tslint test/BotTestFailure.spec.ts",
     "lint:fix": "tslint 'src/**/*.ts' --fix",
     "cleanBuild": "npm run clean && npm run build",
     "watch": "tsc -w",
-    "test": "node_modules/mocha/bin/_mocha --require node_modules/ts-node/register test/BotTester.spec.ts",
-    "buildTypeDocs": "yarn cleanBuild && typedoc --excludeNotExported --out docs --hideGenerator src/BotTester.ts --module commonjs --gaID UA-105358964-1 --readme none",
-    "ci": "yarn lint && yarn test"
+    "test": "node_modules/mocha/bin/_mocha --require node_modules/ts-node/register test/*.spec.ts",
+    "buildTypeDocs": "yarn cleanBuild && typedoc --excludeNotExported --out docs --hideGenerator src/BotTester.ts --module commonjs --gaID UA-105358964-1 --readme none && touch docs/.nojekyll",
+    "ci": "npm run lint && npm run test"
   },
   "dependencies": {
     "bluebird": "^3.5.0",
@@ -52,6 +52,7 @@
     "global": "^4.3.2"
   },
   "devDependencies": {
+    "@types/app-root-path": "^1.2.4",
     "@types/bluebird": "^3.5.8",
     "@types/chai": "^4.0.1",
     "@types/chai-as-promised": "^0.0.31",
@@ -61,8 +62,8 @@
     "chai-as-promised": "^7.1.1",
     "mocha": "^3.4.2",
     "ts-node": "^3.1.0",
-    "tslint": "^5.4.3",
     "typedoc": "^0.8.0",
+    "tslint": "^5.7.0",
     "typescript": "^2.4.1"
   },
   "files": [

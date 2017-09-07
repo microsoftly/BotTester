@@ -29,6 +29,10 @@ export class OutgoingMessageComparator {
         return this.expectedMessages.length !== 0;
     }
 
+    public getTimeoutErrorMessage(): string {
+        return `timedout while waiting to receive ${this.expectedMessages[0].toString()}`;
+    }
+
     /**
      * gets the next expected message and removes it from the expectedMessages
      */
