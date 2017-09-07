@@ -1,4 +1,3 @@
-import * as appRootPath from 'app-root-path';
 import { IAddress } from 'botbuilder';
 import * as fs from 'fs';
 
