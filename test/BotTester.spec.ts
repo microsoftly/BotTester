@@ -205,7 +205,7 @@ describe('BotTester', () => {
                 .toMessage();
 
             // when testing for an address that is not the default for the bot, the address must be passed in
-            return new BotTester(bot, defaultAddress)
+            return new BotTester(bot, { defaultAddress })
                 // because user 1 is the default address, the expected responses can be a string
                 .sendMessageToBot(askForUser1Name, 'A')
                 .sendMessageToBot(askForUser1Name, user1ExpectedResponse)
@@ -238,7 +238,7 @@ describe('BotTester', () => {
             bot.send([msg1, msg2]);
         });
 
-        return new BotTester(bot, CUSTOMER_ADDRESS)
+        return new BotTester(bot, { defaultAddress: CUSTOMER_ADDRESS })
             .sendMessageToBot('anything', 'hello', 'there')
             .runTest();
     });
@@ -295,6 +295,7 @@ describe('BotTester', () => {
             .runTest();
     });
 //```
+
     describe('Cases not for docs', () => {
         it('can handle undefined expectedResponses', () => {
             bot.dialog('/', (session: Session) => {

@@ -2,7 +2,7 @@ import { IMessage } from 'botbuilder';
 import * as chai from 'chai';
 import { IExpectation } from './IExpectation';
 
-// importing with ts method breaks compilation
+// importing with ts method breaks compilation, use require
 //tslint:disable
 const chaiSubset = require('chai-subset');
 //tslint:enable

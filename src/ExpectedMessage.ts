@@ -1,5 +1,5 @@
 import { IMessage } from 'botbuilder';
-import { expect } from './IExpectation';
+import { expect } from './assertionLibraries/IExpectation';
 
 export enum ExpectedMessageType {
     String,
@@ -71,6 +71,10 @@ export class ExpectedMessage {
             default:
                 expect(outgoingMessage.type).toEqual('save');
         }
+    }
+
+    public toString(): string {
+        return JSON.stringify(this.expectedResponseCollection, null, 2);
     }
 
     /**

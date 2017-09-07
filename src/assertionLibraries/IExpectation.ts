@@ -11,6 +11,12 @@ export interface IExpectation {
     toDeeplyInclude(value: {}): void;
 }
 
+/**
+ * Creates a wrapper instance around an assertion class
+ *
+ * @param subject object being tested against
+ * @param message error message to print if expectation fails
+ */
 export function expect(subject: {}, message?: string): IExpectation {
     return createExpectation(subject, message);
 }
