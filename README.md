@@ -1,4 +1,4 @@
-# Bot Tester for Bot Builder Framework [![CircleCI](https://circleci.com/gh/microsoftly/BotTester.svg?style=shield)](https://circleci.com/gh/microsoftly/BotTester) [![npm version](https://badge.fury.io/js/bot-tester.svg)](https://badge.fury.io/js/bot-tester)
+# Bot Tester for Bot Builder Framework [![CircleCI](https://circleci.com/gh/microsoftly/BotTester.svg?style=shield)](https://circleci.com/gh/microsoftly/BotTester) [![npm version](https://badge.fury.io/js/bot-tester.svg)](https://badge.fury.io/js/bot-tester) [![Coverage Status](https://coveralls.io/repos/github/microsoftly/BotTester/badge.svg?branch=master)](https://coveralls.io/github/microsoftly/BotTester?branch=master)
 Simple framework that allows for easy testing of a botbuiler chatbot using mocha and chai.
 ## install
 ```bash
