@@ -53,11 +53,13 @@ describe('BotTester', () => {
     });
 
     it('will fail if response to a prompt is not as expected', (done: Function) => {
+        //tslint:disable
         bot.dialog('/', [(session: Session) => {
             new Prompts.text(session, 'Hi there! Tell me something you like');
         }, (session: Session, results: IDialogResult<string>) => {
             session.send(`${results.response} is pretty cool.`);
             new Prompts.text(session, 'Why do you like it?');
+        //tslint:enable
         }, (session: Session) => session.send('Interesting. Well, that\'s all I have for now')]);
 
         expect(new BotTester(bot)
@@ -70,7 +72,9 @@ describe('BotTester', () => {
 
     xit('NOT SURE HOW TO TEST THIS ONE, IF AT ALLcan inspect session state', () => {
         bot.dialog('/', [(session: Session) => {
+            //tslint:disable
             new Prompts.text(session, 'What would you like to set data to?');
+            //tslint:enable
         }, (session: Session, results: IDialogResult<string>) => {
             session.userData = { data: results.response };
             session.save();
@@ -79,8 +83,10 @@ describe('BotTester', () => {
         return new BotTester(bot)
             .sendMessageToBot('Start this thing!',  'What would you like to set data to?')
             .sendMessageToBotAndExpectSaveWithNoResponse('This is data!')
-            .checkSession((session) => {
+            .checkSession((session: Session) => {
+                //tslint:disable
                 expect(session.userData).not.to.be.null;
+                //tslint:enable
                 expect(session.userData.data).to.be.equal('This is data!');
             })
             .runTest();
