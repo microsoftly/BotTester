@@ -5,20 +5,22 @@ import { ExpectedMessage } from './ExpectedMessage';
  * Manages the comparisons against expected messages and outgoingMessages that the BotTester framework intercepts
  */
 export class OutgoingMessageComparator {
-    private readonly expectedMessages: ExpectedMessage[];
+    private expectedMessages: ExpectedMessage[];
+    private readonly ignoreOrder: boolean;
 
-    constructor(expectedMessages: ExpectedMessage[]) {
+    constructor(expectedMessages: ExpectedMessage[], ignoreOrder: boolean) {
         this.expectedMessages = expectedMessages;
+        this.ignoreOrder = ignoreOrder;
     }
 
     /**
      * compares the current outgoing message against the current expected message
      */
     public compareOutgoingMessageToExpectedResponses(outgoingMessage: IMessage): void {
-        const nextMessage = this.dequeueNextExpectedMessage();
-
-        if (nextMessage) {
-            nextMessage.checkForMessageMatch(outgoingMessage);
+        if (this.ignoreOrder) {
+            this.compareOutgoingMessageToExpectedResponsesWithoutOrder(outgoingMessage);
+        } else {
+            this.compareOutgoingMessageToExpectedResponsesInOrder(outgoingMessage);
         }
     }
 
@@ -31,6 +33,39 @@ export class OutgoingMessageComparator {
 
     public getTimeoutErrorMessage(): string {
         return `timedout while waiting to receive ${this.expectedMessages[0].toString()}`;
+    }
+
+    private compareOutgoingMessageToExpectedResponsesInOrder(outgoingMessage: IMessage): void {
+        const nextMessage = this.dequeueNextExpectedMessage();
+
+        if (nextMessage) {
+            nextMessage.checkForMessageMatch(outgoingMessage);
+        }
+    }
+
+    private compareOutgoingMessageToExpectedResponsesWithoutOrder(outgoingMessage: IMessage): void {
+        const originalItemCount = this.expectedMessages.length;
+
+        let matchingMessageFound: boolean = false;
+        this.expectedMessages = this.expectedMessages.filter((expectedMessage: ExpectedMessage, i: number) => {
+            if (matchingMessageFound) {
+                return true;
+            }
+
+            try {
+                expectedMessage.checkForMessageMatch(outgoingMessage);
+
+                matchingMessageFound = true;
+
+                return false;
+            } catch (e) {
+                return true;
+            }
+        });
+
+        if (originalItemCount === this.expectedMessages.length) {
+            throw new Error(`${JSON.stringify(outgoingMessage, null, 2)} did not match any of ${this.expectedMessages.map((t: ExpectedMessage) => t.toString())}`);
+        }
     }
 
     /**

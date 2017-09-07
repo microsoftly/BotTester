@@ -82,6 +82,19 @@ export class BotTester {
         return this.sendMessageToBotInternal(message, expectedResponses);
     }
 
+    public sendMessageToBotIgnoringResponseOrder(
+        msg: IMessage | string,
+        // currently only supports string RegExp IMessage
+        ...expectedResponses: (PossibleExpectedMessageType | PossibleExpectedMessageType[])[]
+    ): BotTester {
+        const message = this.convertToIMessage(msg);
+
+        // possible that expected responses may be undefined. Remove them
+        expectedResponses = expectedResponses.filter((expectedResponse: {}) => expectedResponse);
+
+        return this.sendMessageToBotInternal(message, expectedResponses, true);
+    }
+
     /**
      * sends a message to the bot. This should be used whenever session.save() is used without sending a reply to the user. This exists due
      * to a limitation in the current implementation of the botbuilder framework
@@ -138,8 +151,8 @@ export class BotTester {
     private sendMessageToBotInternal(
         message: IMessage,
         // currently only supports string RegExp IMessage
-        expectedResponses: (PossibleExpectedMessageType | PossibleExpectedMessageType[])[]
-        //PossibleExpectedMessageCollections | PossibleExpectedMessageCollections[]
+        expectedResponses: (PossibleExpectedMessageType | PossibleExpectedMessageType[])[],
+        ignoreOrder: boolean = false
     ): BotTester {
         let expectedMessages: ExpectedMessage[] = [];
 
@@ -156,7 +169,7 @@ export class BotTester {
             }
         }
 
-        this.testSteps.push(() => this.messageService.sendMessageToBot(message, expectedMessages));
+        this.testSteps.push(() => this.messageService.sendMessageToBot(message, expectedMessages, ignoreOrder));
 
         return this;
     }

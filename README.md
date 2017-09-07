@@ -342,3 +342,18 @@ describe('BotTester', () => {
             .runTest();
     });
 ```
+
+# can check messages while ignoring order
+``` javascript
+    it('can accept messages without expectations for order', () => {
+        bot.dialog('/', (session) => {
+            session.send('hi');
+            session.send('there');
+            session.send('how are you?');
+        });
+
+        return new BotTester(bot)
+            .sendMessageToBotIgnoringResponseOrder('anything', 'how are you?', 'hi', 'there')
+            .runTest();
+    });
+```
