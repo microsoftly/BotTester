@@ -1,4 +1,5 @@
 //```javascript
+import 'mocha'
 import { ConsoleConnector, IAddress, IMessage, Message, Prompts, Session, UniversalBot } from 'botbuilder';
 import { expect } from 'chai';
 import { BotTester } from './../src/BotTester';
@@ -292,6 +293,30 @@ describe('BotTester', () => {
             .sendMessageToBot('you say', 'goodbye')
             .then(() => responseString = 'hello')
             .sendMessageToBot('and i say', 'hello')
+            .runTest();
+    });
+//```
+
+//# Can wait between test steps
+//```javascript
+    it('can wait between test steps', () => {
+        const delay = 1000;
+        let beforeDelayTime;
+        let afterDelayTime;
+
+        bot.dialog('/', (session) => {
+            // send only numbers for this test case ....
+            if (afterDelayTime - beforeDelayTime >= delay) {
+              session.send('i waited some time');
+            }
+
+        });
+
+        return new BotTester(bot)
+            .then(() => beforeDelayTime = Date.now())
+            .wait(delay)
+            .then(() => afterDelayTime = Date.now())
+            .sendMessageToBot('have you waited ?', 'i waited some time')
             .runTest();
     });
 //```

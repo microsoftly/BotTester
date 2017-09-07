@@ -122,6 +122,16 @@ export class BotTester {
         return this;
     }
 
+    /**
+     * Waits for the given delay between test steps.
+     * @param delayInMiliseconds time to wait in milliseconds
+     */
+    public wait(delayInMilliseconds: number): BotTester {
+        this.testSteps.push(() => Promise.delay(delayInMilliseconds));
+
+        return this;
+    }
+
     private convertToIMessage(msg: string | IMessage): IMessage {
         if (typeof(msg) === 'string') {
             return new Message()

@@ -1,4 +1,4 @@
-# Bot Tester for Bot Builder Framework [![CircleCI](https://circleci.com/gh/microsoftly/BotTester.svg?style=shield)](https://circleci.com/gh/microsoftly/BotTester) [![npm version](https://badge.fury.io/js/bot-tester.svg)](https://badge.fury.io/js/bot-tester)
+# Bot Tester for Bot Builder Framework [![CircleCI](https://circleci.com/gh/microsoftly/BotTester.svg?style=shield)](https://circleci.com/gh/microsoftly/BotTester) [![npm version](https://badge.fury.io/js/bot-tester.svg)](https://badge.fury.io/js/bot-tester) [![Coverage Status](https://coveralls.io/repos/github/microsoftly/BotTester/badge.svg?branch=master)](https://coveralls.io/github/microsoftly/BotTester?branch=master)
 Simple framework that allows for easy testing of a botbuiler chatbot using mocha and chai.
 ## install
 ```bash
@@ -315,6 +315,30 @@ describe('BotTester', () => {
             .sendMessageToBot('you say', 'goodbye')
             .then(() => responseString = 'hello')
             .sendMessageToBot('and i say', 'hello')
+            .runTest();
+    });
+```
+
+# Can wait between test steps
+```javascript
+    it('can wait between test steps', () => {
+        const delay = 1000;
+        let beforeDelayTime;
+        let afterDelayTime;
+
+        bot.dialog('/', (session) => {
+            // send only numbers for this test case ....
+            if (afterDelayTime - beforeDelayTime >= delay) {
+              session.send('i waited some time');
+            }
+
+        });
+
+        return new BotTester(bot)
+            .then(() => beforeDelayTime = Date.now())
+            .wait(delay)
+            .then(() => afterDelayTime = Date.now())
+            .sendMessageToBot('have you waited ?', 'i waited some time')
             .runTest();
     });
 ```
