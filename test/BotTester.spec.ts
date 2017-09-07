@@ -1,7 +1,7 @@
 //```javascript
-import 'mocha'
 import { ConsoleConnector, IAddress, IMessage, Message, Prompts, Session, UniversalBot } from 'botbuilder';
 import { expect } from 'chai';
+import 'mocha'
 import { BotTester } from './../src/BotTester';
 
 const connector = new ConsoleConnector();
@@ -307,9 +307,8 @@ describe('BotTester', () => {
         bot.dialog('/', (session) => {
             // send only numbers for this test case ....
             if (afterDelayTime - beforeDelayTime >= delay) {
-              session.send('i waited some time');
+                session.send('i waited some time');
             }
-
         });
 
         return new BotTester(bot)
@@ -317,6 +316,21 @@ describe('BotTester', () => {
             .wait(delay)
             .then(() => afterDelayTime = Date.now())
             .sendMessageToBot('have you waited ?', 'i waited some time')
+            .runTest();
+    });
+//```
+
+//# can check messages while ignoring order
+//``` javascript
+    it.only('can accept messages without expectations for order', () => {
+        bot.dialog('/', (session) => {
+            session.send('hi');
+            session.send('there');
+            session.send('how are you?');
+        });
+
+        return new BotTester(bot)
+            .sendMessageToBotIgnoringResponseOrder('anything', 'how are you?', 'hi', 'there')
             .runTest();
     });
 //```

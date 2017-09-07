@@ -212,4 +212,16 @@ describe('BotTester', () => {
             .sendMessageToBot('hey', 'hi there')
             .runTest()).to.be.rejected.notify(done);
     });
+
+    it.only('will fail random order if response is not in collection', (done: Function) => {
+        bot.dialog('/', (session: Session) => {
+            session.send('hi');
+            session.send('there');
+            session.send('how are you?');
+        });
+
+        expect(new BotTester(bot)
+            .sendMessageToBotIgnoringResponseOrder('anything', 'NOPE?', 'hi', 'there')
+            .runTest()).to.be.rejected.notify(done);
+    });
 });

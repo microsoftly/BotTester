@@ -5,7 +5,7 @@ import { ExpectedMessage } from './ExpectedMessage';
  * Manages the comparisons against expected messages and outgoingMessages that the BotTester framework intercepts
  */
 export class OutgoingMessageComparator {
-    private readonly expectedMessages: ExpectedMessage[];
+    private expectedMessages: ExpectedMessage[];
     private readonly ignoreOrder: boolean;
 
     constructor(expectedMessages: ExpectedMessage[], ignoreOrder: boolean) {
@@ -44,11 +44,10 @@ export class OutgoingMessageComparator {
     }
 
     private compareOutgoingMessageToExpectedResponsesWithoutOrder(outgoingMessage: IMessage): void {
-        const nextMessage = this.dequeueNextExpectedMessage();
-        const expectedItemCount = this.expectedMessages.length;
+        const originalItemCount = this.expectedMessages.length;
 
         let matchingMessageFound: boolean = false;
-        this.expectedMessages.filter((expectedMessage: ExpectedMessage, i: number) => {
+        this.expectedMessages = this.expectedMessages.filter((expectedMessage: ExpectedMessage, i: number) => {
             if (matchingMessageFound) {
                 return true;
             }
@@ -63,8 +62,9 @@ export class OutgoingMessageComparator {
                 return true;
             }
         });
-        if (nextMessage) {
-            nextMessage.checkForMessageMatch(outgoingMessage);
+
+        if (originalItemCount === this.expectedMessages.length) {
+            throw new Error(`${JSON.stringify(outgoingMessage, null, 2)} did not match any of ${this.expectedMessages.map((t: ExpectedMessage) => t.toString())}`);
         }
     }
 

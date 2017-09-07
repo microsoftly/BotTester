@@ -41,7 +41,7 @@ export class MessageService {
         expectedResponses: ExpectedMessage[],
         ignoreOrder: boolean = false
     ): Promise<void> {
-        const outgoingMessageComparator = new OutgoingMessageComparator(expectedResponses);
+        const outgoingMessageComparator = new OutgoingMessageComparator(expectedResponses, ignoreOrder);
         const responsesFullyProcessedPromise = this.setBotToUserMessageChecker(expectedResponses, outgoingMessageComparator);
 
         const receiveMessagePromise = new Promise<void>((res: () => void, rej: (e: Error) => void) => {
