@@ -42,7 +42,6 @@
     "test": "node_modules/mocha/bin/_mocha --require node_modules/ts-node/register test/*.spec.ts",
     "buildTypeDocs": "yarn cleanBuild && typedoc --excludeNotExported --out docs --hideGenerator src/BotTester.ts --module commonjs --gaID UA-105358964-1 --readme none && touch docs/.nojekyll",
     "ci": "npm run lint && npm run test"
-
   },
   "dependencies": {
     "bluebird": "^3.5.0",
@@ -53,6 +52,7 @@
     "global": "^4.3.2"
   },
   "devDependencies": {
+    "@types/app-root-path": "^1.2.4",
     "@types/bluebird": "^3.5.8",
     "@types/chai": "^4.0.1",
     "@types/chai-as-promised": "^0.0.31",

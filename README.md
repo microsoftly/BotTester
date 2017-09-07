@@ -5,7 +5,22 @@ Simple framework that allows for easy testing of a botbuiler chatbot using mocha
 npm install --save bot-tester
 ```
 ## Class definitions, see the [BotTester Framework reference docs](https://microsoftly.github.io/BotTester/classes/_bottester_.bottester.html)
+## config
+config can be set one of 2 ways:
 
+1. creating a bot-tester.json file in the root directory of your project.
+2. passing in a config object into the options param, which is the last, when creating a BotTester instance
+
+Passing in the config overrides any default values or values set by bot-tester.json. At the moment, the options are:
+```javascript
+{
+    defaultAddress: botbuilder.IAddress,
+    timeout: number // in milliseconds
+} 
+```
+if timeout is defined, then a particular ```runTest()``` call will fail if it does not receive each expected message within the timeout period of time set in the options.
+
+For a more in depth view, check out [the Bot Tester Framework Config doc](https://microsoftly.github.io/BotTester/interfaces/_config_.iconfig.html)
 # Example Usage
 ```javascript
 import { ConsoleConnector, IAddress, IMessage, Message, Prompts, Session, UniversalBot } from 'botbuilder';
@@ -14,7 +29,6 @@ import { BotTester } from './../src/BotTester';
 
 const connector = new ConsoleConnector();
 
-// lines with //# should be converted to headers for markdown docs
 describe('BotTester', () => {
     let bot;
 
@@ -214,7 +228,7 @@ describe('BotTester', () => {
                 .toMessage();
 
             // when testing for an address that is not the default for the bot, the address must be passed in
-            return new BotTester(bot, defaultAddress)
+            return new BotTester(bot, { defaultAddress })
                 // because user 1 is the default address, the expected responses can be a string
                 .sendMessageToBot(askForUser1Name, 'A')
                 .sendMessageToBot(askForUser1Name, user1ExpectedResponse)
@@ -247,7 +261,7 @@ describe('BotTester', () => {
             bot.send([msg1, msg2]);
         });
 
-        return new BotTester(bot, CUSTOMER_ADDRESS)
+        return new BotTester(bot, { defaultAddress: CUSTOMER_ADDRESS })
             .sendMessageToBot('anything', 'hello', 'there')
             .runTest();
     });
@@ -277,7 +291,6 @@ describe('BotTester', () => {
         const numberRegex = /^\d+/;
 
         bot.dialog('/', (session) => {
-            // send only numbers for this test case ....
             session.send(session.message.text);
             session.send(session.message.text);
         });
@@ -294,6 +307,7 @@ describe('BotTester', () => {
         let responseString = 'goodbye';
 
         bot.dialog('/', (session) => {
+            // send only numbers for this test case ....
             session.send(responseString);
         });
 
@@ -303,5 +317,4 @@ describe('BotTester', () => {
             .sendMessageToBot('and i say', 'hello')
             .runTest();
     });
-});
 ```

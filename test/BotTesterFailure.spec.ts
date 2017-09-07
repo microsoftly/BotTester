@@ -10,16 +10,12 @@ const expect = chai.expect;
 
 const connector = new ConsoleConnector();
 
-// lines with //# should be converted to headers for markdown docs
 describe('BotTester', () => {
     let bot: UniversalBot;
 
     beforeEach(() => {
         bot = new UniversalBot(connector);
     });
-
-    // ... tests live here!
-//```
 
     it('it will fail if an incorrect response is returned', (done: Function) => {
         bot.dialog('/', (session: Session) => {
@@ -44,21 +40,17 @@ describe('BotTester', () => {
         ).to.eventually.be.rejectedWith('expected [ \'NOPE\' ] to include \'how are you doing?\'').notify(done);
     });
 
-    // re-run the test multiple times to guarantee that multiple colors are returned
-    let randomResponseRunCounter = 5;
-    const randomColors = ['red', 'green', 'blue', 'grey', 'gray', 'purple', 'magenta', 'cheese', 'orange', 'hazelnut'];
-    while (randomResponseRunCounter--) {
-        it('Will fail if response is not in the random response collection', (done: Function) => {
-            bot.dialog('/', (session: Session) => {
-                session.send(randomColors);
-            });
-
-            expect(new BotTester(bot)
-                .sendMessageToBot('tell me a color!', ['this', 'is', 'not', 'in', 'the', 'collection'])
-                .runTest()
-            ).to.be.rejected.notify(done);
+    it('Will fail if response is not in the random response collection', (done: Function) => {
+        const randomColors = ['red', 'green', 'blue', 'grey', 'gray', 'purple', 'magenta', 'cheese', 'orange', 'hazelnut'];
+        bot.dialog('/', (session: Session) => {
+            session.send(randomColors);
         });
-    }
+
+        expect(new BotTester(bot)
+            .sendMessageToBot('tell me a color!', ['this', 'is', 'not', 'in', 'the', 'collection'])
+            .runTest()
+        ).to.be.rejected.notify(done);
+    });
 
     it('will fail if response to a prompt is not as expected', (done: Function) => {
         //tslint:disable
@@ -207,5 +199,17 @@ describe('BotTester', () => {
             .sendMessageToBot('abcd', numberRegex)
             .runTest()
         ).to.be.rejected.notify(done);
+    });
+
+    it('can timeout', (done: Function) => {
+        const timeout = 1000;
+        bot.dialog('/', (session: Session) => {
+            // send only numbers for this test case ....
+            setTimeout(() => session.send('hi there'), timeout * 2 );
+        });
+
+        expect(new BotTester(bot, { timeout })
+            .sendMessageToBot('hey', 'hi there')
+            .runTest()).to.be.rejected.notify(done);
     });
 });

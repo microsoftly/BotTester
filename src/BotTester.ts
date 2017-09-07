@@ -1,14 +1,9 @@
 import * as Promise from 'bluebird';
 import { IAddress, IMessage, Message, Session, UniversalBot } from 'botbuilder';
+import { config, IConfig } from './config';
 import { ExpectedMessage, PossibleExpectedMessageCollections, PossibleExpectedMessageType } from './ExpectedMessage';
 import { botToUserMessageCheckerFunction, MessageService } from './MessageService';
 import { SessionService } from './SessionService';
-
-const DEFAULT_ADDRESS: IAddress = { channelId: 'console',
-    user: { id: 'user1', name: 'user1' },
-    bot: { id: 'bot', name: 'Bot' },
-    conversation: { id: 'user1Conversation' }
-};
 
 export type checkSessionFunction = (s: Session) => void;
 //tslint:disable
@@ -29,19 +24,14 @@ export class BotTester {
     /**
      *
      * @param bot bot that will be tested against
-     * @param defaultAddress (Optional) the address that will be assumed for all response expecations that do not include an address
-     * if not defined, it defaults to
-     { channelId: 'console',
-        user: { id: 'user1', name: 'user1' },
-        bot: { id: 'bot', name: 'Bot' },
-        conversation: { id: 'user1Conversation' }
-    };
-    */
+     * @param options (optional) options to pass to bot. Sets the default address and test timeout
+     */
     //tslint:enable
-    constructor(bot: UniversalBot, defaultAddress?: IAddress) {
+    constructor(bot: UniversalBot, options: IConfig = config) {
+        const defaultAndInputOptionMix = Object.assign({}, config, options);
         this.bot = bot;
-        this.defaultAddress = defaultAddress || DEFAULT_ADDRESS;
-        this.messageService = new MessageService(bot);
+        this.defaultAddress = config.defaultAddress;
+        this.messageService = new MessageService(bot, defaultAndInputOptionMix);
         this.sessionLoader = new SessionService(bot);
         this.testSteps = [] as TestStep[];
     }
