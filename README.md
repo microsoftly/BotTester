@@ -318,3 +318,27 @@ describe('BotTester', () => {
             .runTest();
     });
 ```
+
+# Can wait between test steps
+```javascript
+    it('can wait between test steps', () => {
+        const delay = 1000;
+        let beforeDelayTime;
+        let afterDelayTime;
+
+        bot.dialog('/', (session) => {
+            // send only numbers for this test case ....
+            if (afterDelayTime - beforeDelayTime >= delay) {
+              session.send('i waited some time');
+            }
+
+        });
+
+        return new BotTester(bot)
+            .then(() => beforeDelayTime = Date.now())
+            .wait(delay)
+            .then(() => afterDelayTime = Date.now())
+            .sendMessageToBot('have you waited ?', 'i waited some time')
+            .runTest();
+    });
+```

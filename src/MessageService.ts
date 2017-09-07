@@ -24,7 +24,9 @@ export class MessageService {
         this.bot = bot;
         this.applyOutgoingMessageListener();
         // in case messages aren't checked in the frist step(s)
+        //tslint:disable
         this.botToUserMessageChecker = (msg: IMessage | IMessage[]) => {};
+        //tslint:enable
         this.config = config;
     }
 
