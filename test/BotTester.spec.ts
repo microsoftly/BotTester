@@ -322,7 +322,7 @@ describe('BotTester', () => {
 
 //# can check messages while ignoring order
 //``` javascript
-    it.only('can accept messages without expectations for order', () => {
+    it('can accept messages without expectations for order', () => {
         bot.dialog('/', (session) => {
             session.send('hi');
             session.send('there');

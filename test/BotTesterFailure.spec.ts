@@ -213,7 +213,7 @@ describe('BotTester', () => {
             .runTest()).to.be.rejected.notify(done);
     });
 
-    it.only('will fail random order if response is not in collection', (done: Function) => {
+    it('will fail random order if response is not in collection', (done: Function) => {
         bot.dialog('/', (session: Session) => {
             session.send('hi');
             session.send('there');
