@@ -4,4 +4,4 @@ machine:
 
 test:
   override:
-    - yarn ci
+    - yarn lint && yarn coverage
