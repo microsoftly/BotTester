@@ -11,6 +11,6 @@
         "declaration": true
     },
     "files": [
-        "./src/BotTester.ts"
+        "./src/index.ts"
     ]
 }

@@ -23,11 +23,11 @@ if timeout is defined, then a particular ```runTest()``` call will fail if it do
 For a more in depth view, check out [the Bot Tester Framework Config doc](https://microsoftly.github.io/BotTester/interfaces/_config_.iconfig.html)
 # Example Usage
 ```javascript
-import { ConsoleConnector, IAddress, IMessage, Message, Prompts, Session, UniversalBot } from 'botbuilder';
+import { IAddress, IMessage, Message, Prompts, Session, UniversalBot } from 'botbuilder';
 import { expect } from 'chai';
-import { BotTester } from './../src/BotTester';
+import { BotTester, TestConnector } from 'bot-tester';
 
-const connector = new ConsoleConnector();
+const connector = new TestConnector();
 
 describe('BotTester', () => {
     let bot;

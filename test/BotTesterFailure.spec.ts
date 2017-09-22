@@ -1,14 +1,14 @@
-//```javascript
-import { ConsoleConnector, IAddress, IDialogResult, IMessage, Message, Prompts, Session, UniversalBot } from 'botbuilder';
+import { IAddress, IDialogResult, IMessage, Message, Prompts, Session, UniversalBot } from 'botbuilder';
 import * as chai from 'chai';
 import * as chaiAsPromised from 'chai-as-promised';
 import { BotTester } from './../src/BotTester';
+import { TestConnector } from './../src/TestConnector';
 
 chai.use(chaiAsPromised);
 
 const expect = chai.expect;
 
-const connector = new ConsoleConnector();
+const connector = new TestConnector();
 
 describe('BotTester', () => {
     let bot: UniversalBot;
@@ -68,28 +68,6 @@ describe('BotTester', () => {
             .sendMessageToBot('It\'s blue', 'Interesting. Well, that\'s all I have for now')
             .runTest()
         ).to.be.rejected.notify(done);
-    });
-
-    xit('NOT SURE HOW TO TEST THIS ONE, IF AT ALLcan inspect session state', () => {
-        bot.dialog('/', [(session: Session) => {
-            //tslint:disable
-            new Prompts.text(session, 'What would you like to set data to?');
-            //tslint:enable
-        }, (session: Session, results: IDialogResult<string>) => {
-            session.userData = { data: results.response };
-            session.save();
-        }]);
-
-        return new BotTester(bot)
-            .sendMessageToBot('Start this thing!',  'What would you like to set data to?')
-            .sendMessageToBotAndExpectSaveWithNoResponse('This is data!')
-            .checkSession((session: Session) => {
-                //tslint:disable
-                expect(session.userData).not.to.be.null;
-                //tslint:enable
-                expect(session.userData.data).to.be.equal('This is data!');
-            })
-            .runTest();
     });
 
     it('will fail if decorated messages do not match', (done: Function) => {
