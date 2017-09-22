@@ -1,10 +1,10 @@
 //```javascript
-import { ConsoleConnector, IAddress, IMessage, Message, Prompts, Session, UniversalBot } from 'botbuilder';
+import { IAddress, IMessage, Message, Prompts, Session, UniversalBot } from 'botbuilder';
 import { expect } from 'chai';
-import 'mocha'
 import { BotTester } from './../src/BotTester';
+import { TestConnector } from './../src/TestConnector';
 
-const connector = new ConsoleConnector();
+const connector = new TestConnector();
 
 // lines with //# should be converted to headers for markdown docs
 describe('BotTester', () => {
