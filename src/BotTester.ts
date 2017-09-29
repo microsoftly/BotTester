@@ -30,7 +30,7 @@ export class BotTester {
     constructor(bot: UniversalBot, options: IConfig = config) {
         const defaultAndInputOptionMix = Object.assign({}, config, options);
         this.bot = bot;
-        this.defaultAddress = config.defaultAddress;
+        this.defaultAddress = defaultAndInputOptionMix.defaultAddress;
         this.messageService = new MessageService(bot, defaultAndInputOptionMix);
         this.sessionLoader = new SessionService(bot);
         this.testSteps = [] as TestStep[];
