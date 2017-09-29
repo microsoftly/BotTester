@@ -135,9 +135,9 @@ describe('BotTester', () => {
 //```javascript
     describe('Address/multi user', () => {
         const defaultAddress = { channelId: 'console',
-            user: { id: 'user1', name: 'A' },
-            bot: { id: 'bot', name: 'Bot' },
-            conversation: { id: 'user1Conversation' }
+            user: { id: 'customUser1', name: 'A' },
+            bot: { id: 'customBot1', name: 'Bot1' },
+            conversation: { id: 'customUser1Conversation' }
         };
 
         const user2Address = { channelId: 'console',
@@ -165,7 +165,7 @@ describe('BotTester', () => {
 
             const addr = {
                 user: {
-                    id: 'user1'
+                    id: defaultAddress.user.id
                 }
             } as IAddress;
 
@@ -209,6 +209,7 @@ describe('BotTester', () => {
             return new BotTester(bot, { defaultAddress })
                 // because user 1 is the default address, the expected responses can be a string
                 .sendMessageToBot(askForUser1Name, 'A')
+                .sendMessageToBot('What is my name?', user1ExpectedResponse)
                 .sendMessageToBot(askForUser1Name, user1ExpectedResponse)
                 .sendMessageToBot(askForUser2Name, user2ExpectedResponse)
                 .runTest();
