@@ -321,7 +321,22 @@ describe('BotTester', () => {
     });
 //```
 
-//# can check messages while ignoring order
+//# Can filter messages by type
+//```javascript
+    it('can filter messages out', () => {
+        bot.dialog('/', (session) => {
+            session.send('bar')
+            session.save() // This sends a silent message of type __save__
+            session.send('baz')
+        });
+
+        return new BotTester(bot, { filteredMessageTypes: ['__save__'] })
+            .sendMessageToBot('foo', 'bar', 'baz')
+            .runTest();
+    });
+//```
+
+//# Can check messages while ignoring order
 //``` javascript
     it('can accept messages without expectations for order', () => {
         bot.dialog('/', (session) => {
