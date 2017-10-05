@@ -19,6 +19,7 @@ export class MessageService {
     private bot: UniversalBot;
     private botToUserMessageChecker: botToUserMessageCheckerFunction;
     private config: IConfig;
+    private filteredMessageTypes: string[];
 
     constructor(bot: UniversalBot, config: IConfig) {
         this.bot = bot;
@@ -27,6 +28,7 @@ export class MessageService {
         //tslint:disable
         this.botToUserMessageChecker = (msg: IMessage | IMessage[]) => {};
         //tslint:enable
+        this.filteredMessageTypes = config.filteredMessageTypes;
         this.config = config;
     }
 
@@ -87,7 +89,6 @@ export class MessageService {
                     } catch (e) {
                         return rej(e);
                     }
-
                 });
 
                 if (!outgoingMessageComparator.expectsAdditionalMessages()) {
@@ -106,7 +107,11 @@ export class MessageService {
                 e = [e];
             }
 
-            this.botToUserMessageChecker(e);
+            e = e.filter((outgoingMsg: IMessage) => {
+                return this.filteredMessageTypes.indexOf(outgoingMsg.type) === -1;
+            });
+
+            if (e.length !== 0) { this.botToUserMessageChecker(e); }
         });
     }
 }
