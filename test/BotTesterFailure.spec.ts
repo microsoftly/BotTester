@@ -202,4 +202,55 @@ describe('BotTester', () => {
             .sendMessageToBotIgnoringResponseOrder('anything', 'NOPE?', 'hi', 'there')
             .runTest()).to.be.rejected.notify(done);
     });
+
+    it('will fail if a message filter is not correctly applied', (done: Function) => {
+        bot.dialog('/', (session: Session) => {
+            session.send('hello');
+            session.send('how');
+            session.send('are');
+            session.send('you?');
+        });
+
+        const ignoreHowMessage = (message: IMessage) => !message.text.includes('how');
+        const ignoreAreMessage = (message: IMessage) => !message.text.includes('are');
+
+        expect(new BotTester(bot, { messageFilters: [ignoreHowMessage, ignoreAreMessage]})
+            .sendMessageToBot('intro', 'hello', 'how', 'are', 'you?')
+            .runTest()).to.be.rejected.notify(done);
+    });
+
+    it('will fail if a endOfConversationEvent is seen with an ingoreEndOfConversationEventFilter', (done: Function) => {
+        bot.dialog('/', (session: Session) => {
+            session.send('hello');
+            session.endConversation();
+        });
+
+        expect(new BotTester(bot)
+            // need to timeout before the tests do to catch the error
+            .setTimeout(500)
+            .ignoreEndOfConversationEvent()
+            //tslint:disable
+            .sendMessageToBot('hey', 'hello', {type: 'endOfConversation'} as any)
+            //tslint:enable
+            .runTest())
+        .to.be.rejected.notify(done);
+    });
+
+    it('will fail if a typing event is seen with an ignoreTypingEventFilter', (done: Function) => {
+        bot.dialog('/', (session: Session) => {
+            session.send('hello');
+            session.sendTyping();
+            session.send('hey');
+        });
+
+        expect(new BotTester(bot)
+            // need to timeout before the tests do to catch the error
+            .setTimeout(500)
+            .ignoreTypingEvent()
+            //tslint:disable
+            .sendMessageToBot('hey', 'hello', {type: 'typing'} as any, 'hey')
+            //tslint:enable
+            .runTest())
+        .to.be.rejected.notify(done);
+    });
 });

@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>IConfig | bot-tester</title>
+	<title>IOptionsModifier | bot-tester</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -54,25 +54,38 @@
 					<a href="../index.html">Globals</a>
 				</li>
 				<li>
-					<a href="../modules/_config_.html">&quot;config&quot;</a>
+					<a href="../modules/_bottester_.html">&quot;BotTester&quot;</a>
 				</li>
 				<li>
-					<a href="_config_.iconfig.html">IConfig</a>
+					<a href="_bottester_.ioptionsmodifier.html">IOptionsModifier</a>
 				</li>
 			</ul>
-			<h1>Interface IConfig</h1>
+			<h1>Interface IOptionsModifier</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>methods that the Test builder can call to edit/modify the options. These can be called until any of the IBotTester method are called.</p>
+					</div>
+				</div>
+			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">IConfig</span>
+						<span class="target">IOptionsModifier</span>
 					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel">
+				<h3>Implemented by</h3>
+				<ul class="tsd-hierarchy">
+					<li><a href="../classes/_bottester_.bottester.html" class="tsd-signature-type">BotTester</a></li>
 				</ul>
 			</section>
 			<section class="tsd-panel-group tsd-index-group">
@@ -80,94 +93,121 @@
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
 						<section class="tsd-index-section tsd-is-external">
-							<h3>Properties</h3>
+							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-external"><a href="_config_.iconfig.html#defaultaddress" class="tsd-kind-icon">default<wbr>Address</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-external"><a href="_config_.iconfig.html#ignoreendofconversationevent" class="tsd-kind-icon">ignore<wbr>End<wbr>OfConversation<wbr>Event</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-external"><a href="_config_.iconfig.html#ignoretypingevent" class="tsd-kind-icon">ignore<wbr>Typing<wbr>Event</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-external"><a href="_config_.iconfig.html#messagefilters" class="tsd-kind-icon">message<wbr>Filters</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-external"><a href="_config_.iconfig.html#timeout" class="tsd-kind-icon">timeout</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-external"><a href="_bottester_.ioptionsmodifier.html#addmessagefilter" class="tsd-kind-icon">add<wbr>Message<wbr>Filter</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-external"><a href="_bottester_.ioptionsmodifier.html#ignoreendofconversationevent" class="tsd-kind-icon">ignore<wbr>End<wbr>OfConversation<wbr>Event</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-external"><a href="_bottester_.ioptionsmodifier.html#ignoretypingevent" class="tsd-kind-icon">ignore<wbr>Typing<wbr>Event</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-external"><a href="_bottester_.ioptionsmodifier.html#settimeout" class="tsd-kind-icon">set<wbr>Timeout</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group tsd-is-external">
-				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-external">
-					<a name="defaultaddress" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> default<wbr>Address</h3>
-					<div class="tsd-signature tsd-kind-icon">default<wbr>Address<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">IAddress</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/microsoftly/BotTester/blob/34d027f/src/config.ts#L17">config.ts:17</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>default address bot will use for all communication (when not overriden)</p>
-						</div>
-					</div>
+				<h2>Methods</h2>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-external">
+					<a name="addmessagefilter" class="tsd-anchor"></a>
+					<h3>add<wbr>Message<wbr>Filter</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-external">
+						<li class="tsd-signature tsd-kind-icon">add<wbr>Message<wbr>Filter<span class="tsd-signature-symbol">(</span>filter<span class="tsd-signature-symbol">: </span><a href="../modules/_config_.html#messagefilter" class="tsd-signature-type">MessageFilter</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../classes/_bottester_.bottester.html" class="tsd-signature-type">BotTester</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/microsoftly/BotTester/blob/34d027f/src/BotTester.ts#L22">BotTester.ts:22</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>adds a message filter to the options.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>filter: <a href="../modules/_config_.html#messagefilter" class="tsd-signature-type">MessageFilter</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>message filter to add</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../classes/_bottester_.bottester.html" class="tsd-signature-type">BotTester</a></h4>
+						</li>
+					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-external">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-external">
 					<a name="ignoreendofconversationevent" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> ignore<wbr>End<wbr>OfConversation<wbr>Event</h3>
-					<div class="tsd-signature tsd-kind-icon">ignore<wbr>End<wbr>OfConversation<wbr>Event<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/microsoftly/BotTester/blob/34d027f/src/config.ts#L27">config.ts:27</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>ignores end of conversation event messages</p>
-						</div>
-					</div>
+					<h3>ignore<wbr>End<wbr>OfConversation<wbr>Event</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-external">
+						<li class="tsd-signature tsd-kind-icon">ignore<wbr>End<wbr>OfConversation<wbr>Event<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../classes/_bottester_.bottester.html" class="tsd-signature-type">BotTester</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/microsoftly/BotTester/blob/34d027f/src/BotTester.ts#L37">BotTester.ts:37</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>adds prebuilt filter to ignore endOfConversationEvent</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <a href="../classes/_bottester_.bottester.html" class="tsd-signature-type">BotTester</a></h4>
+						</li>
+					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-external">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-external">
 					<a name="ignoretypingevent" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> ignore<wbr>Typing<wbr>Event</h3>
-					<div class="tsd-signature tsd-kind-icon">ignore<wbr>Typing<wbr>Event<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/microsoftly/BotTester/blob/34d027f/src/config.ts#L22">config.ts:22</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>ignores typing event messages</p>
-						</div>
-					</div>
+					<h3>ignore<wbr>Typing<wbr>Event</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-external">
+						<li class="tsd-signature tsd-kind-icon">ignore<wbr>Typing<wbr>Event<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../classes/_bottester_.bottester.html" class="tsd-signature-type">BotTester</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/microsoftly/BotTester/blob/34d027f/src/BotTester.ts#L32">BotTester.ts:32</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>adds prebuilt filter to ignore typing event</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <a href="../classes/_bottester_.bottester.html" class="tsd-signature-type">BotTester</a></h4>
+						</li>
+					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-external">
-					<a name="messagefilters" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> message<wbr>Filters</h3>
-					<div class="tsd-signature tsd-kind-icon">message<wbr>Filters<span class="tsd-signature-symbol">:</span> <a href="../modules/_config_.html#messagefilter" class="tsd-signature-type">MessageFilter</a><span class="tsd-signature-symbol">[]</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/microsoftly/BotTester/blob/34d027f/src/config.ts#L32">config.ts:32</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>filters for messages that the BotTester framework should use</p>
-						</div>
-					</div>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-external">
-					<a name="timeout" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> timeout</h3>
-					<div class="tsd-signature tsd-kind-icon">timeout<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/microsoftly/BotTester/blob/34d027f/src/config.ts#L13">config.ts:13</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>timeout in milliseconds before a BotTester runner will fail a test (when not overriden)</p>
-						</div>
-					</div>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-external">
+					<a name="settimeout" class="tsd-anchor"></a>
+					<h3>set<wbr>Timeout</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-external">
+						<li class="tsd-signature tsd-kind-icon">set<wbr>Timeout<span class="tsd-signature-symbol">(</span>milliseconds<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../classes/_bottester_.bottester.html" class="tsd-signature-type">BotTester</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/microsoftly/BotTester/blob/34d027f/src/BotTester.ts#L27">BotTester.ts:27</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>sets the timeout time that the BotTester will wait for any particular message before failing</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>milliseconds: <span class="tsd-signature-type">number</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../classes/_bottester_.bottester.html" class="tsd-signature-type">BotTester</a></h4>
+						</li>
+					</ul>
 				</section>
 			</section>
 		</div>
@@ -186,7 +226,7 @@
 					<li class="label tsd-is-external">
 						<span>Externals</span>
 					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
+					<li class="current tsd-kind-external-module tsd-is-external">
 						<a href="../modules/_bottester_.html">"<wbr>Bot<wbr>Tester"</a>
 					</li>
 					<li class=" tsd-kind-external-module tsd-is-external">
@@ -213,45 +253,42 @@
 					<li class=" tsd-kind-external-module tsd-is-external">
 						<a href="../modules/_builtinmessagefilters_.html">"built<wbr>InMessage<wbr>Filters"</a>
 					</li>
-					<li class="current tsd-kind-external-module tsd-is-external">
+					<li class=" tsd-kind-external-module tsd-is-external">
 						<a href="../modules/_config_.html">"config"</a>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
+					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-is-external">
+						<a href="../classes/_bottester_.bottester.html" class="tsd-kind-icon">Bot<wbr>Tester</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-external">
+						<a href="_bottester_.ibottester.html" class="tsd-kind-icon">IBot<wbr>Tester</a>
+					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface tsd-parent-kind-external-module tsd-is-external">
-						<a href="_config_.iconfig.html" class="tsd-kind-icon">IConfig</a>
+						<a href="_bottester_.ioptionsmodifier.html" class="tsd-kind-icon">IOptions<wbr>Modifier</a>
 						<ul>
-							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-external">
-								<a href="_config_.iconfig.html#defaultaddress" class="tsd-kind-icon">default<wbr>Address</a>
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-external">
+								<a href="_bottester_.ioptionsmodifier.html#addmessagefilter" class="tsd-kind-icon">add<wbr>Message<wbr>Filter</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-external">
-								<a href="_config_.iconfig.html#ignoreendofconversationevent" class="tsd-kind-icon">ignore<wbr>End<wbr>OfConversation<wbr>Event</a>
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-external">
+								<a href="_bottester_.ioptionsmodifier.html#ignoreendofconversationevent" class="tsd-kind-icon">ignore<wbr>End<wbr>OfConversation<wbr>Event</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-external">
-								<a href="_config_.iconfig.html#ignoretypingevent" class="tsd-kind-icon">ignore<wbr>Typing<wbr>Event</a>
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-external">
+								<a href="_bottester_.ioptionsmodifier.html#ignoretypingevent" class="tsd-kind-icon">ignore<wbr>Typing<wbr>Event</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-external">
-								<a href="_config_.iconfig.html#messagefilters" class="tsd-kind-icon">message<wbr>Filters</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-external">
-								<a href="_config_.iconfig.html#timeout" class="tsd-kind-icon">timeout</a>
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-external">
+								<a href="_bottester_.ioptionsmodifier.html#settimeout" class="tsd-kind-icon">set<wbr>Timeout</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
 					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-external">
-						<a href="../modules/_config_.html#messagefilter" class="tsd-kind-icon">Message<wbr>Filter</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-external">
-						<a href="../modules/_config_.html#no_timeout" class="tsd-kind-icon">NO_<wbr>TIMEOUT</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-external">
-						<a href="../modules/_config_.html#config" class="tsd-kind-icon">config</a>
+						<a href="../modules/_bottester_.html#checksessionfunction" class="tsd-kind-icon">check<wbr>Session<wbr>Function</a>
 					</li>
 				</ul>
 			</nav>

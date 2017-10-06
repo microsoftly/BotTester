@@ -1,6 +1,7 @@
 import * as Promise from 'bluebird';
 import { IAddress, IMessage, Message, Session, UniversalBot } from 'botbuilder';
-import { config, IConfig } from './config';
+import { ignoreEndOfConversationEventFilter, ignoreTypingEventFilter } from './builtInMessageFilters';
+import { config, IConfig, MessageFilter } from './config';
 import { ExpectedMessage, PossibleExpectedMessageCollections, PossibleExpectedMessageType } from './ExpectedMessage';
 import { botToUserMessageCheckerFunction, MessageService } from './MessageService';
 import { SessionService } from './SessionService';
@@ -11,56 +12,46 @@ type TestStep = () => Promise<any>;
 //tslint:enable
 
 /**
- * Test builder and runner for botbuilder bots
+ * methods that the Test builder can call to edit/modify the options. These can be called until any of the IBotTester method are called.
  */
-export class BotTester {
-    private bot: UniversalBot;
-    private defaultAddress: IAddress;
-    private sessionLoader: SessionService;
-    private messageService: MessageService;
-    private testSteps: TestStep[];
-
-    //tslint:disable
+export interface IOptionsModifier {
     /**
-     *
-     * @param bot bot that will be tested against
-     * @param options (optional) options to pass to bot. Sets the default address and test timeout
+     * adds a message filter to the options.
+     * @param filter message filter to add
      */
-    //tslint:enable
-    constructor(bot: UniversalBot, options: IConfig = config) {
-        const defaultAndInputOptionMix = Object.assign({}, config, options);
-        this.bot = bot;
-        this.defaultAddress = defaultAndInputOptionMix.defaultAddress;
-        this.messageService = new MessageService(bot, defaultAndInputOptionMix);
-        this.sessionLoader = new SessionService(bot);
-        this.testSteps = [] as TestStep[];
-    }
+    addMessageFilter(filter: MessageFilter): BotTester;
 
     /**
-     * executes each test step serially
+     * sets the timeout time that the BotTester will wait for any particular message before failing
      */
-    //tslint:disable
-    public runTest(): Promise<any> {
-    //tslint:enable
-        return Promise.mapSeries(this.testSteps, (fn: TestStep) => fn());
-    }
+    setTimeout(milliseconds: number): BotTester;
+
+    /**
+     * adds prebuilt filter to ignore typing event
+     */
+    ignoreTypingEvent(): BotTester;
+
+    /**
+     * adds prebuilt filter to ignore endOfConversationEvent
+     */
+    ignoreEndOfConversationEvent(): BotTester;
+}
+
+/**
+ * Test builder/runner suite. After any of these are called, no functions in IConfigModified should be accessible
+ */
+export interface IBotTester {
+    /**
+     * executes each test step serially.
+     */
+    runTest(): Promise<{}>;
 
     /**
      * loads a session associated with an address and passes it to a user defined function
      * @param sessionCheckerFunction function passed in to inspect message
      * @param address (Optional) address of the session to load. Defaults to bot's default address if not defined
      */
-    public checkSession(
-        sessionCheckerFunction: checkSessionFunction,
-        address?: IAddress
-    ): BotTester {
-        const runSessionChecker = () => this.sessionLoader.getSession(address || this.defaultAddress)
-                                                .then(sessionCheckerFunction);
-
-        this.testSteps.push(runSessionChecker);
-
-        return this;
-    }
+    checkSession(sessionCheckerFunction: checkSessionFunction, address?: IAddress): IBotTester;
 
     /**
      * sends a message to a bot and compares bot responses against expectedResponsess. Expected responses can be a variable number of args,
@@ -69,11 +60,122 @@ export class BotTester {
      * @param msg message to send to bot
      * @param expectedResponses (Optional) responses the bot-tester framework checks against
      */
+    sendMessageToBot(
+        msg: IMessage | string,
+        // currently only supports string RegExp IMessage
+        ...expectedResponses: (PossibleExpectedMessageType | PossibleExpectedMessageType[])[]): IBotTester;
+
+    /**
+     * same as sendMessageToBot, but the order of responses is not checked. This will cause the test to hang until all messages it expects
+     * are returned
+     */
+    sendMessageToBotIgnoringResponseOrder(
+        msg: IMessage | string,
+        // currently only supports string RegExp IMessage
+        ...expectedResponses: (PossibleExpectedMessageType | PossibleExpectedMessageType[])[]
+    ): IBotTester;
+
+    /**
+     * sends a message to the bot. This should be used whenever session.save() is used without sending a reply to the user. This exists due
+     * to a limitation in the current implementation of the botbuilder framework
+     *
+     * @param msg message to send to bot
+     */
+    sendMessageToBotAndExpectSaveWithNoResponse(msg: IMessage | string): IBotTester;
+
+    /**
+     * Works exactly like Promise's .then function, except that the return value is not passed as an arg to the next function (even if its
+     * another .then)
+     * @param fn some function to run
+     */
+    then(fn: Function): IBotTester;
+
+    /**
+     * Waits for the given delay between test steps.
+     * @param delayInMiliseconds time to wait in milliseconds
+     */
+    wait(delayInMilliseconds: number): IBotTester;
+}
+
+/**
+ * Test builder and runner for botbuilder bots
+ */
+export class BotTester implements IBotTester, IOptionsModifier {
+    private bot: UniversalBot;
+    private sessionLoader: SessionService;
+
+    // this is instantiated in the runTest function. This is done to allow any changes to the config to accumulate
+    private messageService: MessageService;
+    private testSteps: TestStep[];
+    private config: IConfig;
+
+    constructor(bot: UniversalBot, options: IConfig = config) {
+        this.config = Object.assign({}, config, options);
+        this.config.messageFilters = this.config.messageFilters.slice();
+        this.bot = bot;
+        this.messageService = new MessageService(bot, this.config);
+        this.sessionLoader = new SessionService(bot);
+        this.testSteps = [] as TestStep[];
+    }
+
+    public addMessageFilter(messageFilter: MessageFilter): BotTester {
+        this.config.messageFilters.push(messageFilter);
+
+        return this;
+    }
+
+    public setTimeout(milliseconds: number): BotTester {
+        this.config.timeout = milliseconds;
+
+        return this;
+    }
+
+    public ignoreEndOfConversationEvent(): BotTester {
+        this.config.ignoreEndOfConversationEvent = true;
+
+        return this;
+    }
+
+    public ignoreTypingEvent(): BotTester {
+        this.config.ignoreTypingEvent = true;
+
+        return this;
+    }
+
+    /**
+     * Initializes the MessegeService here to allow config changes to accumulate
+     */
+    public runTest(): Promise<{}> {
+        if (this.config.ignoreTypingEvent) {
+            this.config.messageFilters.push(ignoreTypingEventFilter);
+        }
+
+        if (this.config.ignoreEndOfConversationEvent) {
+            this.config.messageFilters.push(ignoreEndOfConversationEventFilter);
+        }
+
+        this.messageService = new MessageService(this.bot, this.config);
+
+        return Promise.mapSeries(this.testSteps, (fn: TestStep) => fn());
+    }
+
+    public checkSession(
+        sessionCheckerFunction: checkSessionFunction,
+        address?: IAddress
+    ): IBotTester {
+        const runSessionChecker = () => this.sessionLoader.getSession(address || this.config.defaultAddress)
+                                                .then(sessionCheckerFunction);
+
+        this.testSteps.push(runSessionChecker);
+
+        return this;
+    }
+
     public sendMessageToBot(
         msg: IMessage | string,
         // currently only supports string RegExp IMessage
         ...expectedResponses: (PossibleExpectedMessageType | PossibleExpectedMessageType[])[]
-    ): BotTester {
+    ): IBotTester {
         const message = this.convertToIMessage(msg);
 
         // possible that expected responses may be undefined. Remove them
@@ -86,7 +188,7 @@ export class BotTester {
         msg: IMessage | string,
         // currently only supports string RegExp IMessage
         ...expectedResponses: (PossibleExpectedMessageType | PossibleExpectedMessageType[])[]
-    ): BotTester {
+    ): IBotTester {
         const message = this.convertToIMessage(msg);
 
         // possible that expected responses may be undefined. Remove them
@@ -95,38 +197,19 @@ export class BotTester {
         return this.sendMessageToBotInternal(message, expectedResponses, true);
     }
 
-    /**
-     * sends a message to the bot. This should be used whenever session.save() is used without sending a reply to the user. This exists due
-     * to a limitation in the current implementation of the botbuilder framework
-     *
-     * @param msg message to send to bot
-     */
-    public sendMessageToBotAndExpectSaveWithNoResponse(
-        msg: IMessage | string
-    ): BotTester {
+    public sendMessageToBotAndExpectSaveWithNoResponse(msg: IMessage | string): IBotTester {
         const message = this.convertToIMessage(msg);
 
         return this.sendMessageToBotInternal(message, [this.sessionLoader.getInternalSaveMessage(message.address)]);
     }
 
-    /**
-     * Works exactly like Promise's .then function, except that the return value is not passed as an arg to the next function (even if its
-     * another .then)
-     * @param fn some function to run
-     */
-    //tslint:disable
-    public then(fn: Function): BotTester {
-    //tslint:enable
+    public then(fn: Function): IBotTester {
         this.testSteps.push(() => Promise.method(fn)());
 
         return this;
     }
 
-    /**
-     * Waits for the given delay between test steps.
-     * @param delayInMiliseconds time to wait in milliseconds
-     */
-    public wait(delayInMilliseconds: number): BotTester {
+    public wait(delayInMilliseconds: number): IBotTester {
         this.testSteps.push(() => Promise.delay(delayInMilliseconds));
 
         return this;
@@ -136,7 +219,7 @@ export class BotTester {
         if (typeof(msg) === 'string') {
             return new Message()
                 .text(msg as string)
-                .address(this.defaultAddress)
+                .address(this.config.defaultAddress)
                 .toMessage();
         }
 
@@ -163,9 +246,9 @@ export class BotTester {
         } else if (expectedResponses instanceof Array) {
             if (expectedResponses.length > 0) {
                 expectedMessages = (expectedResponses as PossibleExpectedMessageCollections[])
-                // tslint:disable
-                .map((currentExpectedResponseCollection:  PossibleExpectedMessageCollections) => new ExpectedMessage(currentExpectedResponseCollection));
-                // tslint:enable
+
+                .map((currentExpectedResponseCollection:  PossibleExpectedMessageCollections) =>
+                    new ExpectedMessage(currentExpectedResponseCollection));
             }
         }
 

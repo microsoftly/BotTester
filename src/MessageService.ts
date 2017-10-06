@@ -1,7 +1,7 @@
 import * as Promise from 'bluebird';
 import { IAddress, IMessage, Message, Session, UniversalBot } from 'botbuilder';
 import { setTimeout } from 'timers';
-import { IConfig, NO_TIMEOUT } from './config';
+import { IConfig, MessageFilter, NO_TIMEOUT } from './config';
 import { ExpectedMessage } from './ExpectedMessage';
 import { OutgoingMessageComparator } from './OutgoingMessageComparator';
 
@@ -87,7 +87,6 @@ export class MessageService {
                     } catch (e) {
                         return rej(e);
                     }
-
                 });
 
                 if (!outgoingMessageComparator.expectsAdditionalMessages()) {
@@ -101,12 +100,15 @@ export class MessageService {
      * Inject middleware to intercept outgoing messages to check their content
      */
     private applyOutgoingMessageListener(): void {
-        this.bot.on('outgoing', (e: IMessage | IMessage[]) => {
-            if (!(e instanceof Array)) {
-                e = [e];
+        this.bot.on('outgoing', (outgoingMessages: IMessage | IMessage[]) => {
+            if (!(outgoingMessages instanceof Array)) {
+                outgoingMessages = [outgoingMessages];
             }
 
-            this.botToUserMessageChecker(e);
+            this.config.messageFilters.forEach(
+                (messageFilter: MessageFilter) => outgoingMessages = (outgoingMessages as IMessage[]).filter(messageFilter));
+
+            this.botToUserMessageChecker(outgoingMessages);
         });
     }
 }
