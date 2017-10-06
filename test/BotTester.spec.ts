@@ -1,8 +1,12 @@
 //```javascript
 import { IAddress, IMessage, Message, Prompts, Session, UniversalBot } from 'botbuilder';
-import { expect } from 'chai';
+import * as chai from 'chai';
+import * as chaiAsPromised from 'chai-as-promised';
 import { BotTester } from './../src/BotTester';
 import { TestConnector } from './../src/TestConnector';
+
+chai.use(chaiAsPromised);
+const expect = chai.expect;
 
 const connector = new TestConnector();
 
@@ -352,6 +356,38 @@ describe('BotTester', () => {
         return new BotTester(bot, { messageFilters: [ignoreHowMessage, ignoreAreMessage]})
             .sendMessageToBot('intro', 'hello', 'you?')
             .runTest();
+    });
+//```
+
+//# can modify BotTester options
+//``` javascript
+    describe('can modifiy options in line in builder chain', () => {
+        it('add a message filter', () => {
+            bot.dialog('/', (session) => {
+                session.send('hello');
+                session.send('there');
+                session.send('green');
+            });
+
+            return new BotTester(bot)
+                .addMessageFilter((msg) => !msg.text.includes('hello'))
+                .addMessageFilter((msg) => !msg.text.includes('there'))
+                .sendMessageToBot('hey', 'green')
+                .runTest();
+        });
+
+        it('change timeout time', (done) => {
+            const timeout = 750;
+            bot.dialog('/', (session) => {
+                setTimeout(() => session.send('hi there'), timeout * 2 );
+            });
+
+            expect(new BotTester(bot)
+                .setTimeout(timeout)
+                .sendMessageToBot('hey', 'hi there')
+                .runTest()
+            ).to.be.rejected.notify(done);
+        });
     });
 //```
 
