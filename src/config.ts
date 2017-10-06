@@ -17,6 +17,16 @@ export interface IConfig {
     defaultAddress?: IAddress;
 
     /**
+     * ignores typing event messages
+     */
+    ignoreTypingEvent?: boolean;
+
+     /**
+      * ignores end of conversation event messages
+      */
+    ignoreEndOfConversationEvent?: boolean;
+
+    /**
      * filters for messages that the BotTester framework should use
      */
     messageFilters?: MessageFilter[];

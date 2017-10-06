@@ -18,7 +18,9 @@ Passing in the config overrides any default values or values set by bot-tester.j
     defaultAddress: botbuilder.IAddress,
     timeout: number // in milliseconds
     // each filter returns false for messages that the BotTester should ignore
-    messageFilters: ((message:IMessage) => boolean)[]
+    messageFilters: ((message:IMessage) => boolean)[],
+    ignoreTypingEvent: boolean,
+    ignoreEndOfConversationEvent: boolean
 } 
 ```
 if timeout is defined, then a particular ```runTest()``` call will fail if it does not receive each expected message within the timeout period of time set in the options.
@@ -410,6 +412,19 @@ describe('BotTester', () => {
                 .sendMessageToBot('hey', 'hi there')
                 .runTest()
             ).to.be.rejected.notify(done);
+        });
+
+        it('can ignore typing events', () => {
+            bot.dialog('/', (session) => {
+                session.send('hello');
+                session.sendTyping();
+                session.send('goodbye');
+            });
+
+            return new BotTester(bot)
+                .ignoreTypingEvent()
+                .sendMessageToBot('hey', 'hello', 'goodbye')
+                .runTest();
         });
     });
 ```
