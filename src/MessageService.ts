@@ -87,7 +87,6 @@ export class MessageService {
                     } catch (e) {
                         return rej(e);
                     }
-
                 });
 
                 if (!outgoingMessageComparator.expectsAdditionalMessages()) {

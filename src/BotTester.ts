@@ -1,5 +1,6 @@
 import * as Promise from 'bluebird';
 import { IAddress, IMessage, Message, Session, UniversalBot } from 'botbuilder';
+import { ignoreEndOfConversationEventFilter, ignoreTypingEventFilter } from './builtInMessageFilters';
 import { config, IConfig, MessageFilter } from './config';
 import { ExpectedMessage, PossibleExpectedMessageCollections, PossibleExpectedMessageType } from './ExpectedMessage';
 import { botToUserMessageCheckerFunction, MessageService } from './MessageService';
@@ -24,6 +25,16 @@ export interface IOptionsModifier {
      * sets the timeout time that the BotTester will wait for any particular message before failing
      */
     setTimeout(milliseconds: number): BotTester;
+
+    /**
+     * adds prebuilt filter to ignore typing event
+     */
+    ignoreTypingEvent(): BotTester;
+
+    /**
+     * adds prebuilt filter to ignore endOfConversationEvent
+     */
+    ignoreEndOfConversationEvent(): BotTester;
 }
 
 /**
@@ -119,10 +130,30 @@ export class BotTester implements IBotTester, IOptionsModifier {
         return this;
     }
 
+    public ignoreEndOfConversationEvent(): BotTester {
+        this.config.ignoreEndOfConversationEvent = true;
+
+        return this;
+    }
+
+    public ignoreTypingEvent(): BotTester {
+        this.config.ignoreTypingEvent = true;
+
+        return this;
+    }
+
     /**
      * Initializes the MessegeService here to allow config changes to accumulate
      */
     public runTest(): Promise<{}> {
+        if (this.config.ignoreTypingEvent) {
+            this.config.messageFilters.push(ignoreTypingEventFilter);
+        }
+
+        if (this.config.ignoreEndOfConversationEvent) {
+            this.config.messageFilters.push(ignoreEndOfConversationEventFilter);
+        }
+
         this.messageService = new MessageService(this.bot, this.config);
 
         return Promise.mapSeries(this.testSteps, (fn: TestStep) => fn());

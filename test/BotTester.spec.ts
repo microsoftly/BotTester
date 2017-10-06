@@ -388,6 +388,19 @@ describe('BotTester', () => {
                 .runTest()
             ).to.be.rejected.notify(done);
         });
+
+        it('can ignore typing events', () => {
+            bot.dialog('/', (session) => {
+                session.send('hello');
+                session.sendTyping();
+                session.send('goodbye');
+            });
+
+            return new BotTester(bot)
+                .ignoreTypingEvent()
+                .sendMessageToBot('hey', 'hello', 'goodbye')
+                .runTest();
+        });
     });
 //```
 
