@@ -1,4 +1,4 @@
-import { IMessage } from 'botbuilder';
+import { IMessage, IEvent } from 'botbuilder';
 import { expect } from './assertionLibraries/IExpectation';
 
 export enum ExpectedMessageType {
@@ -10,7 +10,7 @@ export enum ExpectedMessageType {
 /**
  * Types accepted for responses checkers
  */
-export type PossibleExpectedMessageType = string | IMessage | RegExp;
+export type PossibleExpectedMessageType = string | IMessage | RegExp | IEvent;
 
 /**
  * Response expectations area always collections. The collection is the set of possible responses, chosen at random. If the collection size

@@ -11,14 +11,21 @@ config can be set one of 2 ways:
 1. creating a bot-tester.json file in the root directory of your project.
 2. passing in a config object into the options param, which is the last, when creating a BotTester instance
 
+
 Passing in the config overrides any default values or values set by bot-tester.json. At the moment, the options are:
-```javascript
+```typescript
 {
     defaultAddress: botbuilder.IAddress,
     timeout: number // in milliseconds
+    // each filter returns false for messages that the BotTester should ignore
+    messageFilters: ((message:IMessage) => boolean)[],
+    ignoreTypingEvent: boolean,
+    ignoreEndOfConversationEvent: boolean
 } 
 ```
 if timeout is defined, then a particular ```runTest()``` call will fail if it does not receive each expected message within the timeout period of time set in the options.
+
+additionally, config can be set by using the config updating options in the build chain, documented below in the example use
 
 For a more in depth view, check out [the Bot Tester Framework Config doc](https://microsoftly.github.io/BotTester/interfaces/_config_.iconfig.html)
 # Example Usage
@@ -355,5 +362,69 @@ describe('BotTester', () => {
         return new BotTester(bot)
             .sendMessageToBotIgnoringResponseOrder('anything', 'how are you?', 'hi', 'there')
             .runTest();
+    });
+```
+
+# can apply one or more message filters in the BotTester options for messages to ignore
+``` javascript
+    it('can apply one or more message filters in the BotTester options for messages to ignore', () => {
+        bot.dialog('/', (session) => {
+            session.send('hello');
+            session.send('how');
+            session.send('are');
+            session.send('you?');
+        });
+
+        const ignoreHowMessage = (message) => !message.text.includes('how');
+        const ignoreAreMessage = (message) => !message.text.includes('are');
+
+        return new BotTester(bot, { messageFilters: [ignoreHowMessage, ignoreAreMessage]})
+            .sendMessageToBot('intro', 'hello', 'you?')
+            .runTest();
+    });
+```
+
+# can modify BotTester options
+``` javascript
+    describe('can modifiy options in line in builder chain', () => {
+        it('add a message filter', () => {
+            bot.dialog('/', (session) => {
+                session.send('hello');
+                session.send('there');
+                session.send('green');
+            });
+
+            return new BotTester(bot)
+                .addMessageFilter((msg) => !msg.text.includes('hello'))
+                .addMessageFilter((msg) => !msg.text.includes('there'))
+                .sendMessageToBot('hey', 'green')
+                .runTest();
+        });
+
+        it('change timeout time', (done) => {
+            const timeout = 750;
+            bot.dialog('/', (session) => {
+                setTimeout(() => session.send('hi there'), timeout * 2 );
+            });
+
+            expect(new BotTester(bot)
+                .setTimeout(timeout)
+                .sendMessageToBot('hey', 'hi there')
+                .runTest()
+            ).to.be.rejected.notify(done);
+        });
+
+        it('can ignore typing events', () => {
+            bot.dialog('/', (session) => {
+                session.send('hello');
+                session.sendTyping();
+                session.send('goodbye');
+            });
+
+            return new BotTester(bot)
+                .ignoreTypingEvent()
+                .sendMessageToBot('hey', 'hello', 'goodbye')
+                .runTest();
+        });
     });
 ```
