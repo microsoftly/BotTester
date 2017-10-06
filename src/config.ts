@@ -1,5 +1,10 @@
-import { IAddress } from 'botbuilder';
+import { IAddress, IMessage } from 'botbuilder';
 import * as fs from 'fs';
+
+/**
+ * Returns true if a message
+ */
+export type MessageFilter = (message: IMessage) => boolean;
 
 export interface IConfig {
     /**
@@ -10,6 +15,11 @@ export interface IConfig {
      * default address bot will use for all communication (when not overriden)
      */
     defaultAddress?: IAddress;
+
+    /**
+     * filters for messages that the BotTester framework should use
+     */
+    messageFilters?: MessageFilter[];
 }
 
 const configFilePath = `bot-tester.json`;
@@ -33,5 +43,7 @@ let configInternal: IConfig = {
 if (configFileExists) {
     configInternal = JSON.parse(fs.readFileSync(configFilePath, { encoding: 'utf8' }));
 }
+
+configInternal.messageFilters = [];
 
 export const config = configInternal;
