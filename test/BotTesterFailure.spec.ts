@@ -202,4 +202,20 @@ describe('BotTester', () => {
             .sendMessageToBotIgnoringResponseOrder('anything', 'NOPE?', 'hi', 'there')
             .runTest()).to.be.rejected.notify(done);
     });
+
+    it('will fail if a message filter is not correctly applied', (done: Function) => {
+        bot.dialog('/', (session: Session) => {
+            session.send('hello');
+            session.send('how');
+            session.send('are');
+            session.send('you?');
+        });
+
+        const ignoreHowMessage = (message: IMessage) => !message.text.includes('how');
+        const ignoreAreMessage = (message: IMessage) => !message.text.includes('are');
+
+        expect(new BotTester(bot, { messageFilters: [ignoreHowMessage, ignoreAreMessage]})
+            .sendMessageToBot('intro', 'hello', 'how', 'are', 'you?')
+            .runTest()).to.be.rejected.notify(done);
+    });
 });

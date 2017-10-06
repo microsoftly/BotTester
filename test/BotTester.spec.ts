@@ -336,6 +336,25 @@ describe('BotTester', () => {
     });
 //```
 
+//# can apply one or more message filters in the BotTester options for messages to ignore
+//``` javascript
+    it('can apply one or more message filters in the BotTester options for messages to ignore', () => {
+        bot.dialog('/', (session) => {
+            session.send('hello');
+            session.send('how');
+            session.send('are');
+            session.send('you?');
+        });
+
+        const ignoreHowMessage = (message) => !message.text.includes('how');
+        const ignoreAreMessage = (message) => !message.text.includes('are');
+
+        return new BotTester(bot, { messageFilters: [ignoreHowMessage, ignoreAreMessage]})
+            .sendMessageToBot('intro', 'hello', 'you?')
+            .runTest();
+    });
+//```
+
     describe('Cases not for docs', () => {
         it('can handle undefined expectedResponses', () => {
             bot.dialog('/', (session: Session) => {
