@@ -7,11 +7,6 @@ import { ignoreInternalSaveMessageFilter } from './builtInMessageFilters';
  */
 export type MessageFilter = (message: IMessage) => boolean;
 
-/**
- * Returns true if a message
- */
-export type MessageFilter = (message: IMessage) => boolean;
-
 export interface IConfig {
     /**
      * timeout in milliseconds before a BotTester runner will fail a test (when not overriden)
