@@ -20,7 +20,10 @@ Passing in the config overrides any default values or values set by bot-tester.j
     // each filter returns false for messages that the BotTester should ignore
     messageFilters: ((message:IMessage) => boolean)[],
     ignoreTypingEvent: boolean,
-    ignoreEndOfConversationEvent: boolean
+    ignoreEndOfConversationEvent: boolean,
+    // Setting this to true will cause checkSession to hang and test to fail.
+    ignoreInternalSveMessage?: boolean;
+
 } 
 ```
 if timeout is defined, then a particular ```runTest()``` call will fail if it does not receive each expected message within the timeout period of time set in the options.

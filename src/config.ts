@@ -1,5 +1,6 @@
 import { IAddress, IMessage } from 'botbuilder';
 import * as fs from 'fs';
+import { ignoreInternalSaveMessageFilter } from './builtInMessageFilters';
 
 /**
  * Returns true if a message
@@ -25,6 +26,12 @@ export interface IConfig {
       * ignores end of conversation event messages
       */
     ignoreEndOfConversationEvent?: boolean;
+
+    /**
+     * ignores the internal __save__ message. Setting this to true will cause checkSession to hang and test to fail
+     */
+    // this is explicitly not added as a chained builder function to disaude consumers from using this.
+    ignoreInternalSveMessage?: boolean;
 
     /**
      * filters for messages that the BotTester framework should use
@@ -55,5 +62,9 @@ if (configFileExists) {
 }
 
 configInternal.messageFilters = [];
+
+if (configInternal.ignoreInternalSveMessage) {
+    configInternal.messageFilters.push(ignoreInternalSaveMessageFilter);
+}
 
 export const config = configInternal;
