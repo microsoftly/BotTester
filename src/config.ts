@@ -31,7 +31,7 @@ export interface IConfig {
      * ignores the internal __save__ message. Setting this to true will cause checkSession to hang and test to fail
      */
     // this is explicitly not added as a chained builder function to disaude consumers from using this.
-    ignoreInternalSveMessage?: boolean;
+    ignoreInternalSaveMessage?: boolean;
 
     /**
      * filters for messages that the BotTester framework should use
@@ -63,7 +63,7 @@ if (configFileExists) {
 
 configInternal.messageFilters = [];
 
-if (configInternal.ignoreInternalSveMessage) {
+if (configInternal.ignoreInternalSaveMessage) {
     configInternal.messageFilters.push(ignoreInternalSaveMessageFilter);
 }
 
