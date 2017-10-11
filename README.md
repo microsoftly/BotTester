@@ -22,7 +22,7 @@ Passing in the config overrides any default values or values set by bot-tester.j
     ignoreTypingEvent: boolean,
     ignoreEndOfConversationEvent: boolean,
     // Setting this to true will cause checkSession to hang and test to fail.
-    ignoreInternalSaveMessage?: boolean;
+    ignoreInternalSaveMessage: boolean;
 
 } 
 ```
