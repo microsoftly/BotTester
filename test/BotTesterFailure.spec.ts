@@ -3,6 +3,7 @@ import * as chai from 'chai';
 import * as chaiAsPromised from 'chai-as-promised';
 import { BotTester } from './../src/BotTester';
 import { TestConnector } from './../src/TestConnector';
+import { getAdaptiveCard, getAdaptiveCardAttachment, getAdaptiveCardMessage } from './adaptiveCardProvider';
 
 chai.use(chaiAsPromised);
 
@@ -252,5 +253,35 @@ describe('BotTester', () => {
             //tslint:enable
             .runTest())
         .to.be.rejected.notify(done);
+    });
+
+    it('will fail when there are no matching adaptive cards', (done: Function) => {
+        bot.dialog('/', (session: Session) => {
+            session.send(getAdaptiveCardMessage());
+        });
+
+        const card = getAdaptiveCard();
+
+        card.actions = [{title: 'this is not the correct title', type: 'this is no the correct type'}];
+
+        const message = getAdaptiveCardMessage(card);
+
+        expect(new BotTester(bot)
+            .sendMessageToBot('anything', message)
+            .runTest()).to.be.rejected.notify(done);
+    });
+
+    it('will fail when there are no attachments when they are expected', (done: Function) => {
+        bot.dialog('/', (session: Session) => {
+            session.send('hello');
+        });
+
+        const expectedMessage = getAdaptiveCardMessage();
+
+        expectedMessage.text = 'hello';
+
+        expect(new BotTester(bot)
+            .sendMessageToBot('anything', expectedMessage)
+            .runTest()).to.be.rejected.notify(done);
     });
 });

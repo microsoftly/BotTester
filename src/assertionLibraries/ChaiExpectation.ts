@@ -1,4 +1,4 @@
-import { IMessage } from 'botbuilder';
+import { IAttachment, IMessage } from 'botbuilder';
 import * as chai from 'chai';
 import { IExpectation } from './IExpectation';
 
@@ -72,20 +72,32 @@ export class ChaiExpectation implements IExpectation {
                 return;
             }
 
-            const clone = Object.assign({}, outgoingMessage);
+            const outgoingMessageClone = Object.assign({}, outgoingMessage);
+            const expectedResponseClone = Object.assign({}, expectedResponse);
+
+            // attachments are compared separately
+            const outgoingMessageAttachments = outgoingMessageClone.attachments || [];
+            const expectedResponseAttachments = expectedResponseClone.attachments || [];
+
+            outgoingMessageClone.attachments = [];
+            expectedResponseClone.attachments = [];
 
             // ignore source event (not added to message until after sending)
-            delete expectedResponse.source;
+            delete expectedResponseClone.source;
 
             // auto added by prompts, not needed
-            delete outgoingMessage.inputHint;
+            delete outgoingMessageClone.inputHint;
 
             // always botbuilder
-            delete expectedResponse.agent;
+            delete expectedResponseClone.agent;
 
             try {
-                expect(clone).to.containSubset(expectedResponse);
+                expect(outgoingMessageClone).to.containSubset(expectedResponseClone);
                 matchExists = true;
+
+                if (matchExists && expectedResponseAttachments.length) {
+                    matchExists = this.checkForMatchingAttachments(outgoingMessageAttachments, expectedResponseAttachments);
+                }
             } catch (e) {
                 // continue, no match found
             }
@@ -95,5 +107,31 @@ export class ChaiExpectation implements IExpectation {
             expect.fail(null, null, `expected ${JSON.stringify(outgoingMessage)}\
             to be a subset of one of ${JSON.stringify(expectedResponseCollectionAsIMessage, null, 2)}`);
         }
+    }
+
+    private checkForMatchingAttachments(outgoingAttachments: IAttachment[], expectedAttachments: IAttachment[]): boolean {
+        let matchExists: boolean = false;
+
+        outgoingAttachments.forEach((outgoingAttachment: IAttachment) => {
+            if (matchExists) {
+                return;
+            }
+
+            expectedAttachments.forEach((expectedAttachment: IAttachment) => {
+                if (matchExists) {
+                    return;
+                }
+
+                try {
+                    expect(outgoingAttachment).to.containSubset(expectedAttachment);
+
+                    matchExists = true;
+                } catch (e) {
+                    // continue
+                }
+            });
+        });
+
+        return matchExists;
     }
 }
