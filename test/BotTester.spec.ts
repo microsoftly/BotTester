@@ -4,6 +4,7 @@ import * as chai from 'chai';
 import * as chaiAsPromised from 'chai-as-promised';
 import { BotTester } from './../src/BotTester';
 import { TestConnector } from './../src/TestConnector';
+import { getAdaptiveCard, getAdaptiveCardAttachment, getAdaptiveCardMessage } from './adaptiveCardProvider';
 
 chai.use(chaiAsPromised);
 const expect = chai.expect;
@@ -81,6 +82,19 @@ describe('BotTester', () => {
             .sendMessageToBot('Hola!', 'Hi there! Tell me something you like')
             .sendMessageToBot('The sky', 'The sky is pretty cool.', 'Why do you like it?')
             .sendMessageToBot('It\'s blue', 'Interesting. Well, that\'s all I have for now')
+            .runTest();
+    });
+//```
+
+//# Test Adaptive Cards
+//``` javascript
+    it('can correctly check against adaptive cards', () => {
+        bot.dialog('/', (session) => {
+            session.send(getAdaptiveCardMessage());
+        });
+
+        return new BotTester(bot)
+            .sendMessageToBot('anything', getAdaptiveCardMessage())
             .runTest();
     });
 //```
@@ -414,6 +428,28 @@ describe('BotTester', () => {
                 .sendMessageToBot('this IS another thing')
                 // send second message to make sure the tests can continue as expected
                 .sendMessageToBot('this could be anything!', 'hello')
+                .runTest();
+        });
+
+        it('can ensure adaptive cards are present, regardless of order', () => {
+            bot.dialog('/', (session: Session) => {
+                session.send(getAdaptiveCardMessage());
+            });
+
+            const matchingCard = getAdaptiveCard();
+            const nonMatchingCard = getAdaptiveCard();
+
+            nonMatchingCard.actions = [{title: 'this is not the correct title', type: 'this is no the correct type'}];
+
+            const message1 = getAdaptiveCardMessage(nonMatchingCard);
+            const message2 = getAdaptiveCardMessage(matchingCard);
+
+            message1.attachments.push(getAdaptiveCardAttachment(matchingCard));
+            message2.attachments.push(getAdaptiveCardAttachment(nonMatchingCard));
+
+            return new BotTester(bot)
+                .sendMessageToBot('anything', message1)
+                .sendMessageToBot('anything', message2)
                 .runTest();
         });
     });
