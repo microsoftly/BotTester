@@ -36,6 +36,7 @@ For a more in depth view, check out [the Bot Tester Framework Config doc](https:
 import { IAddress, IMessage, Message, Prompts, Session, UniversalBot } from 'botbuilder';
 import { expect } from 'chai';
 import { BotTester, TestConnector } from 'bot-tester';
+import { getAdaptiveCard, getAdaptiveCardAttachment, getAdaptiveCardMessage } from './adaptiveCardProvider';
 
 const connector = new TestConnector();
 
@@ -109,6 +110,19 @@ describe('BotTester', () => {
             .sendMessageToBot('Hola!', 'Hi there! Tell me something you like')
             .sendMessageToBot('The sky', 'The sky is pretty cool.', 'Why do you like it?')
             .sendMessageToBot('It\'s blue', 'Interesting. Well, that\'s all I have for now')
+            .runTest();
+    });
+```
+
+# Test Adaptive Cards
+``` javascript
+    it('can correctly check against adaptive cards', () => {
+        bot.dialog('/', (session) => {
+            session.send(getAdaptiveCardMessage());
+        });
+
+        return new BotTester(bot)
+            .sendMessageToBot('anything', getAdaptiveCardMessage())
             .runTest();
     });
 ```
