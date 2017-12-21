@@ -1,7 +1,7 @@
 import * as Promise from 'bluebird';
 import { IAddress, IMessage, Message, Session, UniversalBot } from 'botbuilder';
 import { ignoreEndOfConversationEventFilter, ignoreTypingEventFilter } from './builtInMessageFilters';
-import { config, IConfig, MessageFilter } from './config';
+import { getConfig, IConfig, MessageFilter } from './config';
 import { ExpectedMessage, PossibleExpectedMessageCollections, PossibleExpectedMessageType } from './ExpectedMessage';
 import { botToUserMessageCheckerFunction, MessageService } from './MessageService';
 import { SessionService } from './SessionService';
@@ -109,8 +109,8 @@ export class BotTester implements IBotTester, IOptionsModifier {
     private testSteps: TestStep[];
     private config: IConfig;
 
-    constructor(bot: UniversalBot, options: IConfig = config) {
-        this.config = Object.assign({}, config, options);
+    constructor(bot: UniversalBot, options?: IConfig) {
+        this.config = Object.assign({}, getConfig(), options);
         this.config.messageFilters = this.config.messageFilters.slice();
         this.bot = bot;
         this.messageService = new MessageService(bot, this.config);

@@ -40,14 +40,13 @@ export interface IConfig {
 }
 
 const configFilePath = `bot-tester.json`;
-const configFileExists = fs.existsSync(configFilePath);
 
 /**
  * default value for timeout. If config/options are set to this value, no timeout will be used
  */
 export const NO_TIMEOUT = -1;
 
-let configInternal: IConfig = {
+const defaultConfig: IConfig = {
     timeout: NO_TIMEOUT,
     defaultAddress: {
         channelId: 'console',
@@ -57,14 +56,26 @@ let configInternal: IConfig = {
     }
 };
 
-if (configFileExists) {
-    configInternal = JSON.parse(fs.readFileSync(configFilePath, { encoding: 'utf8' }));
+export function getConfig(): IConfig {
+    let configInternal: IConfig;
+
+    if (configInternal) {
+        return configInternal;
+    }
+
+    configInternal = defaultConfig;
+
+    const configFileExists = fs.existsSync(configFilePath);
+
+    if (configFileExists) {
+        configInternal = JSON.parse(fs.readFileSync(configFilePath, { encoding: 'utf8' }));
+    }
+
+    configInternal.messageFilters = [];
+
+    if (configInternal.ignoreInternalSaveMessage) {
+        configInternal.messageFilters.push(ignoreInternalSaveMessageFilter);
+    }
+
+    return configInternal;
 }
-
-configInternal.messageFilters = [];
-
-if (configInternal.ignoreInternalSaveMessage) {
-    configInternal.messageFilters.push(ignoreInternalSaveMessageFilter);
-}
-
-export const config = configInternal;
