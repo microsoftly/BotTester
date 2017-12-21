@@ -63,6 +63,8 @@ export function getConfig(): IConfig {
         return configInternal;
     }
 
+    configInternal = defaultConfig;
+
     const configFileExists = fs.existsSync(configFilePath);
 
     if (configFileExists) {
