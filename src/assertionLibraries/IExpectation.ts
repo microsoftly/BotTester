@@ -26,8 +26,8 @@ function createExpectation(subject: {}, message?: string): IExpectation {
 
     switch (name) {
         case 'chai':
-            return new ChaiExpectation(subject);
+            return new ChaiExpectation(subject, message);
         default:
-            return new ChaiExpectation(subject);
+            return new ChaiExpectation(subject, message);
     }
 }
