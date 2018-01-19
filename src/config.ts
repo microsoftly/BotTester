@@ -69,6 +69,7 @@ export function getConfig(): IConfig {
 
     if (configFileExists) {
         configInternal = JSON.parse(fs.readFileSync(configFilePath, { encoding: 'utf8' }));
+        configInternal.timeout = configInternal.timeout || NO_TIMEOUT;
     }
 
     configInternal.messageFilters = [];
