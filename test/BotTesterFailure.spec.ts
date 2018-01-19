@@ -26,7 +26,7 @@ describe('BotTester', () => {
         expect(new BotTester(bot)
             .sendMessageToBot('Hola!', 'NOPE')
             .runTest()
-        ).to.eventually.be.rejectedWith('expected [ \'NOPE\' ] to include \'hello!\'').notify(done);
+        ).to.eventually.be.rejectedWith('Bot should have responded with \'NOPE\', but was \'hello!\'').notify(done);
     });
 
     it('will fail if one of multiple responses is incorrect', (done: Function) => {
@@ -38,7 +38,19 @@ describe('BotTester', () => {
         expect(new BotTester(bot)
             .sendMessageToBot('Hola!', 'hello!', 'NOPE')
             .runTest()
-        ).to.eventually.be.rejectedWith('expected [ \'NOPE\' ] to include \'how are you doing?\'').notify(done);
+        ).to.eventually.be.rejectedWith('Bot should have responded with \'NOPE\', but was \'how are you doing?\'').notify(done);
+    });
+
+    it('it will fail if an empty collection is given', () => {
+        bot.dialog('/', (session: Session) => {
+            session.send('hello!');
+        });
+
+        try {
+          new BotTester(bot).sendMessageToBot('Hola!', []);
+        } catch (error) {
+          expect(error.message).to.include('expected response collections cannot be empty');
+        }
     });
 
     it('Will fail if response is not in the random response collection', (done: Function) => {
@@ -177,7 +189,7 @@ describe('BotTester', () => {
         expect(new BotTester(bot)
             .sendMessageToBot('abcd', numberRegex)
             .runTest()
-        ).to.be.rejected.notify(done);
+        ).to.eventually.be.rejectedWith('\'abcd\' did not match any regex in /^\\d+/').notify(done);
     });
 
     it('can timeout', (done: Function) => {

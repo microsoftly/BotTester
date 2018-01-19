@@ -30,33 +30,33 @@ const expectWithDeepMatch: DeepMatch = expect as any;
 export class ChaiExpectation implements IExpectation {
     private subject: {};
     private message: string;
-    
+
     constructor(subject: {}, message?: string) {
         this.subject = subject;
         this.message = message;
     }
-    
+
     public notToBeEmpty(): void {
         expect(this.subject, this.message).not.to.be.empty;
     }
-    
+
     public toEqual(value: {}): void {
         expect(this.subject, this.message).to.equal(value);
     }
-    
+
     public toInclude(value: {}): void {
         expect(this.subject, this.message).to.include(value);
     }
-    
+
     public toBeTrue(): void {
         expect(this.subject, this.message).to.be.true;
     }
-    
+
     /**
      * deeply compares an outgoing message with the expected messages that are considered valid for this test to pass.
      * It does a subset comparison, so as long as the expected message is a subset of one of the expected responses, this will pass
-     * 
-     * @param outgoingMessage actual message that bot sends 
+     *
+     * @param outgoingMessage actual message that bot sends
      */
     public toDeeplyInclude(outgoingMessage: IMessage): void {
         const expectedResponseCollectionAsIMessage: IMessage[] = this.subject as IMessage[];
