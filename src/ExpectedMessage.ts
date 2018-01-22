@@ -1,4 +1,4 @@
-import { IMessage, IEvent } from 'botbuilder';
+import { IEvent, IMessage } from 'botbuilder';
 import { expect } from './assertionLibraries/IExpectation';
 
 export enum ExpectedMessageType {
@@ -90,7 +90,7 @@ export class ExpectedMessage {
             expectedResponseStrings.length > 1 ? `one of ${expectedResponseStrings}` : expectedResponseStrings[0];
 
         const errorString =
-            `Bot should have responded with '${errorStringExpectedResponseText}', but was '${outgoingText}`;
+            `Bot should have responded with '${errorStringExpectedResponseText}', but was '${outgoingText}'`;
 
         expect(expectedResponseStrings, errorString).toInclude(outgoingText);
     }
@@ -105,7 +105,7 @@ export class ExpectedMessage {
         const text = outgoingMessage.text;
         const regexCollection: RegExp[] = this.expectedResponseCollection as RegExp[];
         expect(regexCollection.some((regex: RegExp) => regex.test(text)),
-               `${text} did not match any regex in ${regexCollection}`).toBeTrue();
+               `'${text}' did not match any regex in ${regexCollection}`).toBeTrue();
     }
 
     /**
