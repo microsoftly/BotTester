@@ -14,9 +14,12 @@ export interface IConfig {
      *  1) chai
      *
      * chai is the default library if none is provided
-     * more are on the way!
+     * libraries being developed:
+     *  1) Ava
+     *
+     * to request support for a new assertion library, check this thread and submit a comment
      */
-    assertionLibrary?: AssertionLibrary;
+    assertionLibrary?: AssertionLibrary | string;
     /**
      * timeout in milliseconds before a BotTester runner will fail a test (when not overriden)
      */
