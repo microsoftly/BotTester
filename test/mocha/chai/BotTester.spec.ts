@@ -2,9 +2,9 @@
 import { IAddress, IMessage, Message, Prompts, Session, UniversalBot } from 'botbuilder';
 import * as chai from 'chai';
 import * as chaiAsPromised from 'chai-as-promised';
-import { BotTester } from './../src/BotTester';
-import { TestConnector } from './../src/TestConnector';
-import { getAdaptiveCard, getAdaptiveCardAttachment, getAdaptiveCardMessage } from './adaptiveCardProvider';
+import { BotTester } from './../../../src/BotTester';
+import { TestConnector } from './../../../src/TestConnector';
+import { getAdaptiveCard, getAdaptiveCardAttachment, getAdaptiveCardMessage } from './../../adaptiveCardProvider';
 
 chai.use(chaiAsPromised);
 const expect = chai.expect;
