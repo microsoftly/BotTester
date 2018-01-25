@@ -39,7 +39,7 @@
     "lint:fix": "tslint 'src/**/*.ts' --fix",
     "cleanBuild": "npm run clean && npm run build",
     "watch": "tsc -w",
-    "test": "node_modules/mocha/bin/_mocha --require node_modules/ts-node/register test/*.spec.ts",
+    "test": "node_modules/mocha/bin/_mocha --require node_modules/ts-node/register test/**/*.spec.ts",
     "buildTypeDocs": "yarn cleanBuild && rm -rf docs && typedoc --excludeNotExported --out docs --hideGenerator src/BotTester.ts --module commonjs --gaID UA-105358964-1 --readme none && touch docs/.nojekyll",
     "ci": "npm run lint && npm run test",
     "coverage": "npm run coverageTests && nyc report --reporter=text-lcov | node_modules/.bin/coveralls",
