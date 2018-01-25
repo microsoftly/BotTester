@@ -242,13 +242,13 @@ export class BotTester implements IBotTester, IOptionsModifier {
         if (!expectedResponses) {
             expectedMessages = [];
         } else if (!(expectedResponses instanceof Array)) {
-            expectedMessages = [new ExpectedMessage(this.config, expectedResponses)];
+            expectedMessages = [new ExpectedMessage(expectedResponses)];
         } else if (expectedResponses instanceof Array) {
             if (expectedResponses.length > 0) {
                 expectedMessages = (expectedResponses as PossibleExpectedMessageCollections[])
 
                 .map((currentExpectedResponseCollection:  PossibleExpectedMessageCollections) =>
-                    new ExpectedMessage(this.config, currentExpectedResponseCollection));
+                    new ExpectedMessage(currentExpectedResponseCollection));
             }
         }
 
