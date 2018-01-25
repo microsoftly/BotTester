@@ -1,6 +1,5 @@
 import { IAddress, IMessage } from 'botbuilder';
 import * as fs from 'fs';
-import { AssertionLibrary } from './assertionLibraries/AssertionLibrary';
 import { ignoreInternalSaveMessageFilter } from './builtInMessageFilters';
 
 /**
@@ -9,17 +8,6 @@ import { ignoreInternalSaveMessageFilter } from './builtInMessageFilters';
 export type MessageFilter = (message: IMessage) => boolean;
 
 export interface IConfig {
-    /**
-     * assertion library to use when running the tests. Valid libraries/strings/values are:
-     *  1) chai
-     *
-     * chai is the default library if none is provided
-     * libraries being developed:
-     *  1) Ava
-     *
-     * to request support for a new assertion library, check this thread and submit a comment
-     */
-    assertionLibrary?: AssertionLibrary | string;
     /**
      * timeout in milliseconds before a BotTester runner will fail a test (when not overriden)
      */
@@ -60,7 +48,6 @@ export const NO_TIMEOUT = -1;
 
 const defaultConfig: IConfig = {
     timeout: NO_TIMEOUT,
-    assertionLibrary: AssertionLibrary.CHAI,
     defaultAddress: {
         channelId: 'console',
         user: { id: 'user1', name: 'user1' },
@@ -86,8 +73,6 @@ export function getConfig(): IConfig {
     }
 
     configInternal.messageFilters = [];
-
-    configInternal.assertionLibrary = configInternal.assertionLibrary || AssertionLibrary.CHAI;
 
     if (configInternal.ignoreInternalSaveMessage) {
         configInternal.messageFilters.push(ignoreInternalSaveMessageFilter);

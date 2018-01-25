@@ -22,16 +22,8 @@ Passing in the config overrides any default values or values set by bot-tester.j
     ignoreTypingEvent: boolean,
     ignoreEndOfConversationEvent: boolean,
     // Setting this to true will cause checkSession to hang and test to fail.
-    ignoreInternalSaveMessage: boolean,
+    ignoreInternalSaveMessage: boolean;
 
-    // this will allow using different assertion libraries. Currently supported libraries are:
-    // 1) chai
-
-    // with the following under development:
-    // 2) ava
-
-    // should this field not be provided, it will default to chai
-    assertionLibrary: string,
 } 
 ```
 if timeout is defined, then a particular ```runTest()``` call will fail if it does not receive each expected message within the timeout period of time set in the options.
