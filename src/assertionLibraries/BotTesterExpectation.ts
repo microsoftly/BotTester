@@ -6,7 +6,7 @@ import { IExpectation } from './IExpectation';
 export type expectationFunction = (subject: {}, message?: string) => IExpectation;
 
 export class BotTesterExpectation {
-    private readonly assertionLibrary: AssertionLibrary;
+    private readonly assertionLibrary: string;
 
     constructor(config: IConfig) {
         this.assertionLibrary = config.assertionLibrary;
