@@ -17,7 +17,7 @@ export class BotTesterExpectation {
         switch (this.config.assertionLibrary) {
             case AssertionLibrary.AVA:
                 // throw new Error('ava is not yet supported');
-                return new AvaExpectation(this.config.__internal__testContext, subject, message);
+                return new AvaExpectation(this.config.testContext, subject, message);
             case AssertionLibrary.CHAI:
             default:
                 return new ChaiExpectation(subject, message);
