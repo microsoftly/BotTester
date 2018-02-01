@@ -23,7 +23,7 @@ interface IAvaBotTest extends AvaTestContext {
 function getTestOptions(t: AvaTestContext): IConfig {
     return {
         assertionLibrary: 'ava',
-        __internal__testContext: t
+        testContext: t
     };
 }
 

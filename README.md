@@ -33,6 +33,10 @@ Passing in the config overrides any default values or values set by bot-tester.j
 
     // should this field not be provided, it will default to chai
     assertionLibrary: string,
+
+    // certain test runners need to pass in a context. Currently, the following runners require this
+    //    1) ava
+    testContext: {}
 }
 ```
 if timeout is defined, then a particular ```runTest()``` call will fail if it does not receive each expected message within the timeout period of time set in the options.
@@ -40,7 +44,60 @@ if timeout is defined, then a particular ```runTest()``` call will fail if it do
 additionally, config can be set by using the config updating options in the build chain, documented below in the example use
 
 For a more in depth view, check out [the Bot Tester Framework Config doc](https://microsoftly.github.io/BotTester/interfaces/_config_.iconfig.html)
+# Test runner setup
+## Mocha/Chai
+```javascript
+const { UniversalBot } = require('botbuilder');
+const { expect } = require('chai');
+const { BotTester, TestConnector } = require('bot-tester');
+
+describe('BotTester', () => {
+    it('can handle a single response', () => {
+        const bot = new UniversalBot(new TestConnector());
+
+        bot.dialog('/', (session) => {
+            session.send('hello!');
+        });
+
+        const botTesterOptions = {
+            // the assertionLibrary field can be set in the bot-tester.json, but the default is mocha/chai. It can be omitted if the desired assertion library to use is chai.
+            assertionLibrary: 'chai',
+
+            // testContext is not used for chai expectations
+        }
+
+        return new BotTester(bot, botTesterOptions)
+            .sendMessageToBot('Hola!', 'hello!')
+            .runTest();
+    });
+```
+## Ava
+``` javascript
+const test = require('ava');
+const { UniversalBot } = require('botbuilder');
+const { BotTester, TestConnector } = require('bot-tester');
+
+test('can handle a single response', (t) => {
+    const bot = new UniversalBot(new TestConnector());
+
+    bot.dialog('/', (session) => {
+        session.send('hello!');
+    });
+
+    const botTesterOptions = {
+        // the assertionLibrary field can be set in the bot-tester.json, but testContext must be passed in for ava tests
+        assertionLibrary: 'ava',
+        testContext: t
+    }
+
+    return new BotTester(bot, botTesterOptions)
+        .sendMessageToBot('Hola!', 'hello!')
+        .runTest();
+});
+```
+
 # Example Usage
+All examples use mocha/chai, but the content will be similar regardless of the test runner
 ```javascript
 import { IAddress, IMessage, Message, Prompts, Session, UniversalBot } from 'botbuilder';
 import { expect } from 'chai';
