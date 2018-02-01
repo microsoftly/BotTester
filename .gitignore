@@ -4,3 +4,4 @@ yarn-error.log
 .coveralls.yml
 .nyc_output
 coverage
+*.ava.spec.js
