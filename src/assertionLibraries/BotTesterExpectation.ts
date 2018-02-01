@@ -1,5 +1,6 @@
 import { IConfig } from './../config';
 import { AssertionLibrary } from './AssertionLibrary';
+import { AvaExpectation } from './AvaExpectation';
 import { ChaiExpectation } from './ChaiExpectation';
 import { IExpectation } from './IExpectation';
 
@@ -15,7 +16,8 @@ export class BotTesterExpectation {
     public expect(subject: {}, message?: string): IExpectation {
         switch (this.config.assertionLibrary) {
             case AssertionLibrary.AVA:
-                throw new Error('ava is not yet supported');
+                // throw new Error('ava is not yet supported');
+                return new AvaExpectation(this.config.__internal__testContext, subject, message);
             case AssertionLibrary.CHAI:
             default:
                 return new ChaiExpectation(subject, message);
