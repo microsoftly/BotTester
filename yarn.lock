@@ -744,9 +744,9 @@ boom@2.x.x:
   dependencies:
     hoek "2.x.x"
 
-botbuilder@^3.8.4:
-  version "3.9.1"
-  resolved "https://registry.yarnpkg.com/botbuilder/-/botbuilder-3.9.1.tgz#104aede362185d0aa3222cdb545e39d388d09f06"
+botbuilder@^3.14.0:
+  version "3.14.0"
+  resolved "https://registry.yarnpkg.com/botbuilder/-/botbuilder-3.14.0.tgz#fc8a7e436e1f1ee3e4ff82ce183238f81dd570bd"
   dependencies:
     async "^1.5.2"
     base64url "^2.0.0"
@@ -3349,7 +3349,7 @@ sort-keys@^2.0.0:
   dependencies:
     is-plain-obj "^1.0.0"
 
-source-map-support@^0.4.0, source-map-support@^0.4.17:
+source-map-support@^0.4.0:
   version "0.4.17"
   resolved "https://registry.yarnpkg.com/source-map-support/-/source-map-support-0.4.17.tgz#6f2150553e6375375d0ccb3180502b78c18ba430"
   dependencies:
@@ -3361,7 +3361,7 @@ source-map-support@^0.4.15:
   dependencies:
     source-map "^0.5.6"
 
-source-map-support@^0.5.0:
+source-map-support@^0.5.0, source-map-support@^0.5.3:
   version "0.5.3"
   resolved "https://registry.yarnpkg.com/source-map-support/-/source-map-support-0.5.3.tgz#2b3d5fff298cfa4d1afd7d4352d569e9a0158e76"
   dependencies:
@@ -3740,9 +3740,9 @@ typescript@2.4.1:
   version "2.4.1"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.4.1.tgz#c3ccb16ddaa0b2314de031e7e6fee89e5ba346bc"
 
-typescript@^2.4.1:
-  version "2.5.2"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.5.2.tgz#038a95f7d9bbb420b1bf35ba31d4c5c1dd3ffe34"
+typescript@^2.7.1:
+  version "2.7.1"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.7.1.tgz#bb3682c2c791ac90e7c6210b26478a8da085c359"
 
 uglify-js@^2.6:
   version "2.8.29"

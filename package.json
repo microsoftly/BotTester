@@ -66,7 +66,7 @@
   "dependencies": {
     "ava": "^0.25.0",
     "bluebird": "^3.5.0",
-    "botbuilder": "^3.8.4",
+    "botbuilder": "^3.14.0",
     "chai": "^4.0.2",
     "chai-subset": "^1.6.0",
     "colors": "^1.1.2",
@@ -86,11 +86,11 @@
     "istanbul": "^0.4.5",
     "mocha": "^3.4.2",
     "nyc": "^11.2.1",
-    "source-map-support": "^0.4.17",
+    "source-map-support": "^0.5.3",
     "ts-node": "^3.1.0",
     "tslint": "^5.7.0",
     "typedoc": "^0.8.0",
-    "typescript": "^2.4.1"
+    "typescript": "^2.7.1"
   },
   "files": [
     "dist",
