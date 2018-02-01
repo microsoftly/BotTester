@@ -1,5 +1,6 @@
 import { IEvent, IMessage } from 'botbuilder';
-import { expect } from './assertionLibraries/IExpectation';
+import { BotTesterExpectation } from './assertionLibraries/BotTesterExpectation';
+import { IConfig } from './config';
 
 export enum ExpectedMessageType {
     String,
@@ -35,19 +36,23 @@ function getExpectedMessageType(expectedResponseCollection: PossibleExpectedMess
  * response from the bot.
  */
 export class ExpectedMessage {
+    private readonly internalExpectation: BotTesterExpectation;
     /**
      * set of possible responses, chosen at random. If the collection size is 1, then there is only one response that is expected
      */
     private readonly expectedResponseCollection: PossibleExpectedMessageCollections;
 
-    constructor(expectedResponseCollection: PossibleExpectedMessageType | PossibleExpectedMessageCollections) {
+    constructor(
+        config: IConfig,
+        expectedResponseCollection: PossibleExpectedMessageType | PossibleExpectedMessageCollections
+    ) {
+        this.internalExpectation = new BotTesterExpectation(config);
+
         if (!(expectedResponseCollection instanceof Array)) {
             this.expectedResponseCollection = [expectedResponseCollection as PossibleExpectedMessageType];
         } else {
             this.expectedResponseCollection = expectedResponseCollection as PossibleExpectedMessageCollections;
         }
-
-        expect(this.expectedResponseCollection, 'expected response collections cannot be empty').notToBeEmpty();
     }
 
     /**
@@ -69,7 +74,7 @@ export class ExpectedMessage {
                 this.deepMessageMatchCheck(outgoingMessage);
                 break;
             default:
-                expect(outgoingMessage.type).toEqual('save');
+                this.internalExpectation.expect(outgoingMessage.type).toEqual('save');
         }
     }
 
@@ -92,7 +97,7 @@ export class ExpectedMessage {
         const errorString =
             `Bot should have responded with '${errorStringExpectedResponseText}', but was '${outgoingText}'`;
 
-        expect(expectedResponseStrings, errorString).toInclude(outgoingText);
+        this.internalExpectation.expect(expectedResponseStrings, errorString).toInclude(outgoingText);
     }
 
     /**
@@ -104,8 +109,9 @@ export class ExpectedMessage {
     private checkMessageTextForRegex(outgoingMessage: IMessage): void {
         const text = outgoingMessage.text;
         const regexCollection: RegExp[] = this.expectedResponseCollection as RegExp[];
-        expect(regexCollection.some((regex: RegExp) => regex.test(text)),
-               `'${text}' did not match any regex in ${regexCollection}`).toBeTrue();
+
+        this.internalExpectation.expect(regexCollection.some((regex: RegExp) => regex.test(text)),
+                                        `'${text}' did not match any regex in ${regexCollection}`).toBeTrue();
     }
 
     /**
@@ -128,6 +134,6 @@ export class ExpectedMessage {
             this.checkMessageTextForExactStringMatch(outgoingMessage, expectedResponseStrings);
         }
 
-        expect(expectedResponseCollectionAsIMessage).toDeeplyInclude(outgoingMessage);
+        this.internalExpectation.expect(expectedResponseCollectionAsIMessage).toDeeplyInclude(outgoingMessage);
     }
 }

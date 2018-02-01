@@ -47,6 +47,7 @@ export class OutgoingMessageComparator {
         const originalItemCount = this.expectedMessages.length;
 
         let matchingMessageFound: boolean = false;
+
         this.expectedMessages = this.expectedMessages.filter((expectedMessage: ExpectedMessage, i: number) => {
             if (matchingMessageFound) {
                 return true;
