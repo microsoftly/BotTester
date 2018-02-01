@@ -6,10 +6,6 @@ import { IConfig } from './../../src/config';
 import { TestConnector } from './../../src/TestConnector';
 import { getAdaptiveCard, getAdaptiveCardAttachment, getAdaptiveCardMessage } from './../adaptiveCardProvider';
 
-const avaBotTesterOptions: IConfig = {
-    assertionLibrary: 'ava'
-};
-
 const connector = new TestConnector();
 
 interface IBotTestContext {
@@ -24,6 +20,13 @@ interface IAvaBotTest extends AvaTestContext {
 type AvaTestContext = TestContext & Context<any>;
 //tslint:enable
 
+function getTestOptions(t: AvaTestContext): IConfig {
+    return {
+        assertionLibrary: 'ava',
+        __internal__testContext: t
+    };
+}
+
 test.beforeEach((t: IAvaBotTest) => {
     t.context.bot = new UniversalBot(connector);
 });
@@ -35,7 +38,7 @@ test('can handle a single response', (t: IAvaBotTest) => {
         session.send('hello!');
     });
 
-    return new BotTester(bot, avaBotTesterOptions)
+    return new BotTester(bot, getTestOptions(t))
         .sendMessageToBot('Hola!', 'hello!')
         .runTest();
 });
@@ -48,7 +51,7 @@ test('can handle multiple responses', (t: IAvaBotTest) => {
         session.send('how are you doing?');
     });
 
-    new BotTester(bot, avaBotTesterOptions)
+    new BotTester(bot, getTestOptions(t))
         .sendMessageToBot('Hola!', 'hello!', 'how are you doing?')
         .runTest();
 });
