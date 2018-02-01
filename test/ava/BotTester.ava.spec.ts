@@ -40,7 +40,7 @@ test('can handle a single response', (t: IAvaBotTest) => {
         .runTest();
 });
 
-test('can handle multiple responses', () => {
+test('can handle multiple responses', (t: IAvaBotTest) => {
     const bot = t.context.bot;
 
     bot.dialog('/', (session) => {
