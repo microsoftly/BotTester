@@ -6,14 +6,14 @@ import { IExpectation } from './IExpectation';
 export type expectationFunction = (subject: {}, message?: string) => IExpectation;
 
 export class BotTesterExpectation {
-    private readonly assertionLibrary: string;
+    private readonly config: IConfig;
 
     constructor(config: IConfig) {
-        this.assertionLibrary = config.assertionLibrary;
+        this.config = config;
     }
 
     public expect(subject: {}, message?: string): IExpectation {
-        switch (this.assertionLibrary) {
+        switch (this.config.assertionLibrary) {
             case AssertionLibrary.AVA:
                 throw new Error('ava is not yet supported');
             case AssertionLibrary.CHAI:
