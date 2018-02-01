@@ -49,6 +49,13 @@ export interface IConfig {
      * filters for messages that the BotTester framework should use
      */
     messageFilters?: MessageFilter[];
+
+    /**
+     * For internal use only. This allows the test context to be passed down to the assertion library implementation
+     */
+    //tslint:disable
+    __internal__testContext?: any;
+    //tslint:enable
 }
 
 const configFilePath = `bot-tester.json`;
