@@ -4,6 +4,9 @@ Simple framework that allows for easy testing of a botbuiler chatbot using mocha
 ```bash
 npm install --save bot-tester
 ```
+## supported test libraries
+1. mocha/chai
+2. ava
 ## Class definitions, see the [BotTester Framework reference docs](https://microsoftly.github.io/BotTester/classes/_bottester_.bottester.html)
 ## config
 config can be set one of 2 ways:
@@ -26,13 +29,11 @@ Passing in the config overrides any default values or values set by bot-tester.j
 
     // this will allow using different assertion libraries. Currently supported libraries are:
     // 1) chai
-
-    // with the following under development:
     // 2) ava
 
     // should this field not be provided, it will default to chai
     assertionLibrary: string,
-} 
+}
 ```
 if timeout is defined, then a particular ```runTest()``` call will fail if it does not receive each expected message within the timeout period of time set in the options.
 
