@@ -51,10 +51,13 @@ export interface IConfig {
     messageFilters?: MessageFilter[];
 
     /**
-     * For internal use only. This allows the test context to be passed down to the assertion library implementation
+     * Stores the test context. This will be used depending on the test runner you choose to use. Currently, the following test runners
+     * require this field to be defined:
+     *
+     *  1) ava
      */
     //tslint:disable
-    __internal__testContext?: any;
+    testContext?: any;
     //tslint:enable
 }
 
