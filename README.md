@@ -12,7 +12,7 @@ npm install --save bot-tester
 config can be set one of 2 ways:
 
 1. creating a bot-tester.json file in the root directory of your project.
-2. passing in a config object into the options param, which is the last, when creating a BotTester instance
+2. passing in a config object into the options param when instantiating new instances of the BotTester
 
 
 Passing in the config overrides any default values or values set by bot-tester.json. At the moment, the options are:
