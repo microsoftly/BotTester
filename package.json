@@ -1,6 +1,6 @@
 {
   "name": "bot-tester",
-  "version": "3.4.1",
+  "version": "3.4.3",
   "description": "Easily test bots made with the bot builder framework",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -28,7 +28,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/microsoftly/BotTester.git"
+    "url": "git+https://github.com//microsoftly/BotTester.git"
   },
   "scripts": {
     "buildSrc": "tsc -p src/tsconfig.json",
