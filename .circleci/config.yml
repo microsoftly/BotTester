@@ -13,6 +13,9 @@ jobs:
             - yarn-packages-master
             - yarn-packages-
       - run:
+          name: install globals
+          command: yarn global add typescript
+      - run:
           name: yarn install
           command: yarn
       - save_cache:
@@ -32,7 +35,7 @@ jobs:
       - store_artifacts:
           path: coverage
           prefix: coverage
-          
+
 workflows:
   version: 2
   build_and_test:
