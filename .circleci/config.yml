@@ -25,7 +25,7 @@ jobs:
             - node_modules/
       - run:
           name: coverage tests
-          command: yarn coverageTests
+          command: yarn coverage
       - store_test_results:
           path: coverage
       - store_artifacts:
