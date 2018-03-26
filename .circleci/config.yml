@@ -30,7 +30,7 @@ jobs:
           path: coverage
       - store_artifacts:
           path: coverage
-  publish
+  publish:
     steps:
       - checkout
       - run: 
