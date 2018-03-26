@@ -46,7 +46,7 @@ jobs:
           name: publish package to npm
           command: npm publish
 
-workflows
+workflows:
   version: 2
     build-publish:
       jobs:
