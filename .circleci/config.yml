@@ -70,6 +70,16 @@ workflows:
           type: approval
           requires:
             - build_and_test
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /v[0-9]+(\.[0-9]+)*.*/
       - publish:
           requires:
             - hold
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /v[0-9]+(\.[0-9]+)*.*/
