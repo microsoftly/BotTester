@@ -31,6 +31,8 @@ jobs:
       - store_artifacts:
           path: coverage
   publish:
+    docker:
+      - image: circleci/node:8.10
     steps:
       - checkout
       - run: 
@@ -48,12 +50,12 @@ jobs:
 
 workflows:
   version: 2
-    build-publish:
-      jobs:
-        - build
-        - publish:
-          - requires:
-            - build
-          - filters:
-            tags:
-              only: /v[0-9]+(\.[0-9]+)*/
+  build-publish:
+    jobs:
+      - build
+      - publish:
+        - requires:
+          - build
+        - filters:
+          tags:
+            only: /v[0-9]+(\.[0-9]+)*/
