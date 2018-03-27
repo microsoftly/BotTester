@@ -59,6 +59,9 @@ workflows:
               only: /.*/
 
   build_and_publish:
+    filters:
+      tags:
+        only: /v[0-9]+(\.[0-9]+)*/
     jobs:
       - build_and_test
       - publish:
