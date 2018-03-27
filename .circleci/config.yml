@@ -1,0 +1,75 @@
+version: 2
+jobs:
+  build_and_test:
+    docker:
+      - image: circleci/node:8.10
+    steps:
+      - checkout
+      - restore_cache:
+          name: Restore Yarn Package Cache
+          keys:
+            - yarn-packages-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            - yarn-packages-{{ .Branch }}
+            - yarn-packages-master
+            - yarn-packages-
+      - run:
+          name: install globals
+          command: yarn global add typescript
+      - run:
+          name: yarn install
+          command: yarn
+      - save_cache:
+          name: Save Yarn Package Cache
+          key: yarn-packages-{{ .Branch }}-{{ checksum "yarn.lock" }}
+          paths:
+            - node_modules/
+      - run:
+          name: coverage tests
+          command: yarn coverage
+      - store_test_results:
+          path: coverage
+      - store_artifacts:
+          path: coverage
+          
+  publish:
+    docker:
+      - image: circleci/node:8.10
+    steps:
+      - checkout
+      - run: 
+          name: add npm token
+          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
+      - run:
+          name: install globals
+          command: yarn global add typescript
+      - run:
+          name: yarn install
+          command: yarn
+      - run:
+          name: publish package to npm
+          command: npm publish
+
+workflows:
+  version: 2
+  pr_build:
+    jobs:
+      - build_and_test:
+          filters:
+            branches:
+              only: /.*/
+
+  build_and_publish:
+    jobs:
+      - build_and_test:
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /v[0-9]+(\.[0-9]+)*/
+      - hold:
+          type: approval
+          requires:
+            - build_and_test
+      - publish:
+          requires:
+            - hold
