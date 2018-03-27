@@ -61,8 +61,8 @@ workflows:
     jobs:
       - build
       - publish:
-        - requires:
+        requires:
           - build
-        - filters:
+        filters:
           tags:
             only: /v[0-9]+(\.[0-9]+)*/
