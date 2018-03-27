@@ -28,7 +28,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com//microsoftly/BotTester.git"
+    "url": "https://github.com//microsoftly/BotTester.git"
   },
   "scripts": {
     "buildSrc": "tsc -p src/tsconfig.json",
