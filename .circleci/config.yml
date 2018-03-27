@@ -57,3 +57,12 @@ workflows:
           filters:
             branches:
               only: /.*/
+  build_and_publish:
+    jobs:
+      - build
+      - publish:
+          requries:
+            - build
+          filters:
+            tags:
+              only: /v[0-9]+(\.[0-9]+)*/
