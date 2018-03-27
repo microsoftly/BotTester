@@ -30,6 +30,7 @@ jobs:
           path: coverage
       - store_artifacts:
           path: coverage
+          
   publish:
     docker:
       - image: circleci/node:8.10
