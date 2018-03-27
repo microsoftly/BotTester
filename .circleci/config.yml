@@ -57,11 +57,12 @@ workflows:
           filters:
             branches:
               only: /.*/
+
   build_and_publish:
     jobs:
       - build
       - publish:
-          requries:
+          requires:
             - build
           filters:
             tags:
