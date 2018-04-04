@@ -113,7 +113,6 @@ export class BotTester implements IBotTester, IOptionsModifier {
         this.config = Object.assign({}, getConfig(), options);
         this.config.messageFilters = this.config.messageFilters.slice();
         this.bot = bot;
-        this.messageService = new MessageService(bot, this.config);
         this.sessionLoader = new SessionService(bot);
         this.testSteps = [] as TestStep[];
     }
