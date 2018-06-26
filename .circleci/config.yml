@@ -13,6 +13,10 @@ jobs:
             - yarn-packages-master
             - yarn-packages-
       - run:
+          name: install fossa
+          command: |
+            curl -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/fossas/fossa-cli/master/install.sh | bash
+      - run:
           name: install globals
           command: yarn global add typescript
       - run:
@@ -30,6 +34,8 @@ jobs:
           path: coverage
       - store_artifacts:
           path: coverage
+      - run:
+          command: fossa
           
   publish:
     docker:
