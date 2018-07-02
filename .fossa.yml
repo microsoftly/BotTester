@@ -12,5 +12,5 @@ analyze:
     - name: bot-tester
       path: package.json
       type: nodejs
-      options: 
+      options:   
         allow-npm-err: true
