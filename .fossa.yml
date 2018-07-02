@@ -6,7 +6,6 @@ cli:
   server: https://app.fossa.io
   fetcher: custom
   project: git@github.com:microsoftly/BotTester.git
-  branch: addFossa
 analyze:
   modules:
   - name: bot-tester
