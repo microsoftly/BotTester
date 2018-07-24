@@ -28,10 +28,10 @@ function getExpectedMessageType(expectedResponseCollection: PossibleExpectedMess
         return ExpectedMessageType.String;
     } else if (firstElt.constructor.name === 'RegExp') {
         return ExpectedMessageType.Regex;
-    } else if (firstElt.constructor.name === 'IMessage') {
-        return ExpectedMessageType.IMessage;
-    } else {
+    } else if (firstElt.constructor.name === 'Function') {
         return ExpectedMessageType.Function;
+    } else {
+        return ExpectedMessageType.IMessage;
     }
 }
 
