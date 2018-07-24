@@ -1,17 +1,19 @@
-import { IEvent, IMessage } from 'botbuilder';
-import { BotTesterExpectation } from './assertionLibraries/BotTesterExpectation';
-import { IConfig } from './config';
+import {IEvent, IMessage} from 'botbuilder';
+import {assert} from 'chai';
+import {BotTesterExpectation} from './assertionLibraries/BotTesterExpectation';
+import {IConfig} from './config';
 
 export enum ExpectedMessageType {
     String,
     IMessage,
-    Regex
+    Regex,
+    Function
 }
 
 /**
  * Types accepted for responses checkers
  */
-export type PossibleExpectedMessageType = string | IMessage | RegExp | IEvent;
+export type PossibleExpectedMessageType = string | IMessage | RegExp | IEvent | Function;
 
 /**
  * Response expectations area always collections. The collection is the set of possible responses, chosen at random. If the collection size
@@ -26,8 +28,10 @@ function getExpectedMessageType(expectedResponseCollection: PossibleExpectedMess
         return ExpectedMessageType.String;
     } else if (firstElt.constructor.name === 'RegExp') {
         return ExpectedMessageType.Regex;
-    } else {
+    } else if (firstElt.constructor.name === 'IMessage') {
         return ExpectedMessageType.IMessage;
+    } else {
+        return ExpectedMessageType.Function;
     }
 }
 
@@ -42,10 +46,8 @@ export class ExpectedMessage {
      */
     private readonly expectedResponseCollection: PossibleExpectedMessageCollections;
 
-    constructor(
-        config: IConfig,
-        expectedResponseCollection: PossibleExpectedMessageType | PossibleExpectedMessageCollections
-    ) {
+    constructor(config: IConfig,
+                expectedResponseCollection: PossibleExpectedMessageType | PossibleExpectedMessageCollections) {
         this.internalExpectation = new BotTesterExpectation(config);
 
         if (!(expectedResponseCollection instanceof Array)) {
@@ -72,6 +74,9 @@ export class ExpectedMessage {
             case ExpectedMessageType.IMessage:
                 // doing this check will highlight if the diff in text instead of a large IMessage diff
                 this.deepMessageMatchCheck(outgoingMessage);
+                break;
+            case ExpectedMessageType.Function:
+                this.deepMatchCheckWithFunction(outgoingMessage);
                 break;
             default:
                 this.internalExpectation.expect(outgoingMessage.type).toEqual('save');
@@ -111,7 +116,7 @@ export class ExpectedMessage {
         const regexCollection: RegExp[] = this.expectedResponseCollection as RegExp[];
 
         this.internalExpectation.expect(regexCollection.some((regex: RegExp) => regex.test(text)),
-                                        `'${text}' did not match any regex in ${regexCollection}`).toBeTrue();
+            `'${text}' did not match any regex in ${regexCollection}`).toBeTrue();
     }
 
     /**
@@ -135,5 +140,31 @@ export class ExpectedMessage {
         }
 
         this.internalExpectation.expect(expectedResponseCollectionAsIMessage).toDeeplyInclude(outgoingMessage);
+    }
+
+    /**
+     *  Verfy the incoming message with custom test defined by tester
+     *  If the function that tester defined return an error, make the test break
+     *  If the function return anything else, the test is considered as good
+     *  I've tryed to use promise as parameter, but in a promise we change scope, so the assert doesn't work
+     * @param {IMessage} outgoingMessage outgoing message being compared
+     */
+    private deepMatchCheckWithFunction(outgoingMessage: IMessage): void {
+        const functionCollection: Function[] = this.expectedResponseCollection as Function[];
+        let errorString = '';
+        let success = false;
+        functionCollection.forEach((func: Function) => {
+            const result = func(outgoingMessage);
+            if (result instanceof Error) {
+                errorString += `\n -----------------ERROR-----------------\n\n\n'${result.message}' `;
+            } else {
+                success = true;
+            }
+        });
+        // ErrorString here, can hold multiples error, if the bot send multiples message in one batching
+        const error = `Bot should have relied response that matches with function but respond '${outgoingMessage}'` +
+            ` that create the following error(s) '${errorString}'`;
+        this.internalExpectation.expect(success, error).toBeTrue();
+
     }
 }
