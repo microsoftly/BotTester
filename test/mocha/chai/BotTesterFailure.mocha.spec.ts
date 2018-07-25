@@ -42,7 +42,7 @@ describe('BotTester', () => {
     });
 
     // ignore this for now. It's more of a debate as to whether or not the user should know not to do this
-    xit('it will fail if an empty collection is given', () => {
+    it('it will fail if an empty collection is given', () => {
         bot.dialog('/', (session: Session) => {
             session.send('hello!');
         });
@@ -191,6 +191,39 @@ describe('BotTester', () => {
             .sendMessageToBot('abcd', numberRegex)
             .runTest()
         ).to.eventually.be.rejectedWith('\'abcd\' did not match any regex in /^\\d+/').notify(done);
+    });
+
+    it('will fail if function return an error', (done: Function) => {
+        bot.dialog('/', (session: Session) => {
+            session.send('hello!');
+            session.send('13');
+        });
+
+        const botTester = new BotTester(bot)
+            .sendMessageToBot('Hi', (message: IMessage) => {
+                if (message.text === 'hello!') {
+                    return true;
+                }
+            },                (message: IMessage) => {
+                if (parseInt(message.text, 0) % 2 !== 0) {
+                    return new Error(`Message is not an even number : '${message.text}'`);
+                }
+            });
+
+        expect(botTester.runTest()).to.be.rejected.notify(done);
+    });
+
+    it('will fail if function return a bad string', (done: Function) => {
+        bot.dialog('/', (session: Session) => {
+            session.send('hello!');
+        });
+
+        const botTester = new BotTester(bot)
+            .sendMessageToBot('Hi', (message: IMessage) => {
+                return 'foo';
+            });
+
+        expect(botTester.runTest()).to.be.rejected.notify(done);
     });
 
     it('can timeout', (done: Function) => {

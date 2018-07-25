@@ -1,5 +1,4 @@
 import {IEvent, IMessage} from 'botbuilder';
-import {assert} from 'chai';
 import {BotTesterExpectation} from './assertionLibraries/BotTesterExpectation';
 import {IConfig} from './config';
 
@@ -116,7 +115,7 @@ export class ExpectedMessage {
         const regexCollection: RegExp[] = this.expectedResponseCollection as RegExp[];
 
         this.internalExpectation.expect(regexCollection.some((regex: RegExp) => regex.test(text)),
-            `'${text}' did not match any regex in ${regexCollection}`).toBeTrue();
+                                        `'${text}' did not match any regex in ${regexCollection}`).toBeTrue();
     }
 
     /**
@@ -146,17 +145,19 @@ export class ExpectedMessage {
      *  Verfy the incoming message with custom test defined by tester
      *  If the function that tester defined return an error, make the test break
      *  If the function return anything else, the test is considered as good
-     *  I've tryed to use promise as parameter, but in a promise we change scope, so the assert doesn't work
      * @param {IMessage} outgoingMessage outgoing message being compared
      */
     private deepMatchCheckWithFunction(outgoingMessage: IMessage): void {
         const functionCollection: Function[] = this.expectedResponseCollection as Function[];
         let errorString = '';
+        const exceptedResponsesStrings = [];
         let success = false;
         functionCollection.forEach((func: Function) => {
             const result = func(outgoingMessage);
             if (result instanceof Error) {
                 errorString += `\n -----------------ERROR-----------------\n\n\n'${result.message}' `;
+            } else if (typeof result === 'string') {
+                exceptedResponsesStrings.push(result);
             } else {
                 success = true;
             }
@@ -164,7 +165,10 @@ export class ExpectedMessage {
         // ErrorString here, can hold multiples error, if the bot send multiples message in one batching
         const error = `Bot should have relied response that matches with function but respond '${outgoingMessage}'` +
             ` that create the following error(s) '${errorString}'`;
-        this.internalExpectation.expect(success, error).toBeTrue();
-
+        if (exceptedResponsesStrings.length > 0) {
+            this.checkMessageTextForExactStringMatch(outgoingMessage, exceptedResponsesStrings);
+        } else {
+            this.internalExpectation.expect(success, error).toBeTrue();
+        }
     }
 }
