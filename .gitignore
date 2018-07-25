@@ -5,3 +5,4 @@ yarn-error.log
 .nyc_output
 coverage
 *.ava.spec.js
+.idea

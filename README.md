@@ -242,7 +242,28 @@ describe('BotTester', () => {
             .runTest();
     });
 ```
-
+# Make your own tests
+```javascript
+      it("should make you able to write your own tests", () => {
+        bot.dialog('/', (session) => {
+          session.send("Hello");
+          session.send("12");
+        });
+        return botTester.sendMessageToBot('Bonjour',(message) => {
+          if (message.text === "Hello") {
+            return true;
+          } else {
+            return new Error("Message : " + message.text + "is not equal to 'Hello'")
+          }
+        },(message)=>{
+           if (parseInt(message.text,0) % 2 === 0) {
+               return true;
+             } else {
+               return new Error("Message is not an even number : " + message.text);
+             }
+          }).runTest();
+      });
+```
 # Address/multiuser cases
 ```javascript
     describe('Address/multi user', () => {

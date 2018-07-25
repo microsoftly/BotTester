@@ -1,10 +1,10 @@
 //```javascript
-import { IAddress, IMessage, Message, Prompts, Session, UniversalBot } from 'botbuilder';
+import {IAddress, IMessage, Message, Prompts, Session, UniversalBot} from 'botbuilder';
 import * as chai from 'chai';
 import * as chaiAsPromised from 'chai-as-promised';
-import { BotTester } from './../../../src/BotTester';
-import { TestConnector } from './../../../src/TestConnector';
-import { getAdaptiveCard, getAdaptiveCardAttachment, getAdaptiveCardMessage } from './../../adaptiveCardProvider';
+import {BotTester} from './../../../src/BotTester';
+import {TestConnector} from './../../../src/TestConnector';
+import {getAdaptiveCard, getAdaptiveCardAttachment, getAdaptiveCardMessage} from './../../adaptiveCardProvider';
 
 chai.use(chaiAsPromised);
 const expect = chai.expect;
@@ -105,12 +105,12 @@ describe('BotTester', () => {
         bot.dialog('/', [(session) => {
             new Prompts.text(session, 'What would you like to set data to?');
         }, (session, results) => {
-            session.userData = { data: results.response };
+            session.userData = {data: results.response};
             session.save();
         }]);
 
         return new BotTester(bot)
-            .sendMessageToBot('Start this thing!',  'What would you like to set data to?')
+            .sendMessageToBot('Start this thing!', 'What would you like to set data to?')
             .sendMessageToBotAndExpectSaveWithNoResponse('This is data!')
             .checkSession((session) => {
                 expect(session.userData).not.to.be.null;
@@ -152,16 +152,18 @@ describe('BotTester', () => {
 //# Address/multiuser cases
 //```javascript
     describe('Address/multi user', () => {
-        const defaultAddress = { channelId: 'console',
-            user: { id: 'customUser1', name: 'A' },
-            bot: { id: 'customBot1', name: 'Bot1' },
-            conversation: { id: 'customUser1Conversation' }
+        const defaultAddress = {
+            channelId: 'console',
+            user: {id: 'customUser1', name: 'A'},
+            bot: {id: 'customBot1', name: 'Bot1'},
+            conversation: {id: 'customUser1Conversation'}
         };
 
-        const user2Address = { channelId: 'console',
-            user: { id: 'user2', name: 'B' },
-            bot: { id: 'bot', name: 'Bot' },
-            conversation: { id: 'user2Conversation' }
+        const user2Address = {
+            channelId: 'console',
+            user: {id: 'user2', name: 'B'},
+            bot: {id: 'bot', name: 'Bot'},
+            conversation: {id: 'user2Conversation'}
         };
 
         beforeEach(() => {
@@ -201,7 +203,7 @@ describe('BotTester', () => {
 
 //## Can have a default address assigned to the bot
 //```javascript
-        // the bot can have a default address that messages are sent to. If needed, the default address can be ignored by sending an IMessage
+// the bot can have a default address that messages are sent to. If needed, the default address can be ignored by sending an IMessage
         it('Can have a default address assigned to it and communicate to multiple users', () => {
             const askForUser1Name = new Message()
                 .text('What is my name?')
@@ -224,8 +226,8 @@ describe('BotTester', () => {
                 .toMessage();
 
             // when testing for an address that is not the default for the bot, the address must be passed in
-            return new BotTester(bot, { defaultAddress })
-                // because user 1 is the default address, the expected responses can be a string
+            return new BotTester(bot, {defaultAddress})
+            // because user 1 is the default address, the expected responses can be a string
                 .sendMessageToBot(askForUser1Name, 'A')
                 .sendMessageToBot('What is my name?', user1ExpectedResponse)
                 .sendMessageToBot(askForUser1Name, user1ExpectedResponse)
@@ -238,10 +240,11 @@ describe('BotTester', () => {
 //# Can test batch responses
 //```javascript
     it('can handle batch responses', () => {
-        const CUSTOMER_ADDRESS: IAddress = { channelId: 'console',
-            user: { id: 'userId1', name: 'user1' },
-            bot: { id: 'bot', name: 'Bot' },
-            conversation: { id: 'user1Conversation' }
+        const CUSTOMER_ADDRESS: IAddress = {
+            channelId: 'console',
+            user: {id: 'userId1', name: 'user1'},
+            bot: {id: 'bot', name: 'Bot'},
+            conversation: {id: 'user1Conversation'}
         };
 
         const msg1 = new Message()
@@ -258,7 +261,7 @@ describe('BotTester', () => {
             bot.send([msg1, msg2]);
         });
 
-        return new BotTester(bot, { defaultAddress: CUSTOMER_ADDRESS })
+        return new BotTester(bot, {defaultAddress: CUSTOMER_ADDRESS})
             .sendMessageToBot('anything', 'hello', 'there')
             .runTest();
     });
@@ -279,6 +282,44 @@ describe('BotTester', () => {
             .sendMessageToBot('3156', numberRegex)
             .sendMessageToBot('8675309', numberRegex)
             .runTest();
+    });
+//```
+
+//# Can test using Function
+//```javascript
+    it('accepts Function', () => {
+        bot.dialog('/', (session: Session) => {
+            session.send('hello!');
+            session.send('12');
+        });
+
+        const botTester = new BotTester(bot)
+            .sendMessageToBot('Hi', (message: IMessage) => {
+                if (message.text === 'hello!') {
+                    return true;
+                }
+            }, (message: IMessage) => {
+                if (parseInt(message.text, 0) % 2 === 0) {
+                    return true;
+                }
+            });
+
+        return botTester.runTest();
+    });
+//```
+
+//```javascript
+    it('accepts Function that return string', () => {
+        bot.dialog('/', (session: Session) => {
+            session.send('hello!');
+        });
+
+        const botTester = new BotTester(bot)
+            .sendMessageToBot('Hi', (message: IMessage) => {
+                return message.text;
+            });
+
+        return botTester.runTest();
     });
 //```
 
@@ -367,7 +408,7 @@ describe('BotTester', () => {
         const ignoreHowMessage = (message) => !message.text.includes('how');
         const ignoreAreMessage = (message) => !message.text.includes('are');
 
-        return new BotTester(bot, { messageFilters: [ignoreHowMessage, ignoreAreMessage]})
+        return new BotTester(bot, {messageFilters: [ignoreHowMessage, ignoreAreMessage]})
             .sendMessageToBot('intro', 'hello', 'you?')
             .runTest();
     });
@@ -393,7 +434,7 @@ describe('BotTester', () => {
         it('change timeout time', (done) => {
             const timeout = 750;
             bot.dialog('/', (session) => {
-                setTimeout(() => session.send('hi there'), timeout * 2 );
+                setTimeout(() => session.send('hi there'), timeout * 2);
             });
 
             expect(new BotTester(bot)

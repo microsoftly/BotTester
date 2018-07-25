@@ -1,17 +1,18 @@
-import { IEvent, IMessage } from 'botbuilder';
-import { BotTesterExpectation } from './assertionLibraries/BotTesterExpectation';
-import { IConfig } from './config';
+import {IEvent, IMessage} from 'botbuilder';
+import {BotTesterExpectation} from './assertionLibraries/BotTesterExpectation';
+import {IConfig} from './config';
 
 export enum ExpectedMessageType {
     String,
     IMessage,
-    Regex
+    Regex,
+    Function
 }
 
 /**
  * Types accepted for responses checkers
  */
-export type PossibleExpectedMessageType = string | IMessage | RegExp | IEvent;
+export type PossibleExpectedMessageType = string | IMessage | RegExp | IEvent | Function;
 
 /**
  * Response expectations area always collections. The collection is the set of possible responses, chosen at random. If the collection size
@@ -26,6 +27,8 @@ function getExpectedMessageType(expectedResponseCollection: PossibleExpectedMess
         return ExpectedMessageType.String;
     } else if (firstElt.constructor.name === 'RegExp') {
         return ExpectedMessageType.Regex;
+    } else if (firstElt.constructor.name === 'Function') {
+        return ExpectedMessageType.Function;
     } else {
         return ExpectedMessageType.IMessage;
     }
@@ -42,10 +45,8 @@ export class ExpectedMessage {
      */
     private readonly expectedResponseCollection: PossibleExpectedMessageCollections;
 
-    constructor(
-        config: IConfig,
-        expectedResponseCollection: PossibleExpectedMessageType | PossibleExpectedMessageCollections
-    ) {
+    constructor(config: IConfig,
+                expectedResponseCollection: PossibleExpectedMessageType | PossibleExpectedMessageCollections) {
         this.internalExpectation = new BotTesterExpectation(config);
 
         if (!(expectedResponseCollection instanceof Array)) {
@@ -72,6 +73,9 @@ export class ExpectedMessage {
             case ExpectedMessageType.IMessage:
                 // doing this check will highlight if the diff in text instead of a large IMessage diff
                 this.deepMessageMatchCheck(outgoingMessage);
+                break;
+            case ExpectedMessageType.Function:
+                this.deepMatchCheckWithFunction(outgoingMessage);
                 break;
             default:
                 this.internalExpectation.expect(outgoingMessage.type).toEqual('save');
@@ -135,5 +139,36 @@ export class ExpectedMessage {
         }
 
         this.internalExpectation.expect(expectedResponseCollectionAsIMessage).toDeeplyInclude(outgoingMessage);
+    }
+
+    /**
+     *  Verfy the incoming message with custom test defined by tester
+     *  If the function that tester defined return an error, make the test break
+     *  If the function return anything else, the test is considered as good
+     * @param {IMessage} outgoingMessage outgoing message being compared
+     */
+    private deepMatchCheckWithFunction(outgoingMessage: IMessage): void {
+        const functionCollection: Function[] = this.expectedResponseCollection as Function[];
+        let errorString = '';
+        const exceptedResponsesStrings = [];
+        let success = false;
+        functionCollection.forEach((func: Function) => {
+            const result = func(outgoingMessage);
+            if (result instanceof Error) {
+                errorString += `\n -----------------ERROR-----------------\n\n\n'${result.message}' `;
+            } else if (typeof result === 'string') {
+                exceptedResponsesStrings.push(result);
+            } else {
+                success = true;
+            }
+        });
+        // ErrorString here, can hold multiples error, if the bot send multiples message in one batching
+        const error = `Bot should have relied response that matches with function but respond '${outgoingMessage}'` +
+            ` that create the following error(s) '${errorString}'`;
+        if (exceptedResponsesStrings.length > 0) {
+            this.checkMessageTextForExactStringMatch(outgoingMessage, exceptedResponsesStrings);
+        } else {
+            this.internalExpectation.expect(success, error).toBeTrue();
+        }
     }
 }
