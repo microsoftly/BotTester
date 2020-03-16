@@ -1,4 +1,5 @@
 # Bot Tester for Bot Builder Framework [![CircleCI](https://circleci.com/gh/microsoftly/BotTester.svg?style=shield)](https://circleci.com/gh/microsoftly/BotTester) [![npm version](https://badge.fury.io/js/bot-tester.svg)](https://badge.fury.io/js/bot-tester) [![Coverage Status](https://coveralls.io/repos/github/microsoftly/BotTester/badge.svg?branch=master)](https://coveralls.io/github/microsoftly/BotTester?branch=master)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fmicrosoftly%2FBotTester.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fmicrosoftly%2FBotTester?ref=badge_shield)
 Simple framework that allows for easy testing of a botbuiler chatbot using mocha and chai.
 ## install
 ```bash
@@ -511,3 +512,7 @@ describe('BotTester', () => {
         });
     });
 ```
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fmicrosoftly%2FBotTester.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fmicrosoftly%2FBotTester?ref=badge_large)
